@@ -345,25 +345,40 @@ closeNotif.addEventListener("click", () => {
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
     const isLogged = localStorage.getItem("isLogged");
+    const acesso = localStorage.getItem("acesso");
 
-    console.log("🔍 Validando acesso:", { email, isLogged });
+    console.log("🔍 Validando acesso:", { email, isLogged, acesso });
 
     if (!email || isLogged !== "true") {
       window.location.replace("login.html");
       return;
     }
 
-    try {
-      const ref = doc(db, "usuarios", email.toLowerCase());
-      const snap = await getDoc(ref);
-      if (!snap.exists()) {
-        console.warn("⚠️ Documento não encontrado no Firestore");
-        localStorage.removeItem("savedEmail");
-        localStorage.removeItem("isLogged");
+    // ✅ Se já tem aprovação local → permite offline
+    if (acesso === "aprovado") {
+      console.log("✅ Acesso aprovado localmente — permitido offline.");
+      return;
+    }
+
+    // 🔄 Se está online mas não tem flag, valida no Firebase
+    if (navigator.onLine) {
+      try {
+        const ref = doc(db, "usuarios", email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          localStorage.setItem("acesso", "aprovado");
+          console.log("✅ Acesso confirmado no Firebase.");
+        } else {
+          console.warn("⚠️ Documento não encontrado no Firestore");
+          localStorage.clear();
+          window.location.replace("login.html");
+        }
+      } catch (err) {
+        console.error("❌ Erro ao validar:", err);
         window.location.replace("login.html");
       }
-    } catch (err) {
-      console.error("❌ Erro ao validar:", err);
+    } else {
+      console.warn("⚠️ Offline sem aprovação local — redirecionando.");
       window.location.replace("login.html");
     }
   }
@@ -371,8 +386,7 @@ closeNotif.addEventListener("click", () => {
   document.addEventListener("DOMContentLoaded", validarAcesso);
 
   window.logout = function() {
-    localStorage.removeItem("savedEmail");
-    localStorage.removeItem("isLogged");
+    localStorage.clear();
     window.location.replace("login.html");
   }
 </script>
