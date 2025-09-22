@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Pintando a Palavra</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="login-container">
+    <img src="icon-512.png" alt="Logo" class="logo">
+    <h1>Pintando a Palavra</h1>
+    <p class="subtitle">Colorindo histórias da Bíblia</p>
+
+    <form id="loginForm">
+      <label for="email">Gmail</label>
+      <input type="email" id="email" placeholder="Digite seu Gmail" required>
+      <button type="submit">Entrar</button>
+    </form>
+
+    <p id="errorMsg" class="error"></p>
+
+    <div class="checkout">
+      <p>Ainda não possui acesso?</p>
+      <!-- 🔗 Checkout atualizado -->
+      <a href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH" target="_blank">Ir para o Checkout</a>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    // ⚙️ Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔑 Validação do login
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const errorMsg = document.getElementById("errorMsg");
+
+      errorMsg.textContent = "⏳ Verificando...";
+
+      try {
+        const ref = doc(db, "usuarios", email);
+        const snap = await getDoc(ref);
+
+        if (snap.exists()) {
+          // 🔑 Sempre salva no localStorage
+          localStorage.setItem("savedEmail", email);
+          localStorage.setItem("isLogged", "true");
+
+          errorMsg.textContent = "✅ Acesso liberado!";
+          setTimeout(() => window.location.href = "index.html", 500);
+        } else {
+          errorMsg.textContent = "❌ Gmail não encontrado, vá para o checkout!";
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "⚠️ Erro ao verificar, tente novamente.";
+      }
+    });
+
+    // Preenche email salvo, se existir
+    window.addEventListener("load", () => {
+      const saved = localStorage.getItem("savedEmail");
+      if (saved) {
+        document.getElementById("email").value = saved;
+      }
+    });
+  </script>
+</body>
+</html>

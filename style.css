@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  font-family: 'Fredoka', sans-serif;
+  background: #fff9e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  margin: 0;
+  color: #333;
+}
+
+.subtitle {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+}
+
+input[type="email"] {
+  width: 100%;
+  padding: 0.7rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  background: #ffd54f;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 100%;
+}
+
+button:hover {
+  background: #ffca28;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.checkout {
+  margin-top: 1.5rem;
+}
+
+.checkout a {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+  background: #ffe082;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.checkout a:hover {
+  background: #ffd54f;
+}
