@@ -61,6 +61,7 @@
           // 🔑 Sempre salva no localStorage
           localStorage.setItem("savedEmail", email);
           localStorage.setItem("isLogged", "true");
+          localStorage.setItem("acesso", "aprovado"); // ✅ garante acesso offline
 
           errorMsg.textContent = "✅ Acesso liberado!";
           setTimeout(() => window.location.href = "index.html", 500);
