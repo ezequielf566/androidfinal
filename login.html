@@ -25,7 +25,7 @@
       max-width: 400px;
     }
 
-    button, a.btn {
+    button {
       background: #ffd54f;
       border: none;
       padding: 1rem 2rem;
@@ -33,41 +33,14 @@
       font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
-      display: inline-block;
-      text-decoration: none;
-      color: #000;
-      margin-top: 1rem;
     }
   </style>
-
-  <!-- Meta Pixel Code -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1116979890524870'); 
-    fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1116979890524870&ev=PageView&noscript=1"
-  /></noscript>
-  <!-- End Meta Pixel Code -->
 </head>
 <body>
   <main>
     <h1>Entrar</h1>
     <p>Use seu Gmail para acessar</p>
     <button id="loginBtn">Entrar com Gmail</button>
-
-    <!-- Botão de checkout -->
-    <a id="checkoutBtn" class="btn" href="https://seu-checkout.com" target="_blank">
-      Ir para o Checkout
-    </a>
   </main>
 
   <script type="module">
@@ -93,23 +66,21 @@
 
     loginBtn.addEventListener("click", async () => {
       try {
-        // Evento Pixel: CompleteRegistration
-        fbq('track', 'CompleteRegistration', {
-          content_name: 'Login Gmail',
-          method: 'GoogleAuth'
-        });
-
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         const email = user.email;
 
+        // consulta no Firestore
         const ref = doc(db, "usuarios", email.toLowerCase());
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
+          // ✅ salva tudo no localStorage
           localStorage.setItem("savedEmail", email);
           localStorage.setItem("isLogged", "true");
-          localStorage.setItem("acesso", "aprovado");
+          localStorage.setItem("acesso", "aprovado"); // 🔑 garante acesso offline depois
+
+          // redireciona para o menu
           window.location.href = "index.html";
         } else {
           alert("Seu Gmail ainda não está autorizado.");
@@ -119,22 +90,6 @@
         alert("Falha ao entrar. Tente novamente.");
       }
     });
-
-    // Evento Pixel: InitiateCheckout com delay de 300ms para garantir disparo
-    const checkoutBtn = document.getElementById("checkoutBtn");
-    if(checkoutBtn){
-      checkoutBtn.addEventListener("click", function(e){
-        e.preventDefault();
-        fbq('track', 'InitiateCheckout', {
-          content_name: 'Checkout Pintando a Palavra',
-          value: 19.90,
-          currency: 'BRL'
-        });
-        setTimeout(function(){
-          window.location.href = checkoutBtn.href;
-        }, 300);
-      });
-    }
   </script>
 </body>
 </html>
