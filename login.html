@@ -3,84 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Pintando a Palavra</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Pintando a Palavra — Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      background: #fff9e6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    main {
+      background: #fff;
+      border: 2px solid #ffd54f;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 400px;
+    }
+
+    button, a.btn {
+      background: #ffd54f;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+      color: #000;
+      margin-top: 1rem;
+    }
+  </style>
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1116979890524870'); 
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1116979890524870&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
-  <div class="login-container">
-    <img src="icon-512.png" alt="Logo" class="logo">
-    <h1>Pintando a Palavra</h1>
-    <p class="subtitle">Colorindo histórias da Bíblia</p>
+  <main>
+    <h1>Entrar</h1>
+    <p>Use seu Gmail para acessar</p>
+    <button id="loginBtn">Entrar com Gmail</button>
 
-    <form id="loginForm">
-      <label for="email">Gmail</label>
-      <input type="email" id="email" placeholder="Digite seu Gmail" required>
-      <button type="submit">Entrar</button>
-    </form>
+    <!-- Botão de checkout -->
+    <a id="checkoutBtn" class="btn" href="https://seu-checkout.com" target="_blank">
+      Ir para o Checkout
+    </a>
+  </main>
 
-    <p id="errorMsg" class="error"></p>
-
-    <div class="checkout">
-      <p>Ainda não possui acesso?</p>
-      <!-- 🔗 Checkout atualizado -->
-      <a href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH" target="_blank">Ir para o Checkout</a>
-    </div>
-  </div>
-
-  <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js";
 
-    // ⚙️ Configuração do Firebase
     const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_AUTH_DOMAIN",
+      projectId: "SEU_PROJECT_ID",
+      storageBucket: "SEU_BUCKET",
+      messagingSenderId: "SEU_SENDER_ID",
+      appId: "SEU_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
     const db = getFirestore(app);
 
-    // 🔑 Validação do login
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim().toLowerCase();
-      const errorMsg = document.getElementById("errorMsg");
+    const loginBtn = document.getElementById("loginBtn");
 
-      errorMsg.textContent = "⏳ Verificando...";
-
+    loginBtn.addEventListener("click", async () => {
       try {
-        const ref = doc(db, "usuarios", email);
+        // Evento Pixel: CompleteRegistration
+        fbq('track', 'CompleteRegistration', {
+          content_name: 'Login Gmail',
+          method: 'GoogleAuth'
+        });
+
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const email = user.email;
+
+        const ref = doc(db, "usuarios", email.toLowerCase());
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
-          // 🔑 Sempre salva no localStorage
           localStorage.setItem("savedEmail", email);
           localStorage.setItem("isLogged", "true");
-          localStorage.setItem("acesso", "aprovado"); // ✅ garante acesso offline
-
-          errorMsg.textContent = "✅ Acesso liberado!";
-          setTimeout(() => window.location.href = "index.html", 500);
+          localStorage.setItem("acesso", "aprovado");
+          window.location.href = "index.html";
         } else {
-          errorMsg.textContent = "❌ Gmail não encontrado, vá para o checkout!";
+          alert("Seu Gmail ainda não está autorizado.");
         }
       } catch (err) {
-        console.error(err);
-        errorMsg.textContent = "⚠️ Erro ao verificar, tente novamente.";
+        console.error("Erro no login:", err);
+        alert("Falha ao entrar. Tente novamente.");
       }
     });
 
-    // Preenche email salvo, se existir
-    window.addEventListener("load", () => {
-      const saved = localStorage.getItem("savedEmail");
-      if (saved) {
-        document.getElementById("email").value = saved;
-      }
-    });
+    // Evento Pixel: InitiateCheckout com delay de 300ms para garantir disparo
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    if(checkoutBtn){
+      checkoutBtn.addEventListener("click", function(e){
+        e.preventDefault();
+        fbq('track', 'InitiateCheckout', {
+          content_name: 'Checkout Pintando a Palavra',
+          value: 19.90,
+          currency: 'BRL'
+        });
+        setTimeout(function(){
+          window.location.href = checkoutBtn.href;
+        }, 300);
+      });
+    }
   </script>
 </body>
 </html>
