@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Pintando a Palavra</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1116979890524870'); 
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1116979890524870&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
   <div class="login-container">
@@ -23,7 +41,9 @@
     <div class="checkout">
       <p>Ainda não possui acesso?</p>
       <!-- 🔗 Checkout atualizado -->
-      <a href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH" target="_blank">Ir para o Checkout</a>
+      <a id="checkoutBtn" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH" target="_blank">
+        Ir para o Checkout
+      </a>
     </div>
   </div>
 
@@ -58,6 +78,12 @@
         const snap = await getDoc(ref);
 
         if (snap.exists()) {
+          // Evento Pixel: CompleteRegistration
+          fbq('track', 'CompleteRegistration', {
+            content_name: 'Login Gmail',
+            method: 'EmailForm'
+          });
+
           // 🔑 Sempre salva no localStorage
           localStorage.setItem("savedEmail", email);
           localStorage.setItem("isLogged", "true");
@@ -80,6 +106,20 @@
         document.getElementById("email").value = saved;
       }
     });
+
+    // Evento Pixel: InitiateCheckout com delay de 300ms
+    const checkoutBtn = document.getElementById("checkoutBtn");
+    if(checkoutBtn){
+      checkoutBtn.addEventListener("click", function(e){
+        e.preventDefault();
+        fbq('track', 'InitiateCheckout', {
+          content_name: 'Checkout Pintando a Palavra',
+          value: 19.90,
+          currency: 'BRL'
+        });
+        setTimeout(() => window.location.href = checkoutBtn.href, 300);
+      });
+    }
   </script>
 </body>
 </html>
