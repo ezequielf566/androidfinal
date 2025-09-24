@@ -73,6 +73,9 @@
 
       errorMsg.textContent = "⏳ Verificando...";
 
+      // Evento Pixel: LoginAttempt no clique de Entrar
+      fbq('trackCustom', 'LoginAttempt', {email_domain: email.split('@')[1] || 'unknown'});
+
       try {
         const ref = doc(db, "usuarios", email);
         const snap = await getDoc(ref);
