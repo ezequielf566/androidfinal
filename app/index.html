@@ -89,26 +89,37 @@
 
   <!-- 🔸 Banner fixo (inicialmente oculto) -->
   <div id="adBannerApp" style="
-    display:none; position:fixed; left:50%; bottom:8px; transform:translateX(-50%);
-    width:92%; max-width:340px; text-align:center;
-    background:#fff8e1; border:2px solid #ffd54f; border-radius:10px;
-    padding:6px 0 8px; box-shadow:0 2px 6px rgba(0,0,0,.15); z-index:9999;">
-    <!-- botão de fechar -->
+    display:none;
+    position:fixed;
+    left:50%;
+    bottom:12px;
+    transform:translateX(-50%);
+    width:95%;
+    max-width:360px;
+    background:#fff8e1;
+    border:3px solid #ffd54f;
+    border-radius:12px;
+    text-align:center;
+    padding:10px 6px 12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.25);
+    z-index:999999;
+    font-family:'Fredoka',sans-serif;">
     <button onclick="AdsCtl.hideBanner()" aria-label="Fechar" style="
-      position:absolute; top:3px; right:6px;
-      border:none; background:none; color:#444;
-      font-size:16px; cursor:pointer; line-height:1;">✕</button>
-
-    <!-- Placeholder (trocar pelo AdSense depois) -->
-    <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner</p>
+      position:absolute; top:4px; right:8px;
+      border:none; background:none; color:#555;
+      font-size:18px; font-weight:bold;
+      cursor:pointer; line-height:1;">✕</button>
+    <p style="margin:6px 0 0;font-size:15px;color:#333;font-weight:500;">
+      🔸 Espaço para banner (modo gratuito)
+    </p>
   </div>
 
   <script>
   const AdsCtl = {
     keyLast: 'ad:lastTs',
     keyDl: 'ad:dlCount',
-    minIntervalMs: 60000, // intervalo entre banners
-    autoHideMs: 10000,    // banner some após 10s
+    minIntervalMs: 60000,
+    autoHideMs: 10000,
     isPremium() { return localStorage.getItem('premium') === 'true'; },
     now() { return Date.now(); },
     canShow() {
@@ -134,11 +145,10 @@
     }
   };
 
-  // 🔁 Mostra só depois de 1 minuto
+  // 🔁 Mostra o primeiro banner só após 1 minuto
   function regraTempoIniciar() {
     if (AdsCtl.isPremium()) return;
 
-    // ⏳ Mostra o primeiro banner só após 1 minuto
     setTimeout(() => {
       if (!AdsCtl.isPremium()) {
         AdsCtl.showBanner();
@@ -146,7 +156,6 @@
       }
     }, 60000);
 
-    // 🔁 Depois verifica a cada 15s se já pode mostrar novamente
     setInterval(() => {
       if (AdsCtl.isPremium()) return;
       if (AdsCtl.canShow()) {
@@ -160,25 +169,27 @@
   function interceptarSalvar() {
     const botao = document.getElementById("savePng");
     if (!botao) return;
-    const original = botao.onclick || (() => {});
-    botao.onclick = async (e) => {
-      e.preventDefault();
+
+    botao.addEventListener("click", (e) => {
       const n = AdsCtl.incDownload();
       const segundaVez = (n % 2 === 0);
+
       if (!AdsCtl.isPremium() && segundaVez && AdsCtl.canShow()) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+
         AdsCtl.showBanner();
         AdsCtl.markShown();
-        setTimeout(() => original.call(botao, e), 800);
-      } else {
-        original.call(botao, e);
+
+        setTimeout(() => botao.click(), 800);
       }
-    };
+    }, true);
   }
 
   window.addEventListener('load', () => {
     if (!localStorage.getItem('premium')) localStorage.setItem('premium','false');
     regraTempoIniciar();
-    interceptarSalvar();
+    setTimeout(interceptarSalvar, 1000);
   });
   </script>
 </body>
