@@ -8,6 +8,9 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ffffff">
 
+  <!-- ✅ Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
   <style>
     body {
       margin: 0;
@@ -142,7 +145,7 @@
   </main>
 </div>
 
-<!-- 🔸 Banner fixo (modo gratuito) -->
+<!-- 🔸 Banner fixo com AdSense -->
 <div id="adBanner" style="
   position: fixed;
   bottom: 8px;
@@ -154,11 +157,17 @@
   background: #fff8e1;
   border: 2px solid #ffd54f;
   border-radius: 10px;
-  padding: 6px 0;
+  padding: 10px 0;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   z-index: 9999;
 ">
-  <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner (modo gratuito)</p>
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </div>
 
 <div class="notif-banner" id="notifBanner">
@@ -194,12 +203,6 @@ window.onpopstate = function(event) {
     if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
-function showMsg(texto) {
-  const msg = document.getElementById("msg");
-  msg.innerText = texto;
-  msg.style.display = "block";
-  setTimeout(() => { msg.style.display = "none"; }, 3000);
-}
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
@@ -216,8 +219,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   installBtn.addEventListener("click", async () => {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") showMsg("✅ App instalado com sucesso!");
-    else showMsg("❌ Instalação cancelada.");
     deferredPrompt = null;
     installBtn.remove();
   });
