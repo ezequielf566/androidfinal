@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pintando a Palavra — Colorir</title>
   <link rel="stylesheet" href="css/style.css" />
+
+  <!-- ✅ Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
+
 <body>
   <header class="topbar">
     <div id="progressWidget" class="progress-widget" aria-label="Progresso do livro">
@@ -87,7 +91,7 @@
   });
   </script>
 
-  <!-- 🔸 Banner fixo (inicialmente oculto) -->
+  <!-- 🔸 Banner AdSense fixo -->
   <div id="adBannerApp" style="
     display:none;
     position:fixed;
@@ -100,24 +104,38 @@
     border:3px solid #ffd54f;
     border-radius:12px;
     text-align:center;
-    padding:10px 6px 12px;
     box-shadow:0 4px 10px rgba(0,0,0,0.25);
     z-index:999999;
-    font-family:'Fredoka',sans-serif;">
-    <button onclick="AdsCtl.hideBanner()" aria-label="Fechar" style="
-      position:absolute; top:4px; right:8px;
-      border:none; background:none; color:#555;
-      font-size:18px; font-weight:bold;
-      cursor:pointer; line-height:1;">✕</button>
-    <p style="margin:6px 0 0;font-size:15px;color:#333;font-weight:500;">
-      🔸 Espaço para banner (modo gratuito)
-    </p>
+    font-family:'Fredoka',sans-serif;
+    padding:20px 8px 12px;
+    overflow:hidden;">
+
+    <div style="position:absolute;top:4px;right:6px;z-index:1000000;">
+      <button onclick="AdsCtl.hideBanner()" aria-label="Fechar" style="
+        border:none;
+        background:none;
+        color:#555;
+        font-size:18px;
+        font-weight:bold;
+        cursor:pointer;
+        line-height:1;">✕</button>
+    </div>
+
+    <!-- 🔁 Bloco AdSense -->
+    <div id="adContent" style="margin-top:10px;">
+      <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+        data-ad-slot="XXXXXXXXXX"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
   </div>
 
   <script>
   const AdsCtl = {
     keyLast: 'ad:lastTs',
-    keyDl: 'ad:dlCount',
     minIntervalMs: 60000,
     autoHideMs: 10000,
     isPremium() { return localStorage.getItem('premium') === 'true'; },
@@ -127,11 +145,6 @@
       return (this.now() - last) >= this.minIntervalMs;
     },
     markShown() { localStorage.setItem(this.keyLast, String(this.now())); },
-    incDownload() {
-      const n = +(localStorage.getItem(this.keyDl) || 0) + 1;
-      localStorage.setItem(this.keyDl, String(n));
-      return n;
-    },
     showBanner() {
       const el = document.getElementById('adBannerApp');
       if (!el) return;
@@ -145,16 +158,19 @@
     }
   };
 
-  // 🔁 Mostra o primeiro banner só após 1 minuto
   function regraTempoIniciar() {
     if (AdsCtl.isPremium()) return;
+
+    const isFirstOpen = !localStorage.getItem('ad:firstOpenShown');
+    const primeiroDelay = isFirstOpen ? 180000 : 60000;
 
     setTimeout(() => {
       if (!AdsCtl.isPremium()) {
         AdsCtl.showBanner();
         AdsCtl.markShown();
+        localStorage.setItem('ad:firstOpenShown', 'true');
       }
-    }, 60000);
+    }, primeiroDelay);
 
     setInterval(() => {
       if (AdsCtl.isPremium()) return;
@@ -165,31 +181,9 @@
     }, 15000);
   }
 
-  // 💾 Mostra banner na 2ª, 4ª, 6ª... vez que clicar em "Salvar PNG"
-  function interceptarSalvar() {
-    const botao = document.getElementById("savePng");
-    if (!botao) return;
-
-    botao.addEventListener("click", (e) => {
-      const n = AdsCtl.incDownload();
-      const segundaVez = (n % 2 === 0);
-
-      if (!AdsCtl.isPremium() && segundaVez && AdsCtl.canShow()) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-
-        AdsCtl.showBanner();
-        AdsCtl.markShown();
-
-        setTimeout(() => botao.click(), 800);
-      }
-    }, true);
-  }
-
   window.addEventListener('load', () => {
-    if (!localStorage.getItem('premium')) localStorage.setItem('premium','false');
+    if (!localStorage.getItem('premium')) localStorage.setItem('premium', 'false');
     regraTempoIniciar();
-    setTimeout(interceptarSalvar, 1000);
   });
   </script>
 </body>
