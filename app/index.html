@@ -107,8 +107,8 @@
   const AdsCtl = {
     keyLast: 'ad:lastTs',
     keyDl: 'ad:dlCount',
-    minIntervalMs: 60000,
-    autoHideMs: 10000,
+    minIntervalMs: 60000, // intervalo entre banners
+    autoHideMs: 10000,    // banner some após 10s
     isPremium() { return localStorage.getItem('premium') === 'true'; },
     now() { return Date.now(); },
     canShow() {
@@ -134,15 +134,29 @@
     }
   };
 
+  // 🔁 Mostra só depois de 1 minuto
   function regraTempoIniciar() {
     if (AdsCtl.isPremium()) return;
-    if (AdsCtl.canShow()) { AdsCtl.showBanner(); AdsCtl.markShown(); }
+
+    // ⏳ Mostra o primeiro banner só após 1 minuto
+    setTimeout(() => {
+      if (!AdsCtl.isPremium()) {
+        AdsCtl.showBanner();
+        AdsCtl.markShown();
+      }
+    }, 60000);
+
+    // 🔁 Depois verifica a cada 15s se já pode mostrar novamente
     setInterval(() => {
       if (AdsCtl.isPremium()) return;
-      if (AdsCtl.canShow()) { AdsCtl.showBanner(); AdsCtl.markShown(); }
+      if (AdsCtl.canShow()) {
+        AdsCtl.showBanner();
+        AdsCtl.markShown();
+      }
     }, 15000);
   }
 
+  // 💾 Mostra banner na 2ª, 4ª, 6ª... vez que clicar em "Salvar PNG"
   function interceptarSalvar() {
     const botao = document.getElementById("savePng");
     if (!botao) return;
