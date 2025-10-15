@@ -69,8 +69,8 @@
     }
     .menu button:hover { background: #ffd54f; transform: scale(1.02); }
     .socials {
-      display: flex; justify-content: center; gap: 1rem;
-      margin-top: 1rem; flex-wrap: wrap;
+      display: flex; justify-content:center; align-items:center;
+      gap: 1rem; flex-wrap: nowrap; margin-top: 1rem;
     }
     .socials button {
       background: #fff59d; border: none;
@@ -102,8 +102,8 @@
     }
     @media (max-width:600px){
       h1{font-size:1.6rem;} .menu{max-width:90%;}
-      .socials{flex-direction:column;align-items:center;}
-      .socials button{width:100%;max-width:200px;}
+      .socials{flex-direction:row; justify-content:center;}
+      .socials button{flex:1; max-width:140px;}
     }
   </style>
 </head>
@@ -142,6 +142,25 @@
   </main>
 </div>
 
+<!-- 🔸 Banner fixo (modo gratuito) -->
+<div id="adBanner" style="
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 340px;
+  text-align: center;
+  background: #fff8e1;
+  border: 2px solid #ffd54f;
+  border-radius: 10px;
+  padding: 6px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 9999;
+">
+  <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner (modo gratuito)</p>
+</div>
+
 <div class="notif-banner" id="notifBanner">
   <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
   <p><strong>Primeiro acesso:</strong> abra com internet para que o app baixe e salve todos os arquivos.</p>
@@ -159,6 +178,8 @@
 
 <script>
 function abrirApp() {
+  const adBanner = document.getElementById("adBanner");
+  if (adBanner) adBanner.style.display = "none";
   document.getElementById("menuContainer").style.display = "none";
   const iframe = document.getElementById("conteudo");
   iframe.style.display = "block";
@@ -169,6 +190,8 @@ window.onpopstate = function(event) {
   if (!event.state || event.state.tela !== "app") {
     document.getElementById("conteudo").style.display = "none";
     document.getElementById("menuContainer").style.display = "block";
+    const isPremium = localStorage.getItem("premium") === "true";
+    if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
 function showMsg(texto) {
@@ -193,13 +216,12 @@ window.addEventListener('beforeinstallprompt', (e) => {
   installBtn.addEventListener("click", async () => {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") { showMsg("✅ App instalado com sucesso!"); }
-    else { showMsg("❌ Instalação cancelada."); }
+    if (outcome === "accepted") showMsg("✅ App instalado com sucesso!");
+    else showMsg("❌ Instalação cancelada.");
     deferredPrompt = null;
     installBtn.remove();
   });
 });
-// Notificação: abrir/fechar banner
 const notifBtn = document.getElementById("notifBtn");
 const notifBanner = document.getElementById("notifBanner");
 const closeNotif = document.getElementById("closeNotif");
@@ -207,7 +229,6 @@ notifBtn.addEventListener("click", () => { notifBanner.style.display = "block"; 
 closeNotif.addEventListener("click", () => { notifBanner.style.display = "none"; });
 </script>
 
-<!-- 🔐 Controle de acesso -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -228,14 +249,12 @@ closeNotif.addEventListener("click", () => { notifBanner.style.display = "none";
     const email = localStorage.getItem("savedEmail");
     const isPremium = localStorage.getItem("premium") === "true";
 
-    // 🟢 Define modo gratuito por padrão se vazio
     if (!localStorage.getItem("premium")) {
       localStorage.setItem("premium", "false");
       localStorage.setItem("isLogged", "true");
       console.log("🔸 Primeiro acesso — modo gratuito ativado.");
     }
 
-    // 🔐 Premium → valida Firebase
     if (isPremium) {
       if (navigator.onLine) {
         try {
@@ -261,7 +280,6 @@ closeNotif.addEventListener("click", () => { notifBanner.style.display = "none";
       }
     }
 
-    // 🎨 Gratuito → entra normal
     console.log("🎨 Modo gratuito — acesso liberado.");
   }
 
