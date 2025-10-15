@@ -18,7 +18,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     header {
       background: #ffd54f;
       padding: 1rem;
@@ -26,7 +25,6 @@
       justify-content: space-between;
       align-items: center;
     }
-
     .notif-icon {
       position: relative;
       cursor: pointer;
@@ -44,29 +42,24 @@
       animation: blink 1s infinite;
     }
     @keyframes blink {0%,100%{opacity:1;}50%{opacity:0.3;}}
-
     header .btn {
       background: #fff; border: none; padding: 0.5rem 1rem;
       border-radius: 8px; cursor: pointer; font-weight: bold;
       transition: background 0.2s; color: #000; margin-left: 0.5rem;
     }
     header .btn:hover { background: #f1f1f1; }
-
     main {
       flex: 1; display: flex; flex-direction: column;
       justify-content: center; align-items: center;
       text-align: center; padding: 2rem;
     }
-
     h1 { font-size: 2rem; margin-bottom: 2rem; color: #000; }
     h2 { margin-top: 2rem; font-size: 1.3rem; color: #000; }
-
     .menu {
       display: flex; flex-direction: column;
       gap: 1rem; margin-bottom: 2rem;
       width: 100%; max-width: 320px;
     }
-
     .menu button {
       background: #ffe082; border: none;
       padding: 1rem; border-radius: 12px;
@@ -75,27 +68,46 @@
       width: 100%; color: #000;
     }
     .menu button:hover { background: #ffd54f; transform: scale(1.02); }
-
     .socials {
-      display: flex; justify-content: center; align-items: center;
-      gap: 1rem; margin-top: 1rem; flex-wrap: wrap;
+      display: flex; justify-content: center; gap: 1rem;
+      margin-top: 1rem; flex-wrap: wrap;
     }
     .socials button {
       background: #fff59d; border: none;
-      padding: 0.8rem 1.5rem; border-radius: 12px;
+      padding: 0.8rem 1.2rem; border-radius: 12px;
       font-size: 1rem; cursor: pointer; font-weight: bold;
       transition: transform 0.2s, background 0.2s;
-      color: #000; min-width: 130px;
+      min-width: 120px; color: #000;
     }
     .socials button:hover { background: #ffe082; transform: scale(1.03); }
-
-    @media (max-width:600px) {
+    #msg {
+      position: fixed; bottom: 20px; left: 50%;
+      transform: translateX(-50%); background: #323232;
+      color: #fff; padding: 12px 20px; border-radius: 8px;
+      font-size: 0.95rem; display: none; z-index: 9999;
+    }
+    .notif-banner {
+      display: none; position: fixed; top: 70px; left: 50%;
+      transform: translateX(-50%); background: #fff9e6;
+      border: 3px solid #ffd54f; border-radius: 12px;
+      padding: 15px 20px; width: 90%; max-width: 450px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 1000; font-family: "Fredoka", sans-serif;
+    }
+    .notif-banner p { margin: 0.6rem 0; font-size: 15px; color: #333; line-height: 1.4; }
+    .notif-banner strong { color: #000; }
+    #closeNotif {
+      margin-top: 10px; background: #ffd54f; border: none;
+      padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+    @media (max-width:600px){
       h1{font-size:1.6rem;} .menu{max-width:90%;}
-      .socials{flex-direction:row; justify-content:center;}
-      .socials button{flex:1; max-width:140px;}
+      .socials{flex-direction:column;align-items:center;}
+      .socials button{width:100%;max-width:200px;}
     }
   </style>
 </head>
+
 <body>
 <div id="menuContainer">
   <header>
@@ -130,49 +142,72 @@
   </main>
 </div>
 
-<!-- 🔸 Banner fixo (modo gratuito) -->
-<div id="adBanner" style="
-  position: fixed;
-  bottom: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 95%;
-  max-width: 340px;
-  text-align: center;
-  background: #fff8e1;
-  border: 2px solid #ffd54f;
-  border-radius: 10px;
-  padding: 4px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  z-index: 9999;
-">
-  <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner (modo gratuito)</p>
+<div class="notif-banner" id="notifBanner">
+  <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
+  <p><strong>Primeiro acesso:</strong> abra com internet para que o app baixe e salve todos os arquivos.</p>
+  <p><strong>Depois disso:</strong> funciona 100% off-line.</p>
+  <p>✅ <strong>Off-line é mais rápido:</strong> páginas carregam em segundos porque tudo já está no seu dispositivo.</p>
+  <p>❌ <strong>Online pode ser mais lento:</strong> o servidor verifica atualizações e recarrega conteúdos.</p>
+  <hr>
+  <p><strong>📲 Como instalar o app:</strong><br>
+  Acesse o site e clique em “📲 Instalar App”. Após instalado, ele ficará disponível na tela inicial do celular ou desktop.</p>
+  <button id="closeNotif">Fechar</button>
 </div>
 
+<div id="msg"></div>
 <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
 <script>
 function abrirApp() {
-  const adBanner = document.getElementById("adBanner");
-  if (adBanner) adBanner.style.display = "none";
   document.getElementById("menuContainer").style.display = "none";
   const iframe = document.getElementById("conteudo");
   iframe.style.display = "block";
-  iframe.src = "app/index.html";
-  history.pushState({ tela: "app" }, "", "#app");
+  iframe.src = "app/index.html"; 
+  history.pushState({tela: "app"}, "", "#app");
 }
-
 window.onpopstate = function(event) {
   if (!event.state || event.state.tela !== "app") {
     document.getElementById("conteudo").style.display = "none";
     document.getElementById("menuContainer").style.display = "block";
-    const isPremium = localStorage.getItem("premium") === "true";
-    if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
+function showMsg(texto) {
+  const msg = document.getElementById("msg");
+  msg.innerText = texto;
+  msg.style.display = "block";
+  setTimeout(() => { msg.style.display = "none"; }, 3000);
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+      .catch(err => console.log('❌ Service Worker falhou:', err));
+  });
+}
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById("installBtn");
+  installBtn.style.display = "inline-block";
+  installBtn.addEventListener("click", async () => {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") { showMsg("✅ App instalado com sucesso!"); }
+    else { showMsg("❌ Instalação cancelada."); }
+    deferredPrompt = null;
+    installBtn.remove();
+  });
+});
+// Notificação: abrir/fechar banner
+const notifBtn = document.getElementById("notifBtn");
+const notifBanner = document.getElementById("notifBanner");
+const closeNotif = document.getElementById("closeNotif");
+notifBtn.addEventListener("click", () => { notifBanner.style.display = "block"; });
+closeNotif.addEventListener("click", () => { notifBanner.style.display = "none"; });
 </script>
 
-<!-- 🔐 Acesso atualizado -->
+<!-- 🔐 Controle de acesso -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -193,7 +228,14 @@ window.onpopstate = function(event) {
     const email = localStorage.getItem("savedEmail");
     const isPremium = localStorage.getItem("premium") === "true";
 
-    // ✅ Premium → valida no Firebase
+    // 🟢 Define modo gratuito por padrão se vazio
+    if (!localStorage.getItem("premium")) {
+      localStorage.setItem("premium", "false");
+      localStorage.setItem("isLogged", "true");
+      console.log("🔸 Primeiro acesso — modo gratuito ativado.");
+    }
+
+    // 🔐 Premium → valida Firebase
     if (isPremium) {
       if (navigator.onLine) {
         try {
@@ -201,6 +243,7 @@ window.onpopstate = function(event) {
           const snap = await getDoc(ref);
           if (snap.exists()) {
             console.log("✅ Premium confirmado no Firebase.");
+            localStorage.setItem("acesso", "aprovado");
             return;
           } else {
             console.warn("⚠️ Gmail Premium não encontrado — redirecionando.");
@@ -218,20 +261,16 @@ window.onpopstate = function(event) {
       }
     }
 
-    // ✅ Gratuito (sem premium) → entra automaticamente
+    // 🎨 Gratuito → entra normal
     console.log("🎨 Modo gratuito — acesso liberado.");
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    validarAcesso();
-    const isPremium = localStorage.getItem("premium") === "true";
-    if (isPremium) document.getElementById("adBanner").style.display = "none";
-  });
+  document.addEventListener("DOMContentLoaded", validarAcesso);
 
   window.logout = function() {
     localStorage.clear();
     window.location.replace("login.html");
-  }
+  };
 </script>
 </body>
 </html>
