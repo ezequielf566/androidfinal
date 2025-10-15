@@ -89,13 +89,6 @@
     }
     .socials button:hover { background: #ffe082; transform: scale(1.03); }
 
-    #msg {
-      position: fixed; bottom: 20px; left: 50%;
-      transform: translateX(-50%); background: #323232;
-      color: #fff; padding: 12px 20px; border-radius: 8px;
-      font-size: 0.95rem; display: none; z-index: 9999;
-    }
-
     @media (max-width:600px) {
       h1{font-size:1.6rem;} .menu{max-width:90%;}
       .socials{flex-direction:row; justify-content:center;}
@@ -198,16 +191,9 @@ window.onpopstate = function(event) {
 
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
-    const isLogged = localStorage.getItem("isLogged");
     const isPremium = localStorage.getItem("premium") === "true";
 
-    // 🔹 Modo gratuito — entra sem login
-    if (!isPremium) {
-      console.log("🎨 Modo gratuito — acesso liberado sem login.");
-      return;
-    }
-
-    // 🔹 Premium — valida no Firebase
+    // ✅ Premium → valida no Firebase
     if (isPremium) {
       if (navigator.onLine) {
         try {
@@ -215,21 +201,25 @@ window.onpopstate = function(event) {
           const snap = await getDoc(ref);
           if (snap.exists()) {
             console.log("✅ Premium confirmado no Firebase.");
+            return;
           } else {
+            console.warn("⚠️ Gmail Premium não encontrado — redirecionando.");
             localStorage.clear();
             window.location.replace("login.html");
+            return;
           }
         } catch (err) {
           console.error("❌ Erro ao verificar Premium:", err);
+          return;
         }
       } else {
         console.log("📴 Offline — Premium local mantido.");
+        return;
       }
-      return;
     }
 
-    // 🔹 Caso não tenha nenhuma flag, volta pro login
-    window.location.replace("login.html");
+    // ✅ Gratuito (sem premium) → entra automaticamente
+    console.log("🎨 Modo gratuito — acesso liberado.");
   }
 
   document.addEventListener("DOMContentLoaded", () => {
