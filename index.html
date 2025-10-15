@@ -145,24 +145,22 @@
   </main>
 </div>
 
-<!-- 🔸 Banner fixo com AdSense -->
+<!-- 🔸 Banner fixo (rodapé real) -->
 <div id="adBanner" style="
   position: fixed;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92%;
-  max-width: 340px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   text-align: center;
   background: #fff8e1;
-  border: 2px solid #ffd54f;
-  border-radius: 10px;
-  padding: 10px 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border-top: 2px solid #ffd54f;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
   z-index: 9999;
+  padding: 4px 0;
 ">
   <ins class="adsbygoogle"
-       style="display:block"
+       style="display:block;width:100%;height:auto;min-height:60px;"
        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
        data-ad-slot="XXXXXXXXXX"
        data-ad-format="auto"
@@ -187,8 +185,7 @@
 
 <script>
 function abrirApp() {
-  const adBanner = document.getElementById("adBanner");
-  if (adBanner) adBanner.style.display = "none";
+  document.getElementById("adBanner").style.display = "none";
   document.getElementById("menuContainer").style.display = "none";
   const iframe = document.getElementById("conteudo");
   iframe.style.display = "block";
@@ -203,31 +200,6 @@ window.onpopstate = function(event) {
     if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-      .catch(err => console.log('❌ Service Worker falhou:', err));
-  });
-}
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installBtn = document.getElementById("installBtn");
-  installBtn.style.display = "inline-block";
-  installBtn.addEventListener("click", async () => {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBtn.remove();
-  });
-});
-const notifBtn = document.getElementById("notifBtn");
-const notifBanner = document.getElementById("notifBanner");
-const closeNotif = document.getElementById("closeNotif");
-notifBtn.addEventListener("click", () => { notifBanner.style.display = "block"; });
-closeNotif.addEventListener("click", () => { notifBanner.style.display = "none"; });
 </script>
 
 <script type="module">
