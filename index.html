@@ -8,9 +8,6 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ffffff">
 
-  <!-- ✅ Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
   <style>
     body {
       margin: 0;
@@ -103,6 +100,35 @@
       margin-top: 10px; background: #ffd54f; border: none;
       padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
     }
+
+    /* 🔸 Banner temporizado */
+    #adBanner {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 340px;
+      text-align: center;
+      background: #fff8e1;
+      border: 2px solid #ffd54f;
+      border-radius: 10px;
+      padding: 6px 30px 6px 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    #closeAd {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      font-weight: bold;
+      color: #444;
+      cursor: pointer;
+      font-size: 16px;
+    }
     @media (max-width:600px){
       h1{font-size:1.6rem;} .menu{max-width:90%;}
       .socials{flex-direction:row; justify-content:center;}
@@ -145,38 +171,19 @@
   </main>
 </div>
 
-<!-- 🔸 Banner fixo (rodapé real) -->
-<div id="adBanner" style="
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  text-align: center;
-  background: #fff8e1;
-  border-top: 2px solid #ffd54f;
-  box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
-  z-index: 9999;
-  padding: 4px 0;
-">
-  <ins class="adsbygoogle"
-       style="display:block;width:100%;height:auto;min-height:60px;"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="XXXXXXXXXX"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<!-- 🔸 Banner temporizado -->
+<div id="adBanner">
+  <span id="closeAd">✕</span>
+  <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner (modo gratuito)</p>
 </div>
 
+<!-- 🔔 Notificação explicativa -->
 <div class="notif-banner" id="notifBanner">
   <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
-  <p><strong>Primeiro acesso:</strong> abra com internet para que o app baixe e salve todos os arquivos.</p>
+  <p><strong>Primeiro acesso:</strong> abra com internet para baixar tudo.</p>
   <p><strong>Depois disso:</strong> funciona 100% off-line.</p>
-  <p>✅ <strong>Off-line é mais rápido:</strong> páginas carregam em segundos porque tudo já está no seu dispositivo.</p>
-  <p>❌ <strong>Online pode ser mais lento:</strong> o servidor verifica atualizações e recarrega conteúdos.</p>
   <hr>
-  <p><strong>📲 Como instalar o app:</strong><br>
-  Acesse o site e clique em “📲 Instalar App”. Após instalado, ele ficará disponível na tela inicial do celular ou desktop.</p>
+  <p><strong>📲 Como instalar o app:</strong><br> Clique em “📲 Instalar App”.</p>
   <button id="closeNotif">Fechar</button>
 </div>
 
@@ -196,10 +203,30 @@ window.onpopstate = function(event) {
   if (!event.state || event.state.tela !== "app") {
     document.getElementById("conteudo").style.display = "none";
     document.getElementById("menuContainer").style.display = "block";
-    const isPremium = localStorage.getItem("premium") === "true";
-    if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
+
+// 🔹 Banner com temporizador
+const adBanner = document.getElementById("adBanner");
+const closeAd = document.getElementById("closeAd");
+
+function showBanner() {
+  adBanner.style.display = "block";
+  setTimeout(() => adBanner.style.opacity = "1", 100);
+  setTimeout(() => hideBanner(), 10000);
+}
+
+function hideBanner() {
+  adBanner.style.opacity = "0";
+  setTimeout(() => adBanner.style.display = "none", 500);
+}
+
+closeAd.addEventListener("click", hideBanner);
+
+window.addEventListener("load", () => {
+  setTimeout(showBanner, 2000);
+  setInterval(showBanner, 60000);
+});
 </script>
 
 <script type="module">
@@ -221,47 +248,20 @@ window.onpopstate = function(event) {
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
     const isPremium = localStorage.getItem("premium") === "true";
-
-    if (!localStorage.getItem("premium")) {
-      localStorage.setItem("premium", "false");
-      localStorage.setItem("isLogged", "true");
-      console.log("🔸 Primeiro acesso — modo gratuito ativado.");
-    }
-
-    if (isPremium) {
-      if (navigator.onLine) {
-        try {
-          const ref = doc(db, "usuarios", (email || "").toLowerCase());
-          const snap = await getDoc(ref);
-          if (snap.exists()) {
-            console.log("✅ Premium confirmado no Firebase.");
-            localStorage.setItem("acesso", "aprovado");
-            return;
-          } else {
-            console.warn("⚠️ Gmail Premium não encontrado — redirecionando.");
-            localStorage.clear();
-            window.location.replace("login.html");
-            return;
-          }
-        } catch (err) {
-          console.error("❌ Erro ao verificar Premium:", err);
-          return;
+    if (!isPremium) return;
+    if (navigator.onLine) {
+      try {
+        const ref = doc(db, "usuarios", (email || "").toLowerCase());
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          localStorage.clear();
+          window.location.replace("login.html");
         }
-      } else {
-        console.log("📴 Offline — Premium local mantido.");
-        return;
-      }
+      } catch {}
     }
-
-    console.log("🎨 Modo gratuito — acesso liberado.");
   }
-
   document.addEventListener("DOMContentLoaded", validarAcesso);
-
-  window.logout = function() {
-    localStorage.clear();
-    window.location.replace("login.html");
-  };
+  window.logout = () => { localStorage.clear(); window.location.replace("login.html"); };
 </script>
 </body>
 </html>
