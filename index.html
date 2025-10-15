@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pintando a Palavra — Menu</title>
 
-  <!-- Manifest PWA -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ffffff">
 
@@ -28,7 +27,6 @@
       align-items: center;
     }
 
-    /* Ícone de notificação */
     .notif-icon {
       position: relative;
       cursor: pointer;
@@ -37,180 +35,92 @@
       align-items: center;
       justify-content: center;
     }
-    .notif-icon svg {
-      width: 28px;
-      height: 28px;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
+    .notif-icon svg { width: 28px; height: 28px; }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.15);} }
     .notif-badge {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 12px;
-      height: 12px;
-      background: red;
-      border-radius: 50%;
-      border: 2px solid white;
+      position: absolute; top: 0; right: 0;
+      width: 12px; height: 12px; background: red;
+      border-radius: 50%; border: 2px solid white;
       animation: blink 1s infinite;
     }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
+    @keyframes blink {0%,100%{opacity:1;}50%{opacity:0.3;}}
 
     header .btn {
-      background: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-      color: #000;
-      margin-left: 0.5rem;
+      background: #fff; border: none; padding: 0.5rem 1rem;
+      border-radius: 8px; cursor: pointer; font-weight: bold;
+      transition: background 0.2s; color: #000; margin-left: 0.5rem;
     }
-    header .btn:hover {
-      background: #f1f1f1;
-    }
+    header .btn:hover { background: #f1f1f1; }
 
     main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 2rem;
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; padding: 2rem;
     }
 
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      color: #000;
-    }
-
-    h2 {
-      margin-top: 2rem;
-      font-size: 1.3rem;
-      color: #000;
-    }
+    h1 { font-size: 2rem; margin-bottom: 2rem; color: #000; }
+    h2 { margin-top: 2rem; font-size: 1.3rem; color: #000; }
 
     .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      width: 100%;
-      max-width: 320px;
+      display: flex; flex-direction: column;
+      gap: 1rem; margin-bottom: 2rem;
+      width: 100%; max-width: 320px;
     }
 
     .menu button {
-      background: #ffe082;
-      border: none;
-      padding: 1rem;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      font-weight: bold;
-      transition: transform 0.2s, background 0.2s;
-      width: 100%;
-      color: #000;
+      background: #ffe082; border: none;
+      padding: 1rem; border-radius: 12px;
+      font-size: 1.1rem; cursor: pointer;
+      font-weight: bold; transition: transform 0.2s, background 0.2s;
+      width: 100%; color: #000;
     }
-
-    .menu button:hover {
-      background: #ffd54f;
-      transform: scale(1.02);
-    }
+    .menu button:hover { background: #ffd54f; transform: scale(1.02); }
 
     .socials {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center; align-items: center;
+      gap: 1rem; margin-top: 1rem; flex-wrap: wrap;
     }
     .socials button {
-      background: #fff59d;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      border-radius: 12px;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: bold;
+      background: #fff59d; border: none;
+      padding: 0.8rem 1.5rem; border-radius: 12px;
+      font-size: 1rem; cursor: pointer; font-weight: bold;
       transition: transform 0.2s, background 0.2s;
-      min-width: 120px;
-      color: #000;
+      color: #000; min-width: 130px;
     }
-    .socials button:hover {
-      background: #ffe082;
-      transform: scale(1.03);
-    }
+    .socials button:hover { background: #ffe082; transform: scale(1.03); }
 
     #msg {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #323232;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      display: none;
-      z-index: 9999;
+      position: fixed; bottom: 20px; left: 50%;
+      transform: translateX(-50%); background: #323232;
+      color: #fff; padding: 12px 20px; border-radius: 8px;
+      font-size: 0.95rem; display: none; z-index: 9999;
     }
 
-    /* Banner de notificação */
     .notif-banner {
-      display: none;
-      position: fixed;
-      top: 70px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff9e6;
-      border: 3px solid #ffd54f;
-      border-radius: 12px;
-      padding: 15px 20px;
-      width: 90%;
-      max-width: 450px;
+      display: none; position: fixed; top: 70px; left: 50%;
+      transform: translateX(-50%); background: #fff9e6;
+      border: 3px solid #ffd54f; border-radius: 12px;
+      padding: 15px 20px; width: 90%; max-width: 450px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      z-index: 1000;
-      font-family: "Fredoka", sans-serif;
+      z-index: 1000; font-family: "Fredoka", sans-serif;
     }
-    .notif-banner p {
-      margin: 0.6rem 0;
-      font-size: 15px;
-      color: #333;
-      line-height: 1.4;
-    }
-    .notif-banner strong {
-      color: #000;
-    }
+    .notif-banner p { margin: 0.6rem 0; font-size: 15px; color: #333; line-height: 1.4; }
+    .notif-banner strong { color: #000; }
     #closeNotif {
-      margin-top: 10px;
-      background: #ffd54f;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+      margin-top: 10px; background: #ffd54f; border: none;
+      padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
     }
 
-    @media (max-width: 600px) {
-      h1 { font-size: 1.6rem; }
-      .menu { max-width: 90%; }
-      .socials { flex-direction: column; align-items: center; }
-      .socials button { width: 100%; max-width: 200px; }
+    @media (max-width:600px) {
+      h1{font-size:1.6rem;} .menu{max-width:90%;}
+      .socials{flex-direction:row; justify-content:center;}
+      .socials button{flex:1; max-width:140px;}
     }
   </style>
 </head>
 <body>
-<div id='menuContainer'>
+<div id="menuContainer">
   <header>
-    <!-- Ícone de notificação -->
     <div class="notif-icon" id="notifBtn" title="Notificações">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
         <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
@@ -230,37 +140,36 @@
 
     <div class="menu">
       <button onclick="abrirApp()">Histórias</button>
-      <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">
-        Atividades
-      </button>
-      <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">
-        PDF Completo
-      </button>
+      <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">Atividades</button>
+      <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">PDF Completo</button>
     </div>
 
     <h2>Siga-nos nas redes sociais</h2>
     <div class="socials">
-      <button onclick="window.open('https://www.instagram.com/pintandoapalavra_?igsh=MTBzdjdnc2k3OG4yaQ==', '_blank')">
-        Instagram
-      </button>
-      <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">
-        Facebook
-      </button>
+      <button onclick="window.open('https://www.instagram.com/pintandoapalavra_?igsh=MTBzdjdnc2k3OG4yaQ==', '_blank')">Instagram</button>
+      <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">Facebook</button>
     </div>
   </main>
 </div>
 
-<!-- Banner de notificação -->
-<div class="notif-banner" id="notifBanner">
-  <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
-  <p><strong>Primeiro acesso:</strong> abra com internet para que o app baixe e salve todos os arquivos.</p>
-  <p><strong>Depois disso:</strong> funciona 100% off-line.</p>
-  <p>✅ <strong>Off-line é mais rápido:</strong> páginas carregam em segundos porque tudo já está no seu dispositivo.</p>
-  <p>❌ <strong>Online pode ser mais lento:</strong> o servidor verifica atualizações e recarrega conteúdos.</p>
-  <hr>
-  <p><strong>📲 Como instalar o app:</strong><br>
-  Acesse o site e clique em “📲 Instalar App”. Após instalado, ele ficará disponível na tela inicial do celular ou desktop.</p>
-  <button id="closeNotif">Fechar</button>
+<!-- 🔸 Banner fixo para modo gratuito -->
+<div id="adBanner" style="
+  position: fixed;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 340px;
+  text-align: center;
+  background: #fff8e1;
+  border: 2px solid #ffd54f;
+  border-radius: 10px;
+  padding: 4px 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 9999;
+">
+  <!-- Placeholder do anúncio (configurar depois) -->
+  <p style="margin:4px;font-size:14px;color:#444;">🔸 Espaço para banner (modo gratuito)</p>
 </div>
 
 <div id="msg"></div>
@@ -268,64 +177,26 @@
 
 <script>
 function abrirApp() {
+  const adBanner = document.getElementById("adBanner");
+  if (adBanner) adBanner.style.display = "none"; // banner some ao abrir app
   document.getElementById("menuContainer").style.display = "none";
   const iframe = document.getElementById("conteudo");
   iframe.style.display = "block";
-  iframe.src = "app/index.html"; 
-  history.pushState({tela: "app"}, "", "#app");
+  iframe.src = "app/index.html";
+  history.pushState({ tela: "app" }, "", "#app");
 }
+
 window.onpopstate = function(event) {
   if (!event.state || event.state.tela !== "app") {
     document.getElementById("conteudo").style.display = "none";
     document.getElementById("menuContainer").style.display = "block";
+    const isPremium = localStorage.getItem("premium") === "true";
+    if (!isPremium) document.getElementById("adBanner").style.display = "block";
   }
 };
-function showMsg(texto) {
-  const msg = document.getElementById("msg");
-  msg.innerText = texto;
-  msg.style.display = "block";
-  setTimeout(() => { msg.style.display = "none"; }, 3000);
-}
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
-      .catch(err => console.log('❌ Service Worker falhou:', err));
-  });
-}
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installBtn = document.getElementById("installBtn");
-  installBtn.style.display = "inline-block";
-  installBtn.addEventListener("click", async () => {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") {
-      showMsg("✅ App instalado com sucesso!");
-    } else {
-      showMsg("❌ Instalação cancelada.");
-    }
-    deferredPrompt = null;
-    installBtn.remove();
-  });
-});
-
-// Notificação: abrir/fechar banner
-const notifBtn = document.getElementById("notifBtn");
-const notifBanner = document.getElementById("notifBanner");
-const closeNotif = document.getElementById("closeNotif");
-
-notifBtn.addEventListener("click", () => {
-  notifBanner.style.display = "block";
-});
-closeNotif.addEventListener("click", () => {
-  notifBanner.style.display = "none";
-});
 </script>
 
-<!-- 🔐 Trava de acesso com Firebase -->
+<!-- 🔐 Trava de acesso atualizada -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
   import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -345,45 +216,39 @@ closeNotif.addEventListener("click", () => {
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
     const isLogged = localStorage.getItem("isLogged");
-    const acesso = localStorage.getItem("acesso");
+    const isPremium = localStorage.getItem("premium") === "true";
 
-    console.log("🔍 Validando acesso:", { email, isLogged, acesso });
-
-    if (!email || isLogged !== "true") {
+    if (!isLogged) {
       window.location.replace("login.html");
       return;
     }
 
-    // ✅ Se já tem aprovação local → permite offline
-    if (acesso === "aprovado") {
-      console.log("✅ Acesso aprovado localmente — permitido offline.");
+    if (!isPremium) {
+      console.log("🎨 Modo gratuito — banner ativo.");
       return;
     }
 
-    // 🔄 Se está online mas não tem flag, valida no Firebase
     if (navigator.onLine) {
       try {
-        const ref = doc(db, "usuarios", email.toLowerCase());
+        const ref = doc(db, "usuarios", (email || "").toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists()) {
-          localStorage.setItem("acesso", "aprovado");
-          console.log("✅ Acesso confirmado no Firebase.");
+          console.log("✅ Premium confirmado no Firebase.");
         } else {
-          console.warn("⚠️ Documento não encontrado no Firestore");
           localStorage.clear();
           window.location.replace("login.html");
         }
       } catch (err) {
-        console.error("❌ Erro ao validar:", err);
-        window.location.replace("login.html");
+        console.error("❌ Erro ao verificar Premium:", err);
       }
-    } else {
-      console.warn("⚠️ Offline sem aprovação local — redirecionando.");
-      window.location.replace("login.html");
     }
   }
 
-  document.addEventListener("DOMContentLoaded", validarAcesso);
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso();
+    const isPremium = localStorage.getItem("premium") === "true";
+    if (isPremium) document.getElementById("adBanner").style.display = "none";
+  });
 
   window.logout = function() {
     localStorage.clear();
