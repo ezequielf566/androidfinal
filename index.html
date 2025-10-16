@@ -182,7 +182,7 @@
 
       <div class="menu" id="menuPrincipal">
         <button onclick="abrirApp()">📖 Histórias</button>
-        <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">🎨 Atividades</button>
+        <button onclick="abrirAtividades()">🎨 Atividades</button>
         <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
       </div>
 
@@ -203,17 +203,27 @@
     });
 
     function abrirApp() {
+      abrirTela("app/index.html", "app");
+    }
+
+    function abrirAtividades() {
+      abrirTela("atividades/index.html", "atividades");
+    }
+
+    function abrirTela(src, tela) {
       document.getElementById("menuContainer").style.display = "none";
       const iframe = document.getElementById("conteudo");
       iframe.style.display = "block";
-      iframe.src = "app/index.html"; 
-      history.pushState({tela: "app"}, "", "#app");
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
     }
 
     window.onpopstate = function(event) {
-      if (!event.state || event.state.tela !== "app") {
-        document.getElementById("conteudo").style.display = "none";
-        document.getElementById("menuContainer").style.display = "block";
+      const conteudo = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      if (!event.state || (event.state.tela !== "app" && event.state.tela !== "atividades")) {
+        conteudo.style.display = "none";
+        menu.style.display = "block";
       }
     };
 
@@ -233,7 +243,7 @@
     });
   </script>
 
-  <!-- 🔐 Firebase + Acesso offline restaurado -->
+  <!-- 🔐 Firebase + Acesso offline -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -266,15 +276,11 @@
     async function validarAcesso() {
       const email = localStorage.getItem("savedEmail");
       const isLogged = localStorage.getItem("isLogged") === "true";
-
-      // ✅ Permite abrir offline se já houver login salvo
       if (!isLogged || !email) {
-        if (!navigator.onLine) return; // está offline mas tem cache → deixa abrir
+        if (!navigator.onLine) return;
         window.location.replace("login.html");
         return;
       }
-
-      // 🔹 Só valida no Firebase quando online
       if (navigator.onLine) {
         try {
           const ref = doc(db, "usuariosGoogle", email.toLowerCase());
