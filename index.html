@@ -3,123 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pintando a Palavra — Menu</title>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#ffffff">
+  <title>Pintando a Palavra — Login</title>
 
   <style>
     body {
-      margin: 0;
-      font-family: "Fredoka", sans-serif;
-      color: #222;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
-      background-attachment: fixed;
-      overflow-x: hidden;
-    }
-    header {
-      background: linear-gradient(90deg, #ffd54f, #ffea80);
-      padding: 0.8rem 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom-left-radius: 12px;
-      border-bottom-right-radius: 12px;
-    }
-    .notif-icon svg { width: 28px; height: 28px; stroke: #222; }
-    .notif-badge { position:absolute;top:2px;right:2px;width:10px;height:10px;background:#ff3b30;border-radius:50%;border:2px solid #fff; }
-    header .btn {
-      background: #fff;
-      border: none;
-      padding: 0.6rem 1.1rem;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 600;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    header .btn:hover { transform: scale(1.05); background: #fff7d1; }
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2.5rem 1rem 3rem;
-      text-align: center;
-    }
-    .saudacao {
-      font-size: 1.6rem;
-      line-height: 1.5;
-      color: #222;
-      font-weight: 600;
-      margin-bottom: 2rem;
-      background: rgba(255, 255, 255, 0.6);
-      padding: 1rem 1.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      backdrop-filter: blur(5px);
-      display: inline-block;
-      opacity: 0;
-    }
-    .typing span {
-      display:inline-block;
-      opacity:0;
-      animation: appear 0.03s forwards;
-    }
-    @keyframes appear { to { opacity:1; } }
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      width: 100%;
-      max-width: 340px;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-    .menu button {
-      background: #ffd54f;
-      border: none;
-      padding: 1rem;
-      border-radius: 16px;
-      font-size: 1.15rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      transition: all 0.25s ease;
-      color: #222;
-    }
-    .menu button:hover { transform: scale(1.03); background: #ffe066; }
-    h2 { margin-top: 2.2rem; font-size: 1.25rem; font-weight: 600; color: #222; opacity: 0; transition: opacity 0.8s ease; }
-    .socials {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(180deg, #FFF6D6 0%, #FFE7A1 100%);
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-      opacity: 0;
-      transition: opacity 0.8s ease;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
     }
-    .socials button {
-      background: #fffbe6;
-      border: 2px solid #ffe066;
-      border-radius: 14px;
-      padding: 0.7rem 1.3rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    .login-container {
+      text-align: center;
+      background: #fff;
+      padding: 45px 35px;
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 380px;
+      position: relative;
+      animation: fadeIn 0.8s ease;
     }
-    .socials button:hover { background: #fff2b3; transform: scale(1.05); }
+    .stars { position:absolute; top:10px; left:50%; transform:translateX(-50%); width:120px; height:120px; pointer-events:none; }
+    .star { position:absolute; width:10px; height:10px; background:#FFD54F; border-radius:50%; opacity:0; animation:twinkle 3s infinite ease-in-out; }
+    .star:nth-child(1){top:0;left:50%;animation-delay:0s;} .star:nth-child(2){top:20%;left:80%;animation-delay:1s;}
+    .star:nth-child(3){top:60%;left:90%;animation-delay:2s;} .star:nth-child(4){top:70%;left:10%;animation-delay:1.5s;}
+    .star:nth-child(5){top:30%;left:5%;animation-delay:0.5s;}
+    @keyframes twinkle{0%,100%{opacity:0;transform:scale(0.5);}50%{opacity:1;transform:scale(1.3);}}
+    .logo{width:110px;margin-bottom:10px;filter:drop-shadow(0 3px 4px rgba(0,0,0,0.1));animation:logoPop 1.3s ease;}
+    @keyframes logoPop{0%{opacity:0;transform:scale(0.7);}100%{opacity:1;transform:scale(1);}}
+    h1{font-size:1.8rem;color:#222;margin-bottom:8px;}
+    .subtitle{color:#555;font-size:1rem;margin-bottom:10px;}
+    .quote{font-size:14px;color:#666;font-style:italic;margin-bottom:25px;}
+    .google-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:2px solid #dadce0;border-radius:10px;
+      padding:12px 20px;font-size:16px;font-weight:500;color:#3c4043;cursor:pointer;transition:all 0.2s ease;width:100%;
+      box-shadow:0 3px 6px rgba(0,0,0,0.15);}
+    .google-btn:hover{transform:scale(1.03);background:#f8f9fa;}
+    .google-icon{width:22px;height:22px;}
+    .error{margin-top:15px;font-size:15px;min-height:30px;color:red;}
+    .footer{margin-top:25px;font-size:13px;color:#777;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+    .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.85);
+      display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:999;opacity:0;visibility:hidden;
+      transition:opacity 0.3s ease;}
+    .loading-overlay.active{opacity:1;visibility:visible;}
+    .spinner{width:60px;height:60px;border:6px solid #ffd54f;border-top:6px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading-text{font-size:16px;color:#444;font-weight:500;}
   </style>
 </head>
 
@@ -128,124 +61,106 @@
     <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_28e5acb5ac.mp3" type="audio/mpeg">
   </audio>
 
-  <div id="menuContainer">
-    <header>
-      <div class="notif-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
-        </svg>
-        <span class="notif-badge"></span>
-      </div>
-      <div style="display:flex;gap:0.5rem;margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar</button>
-        <button onclick="logout()" class="btn">🚪 Sair</button>
-      </div>
-    </header>
+  <div class="login-container">
+    <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+    <img src="icon-512.png" alt="Logo" class="logo">
+    <h1>Pintando a Palavra</h1>
+    <p class="subtitle">Colorindo histórias da Bíblia</p>
+    <p class="quote">🌈 “Deixem vir a mim as crianças...” — Mateus 19:14</p>
 
-    <main>
-      <div id="saudacao" class="saudacao"></div>
+    <button id="loginGoogle" class="google-btn">
+      <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.15 0 5.91 1.09 8.12 2.88l6.03-6.03C34.21 3.41 29.42 1.5 24 1.5 14.64 1.5 6.56 7.24 3.04 15.09l7.35 5.71C12.18 13.03 17.61 9.5 24 9.5z"/>
+        <path fill="#34A853" d="M46.5 24.5c0-1.6-.14-3.13-.39-4.63H24v9.13h12.7c-.57 2.9-2.26 5.36-4.83 7.03l7.48 5.83C43.51 38.02 46.5 31.76 46.5 24.5z"/>
+        <path fill="#4A90E2" d="M9.39 28.8C8.72 26.95 8.33 24.83 8.33 22.5c0-2.33.39-4.45 1.06-6.3L2.04 10.49C.75 13.64 0 17.03 0 20.5c0 7.26 2.99 13.52 7.77 17.87l7.48-5.83c-2.35-1.6-4.05-4.06-4.71-6.74l-.15-.43z"/>
+        <path fill="#FBBC05" d="M24 47.5c6.3 0 11.6-2.07 15.46-5.61l-7.48-5.83c-2.13 1.4-4.87 2.2-7.98 2.2-6.39 0-11.82-3.53-14.61-8.7l-7.35 5.71C6.56 40.76 14.64 47.5 24 47.5z"/>
+      </svg>
+      Entrar com Google
+    </button>
 
-      <div class="menu" id="menuPrincipal">
-        <button onclick="abrirApp()">📖 Histórias</button>
-        <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">🎨 Atividades</button>
-        <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
-      </div>
-
-      <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
-      <div class="socials" id="socialsBlock">
-        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
-        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
-      </div>
-    </main>
+    <p id="errorMsg" class="error"></p>
+    <p class="footer">✨ Feito com fé por <strong>Pintando a Palavra</strong></p>
   </div>
 
-  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
-
-  <script>
-    document.addEventListener("DOMContentLoaded",()=>{
-      const sound=document.getElementById("welcomeSound");
-      setTimeout(()=>sound.play().catch(()=>{}),800);
-    });
-    function abrirApp(){
-      document.getElementById("menuContainer").style.display="none";
-      const iframe=document.getElementById("conteudo");
-      iframe.style.display="block";
-      iframe.src="app/index.html";
-      history.pushState({tela:"app"},"","#app");
-    }
-    window.onpopstate=function(e){
-      if(!e.state||e.state.tela!=="app"){
-        document.getElementById("conteudo").style.display="none";
-        document.getElementById("menuContainer").style.display="block";
-      }
-    };
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt',(e)=>{
-      e.preventDefault();deferredPrompt=e;
-      const b=document.getElementById("installBtn");
-      b.style.display="inline-block";
-      b.addEventListener("click",async()=>{
-        deferredPrompt.prompt();await deferredPrompt.userChoice;
-        deferredPrompt=null;b.remove();
-      });
-    });
-  </script>
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Entrando...</div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    const firebaseConfig={
-      apiKey:"AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain:"pintando-a-palavra-fnl.firebaseapp.com",
-      projectId:"pintando-a-palavra-fnl",
-      storageBucket:"pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId:"394858613454",
-      appId:"1:394858613454:web:68ecc607c0414bd7779e9f"
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
     };
-    const app=initializeApp(firebaseConfig);
-    const db=getFirestore(app);
 
-    async function exibirSaudacao(){
-      const div=document.getElementById("saudacao");
-      const nomeCompleto=localStorage.getItem("displayName")||"";
-      const primeiroNome=nomeCompleto.split(" ")[0]||"Amigo";
-      const texto=`👋 Olá, ${primeiroNome}! Que bom ter você aqui 💛`;
-      div.innerHTML="";
-      div.classList.add("typing");
-      texto.split("").forEach((char,i)=>{
-        const span=document.createElement("span");
-        span.innerText=char;
-        span.style.animationDelay=`${i*0.04}s`;
-        div.appendChild(span);
-      });
-      div.style.opacity=1;
-      const total=texto.length*40+800;
-      setTimeout(()=>{
-        document.getElementById("menuPrincipal").style.opacity=1;
-        document.getElementById("socialsBlock").style.opacity=1;
-        document.getElementById("socialTitle").style.opacity=1;
-      },total);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    const loginBtn = document.getElementById("loginGoogle");
+    const errorMsg = document.getElementById("errorMsg");
+    const loading = document.getElementById("loading");
+    const welcomeSound = document.getElementById("welcomeSound");
+
+    let soundPlayed = false;
+    function playWelcomeSound(){
+      if(soundPlayed)return;
+      welcomeSound.volume=0.25;
+      welcomeSound.play().catch(()=>{});
+      soundPlayed=true;
     }
+    document.body.addEventListener("click",playWelcomeSound);
 
-    async function validarAcesso(){
-      const email=localStorage.getItem("savedEmail");
-      const isLogged=localStorage.getItem("isLogged")==="true";
-      if(!isLogged||!email){window.location.replace("login.html");return;}
-      if(!navigator.onLine)return;
-      try{
-        const ref=doc(db,"usuariosGoogle",email.toLowerCase());
-        const snap=await getDoc(ref);
-        if(!snap.exists()){localStorage.clear();window.location.replace("login.html");}
-      }catch{}
-    }
-
-    document.addEventListener("DOMContentLoaded",()=>{
-      exibirSaudacao();
-      validarAcesso();
+    getRedirectResult(auth).then(async(result)=>{
+      if(result && result.user) await handleLogin(result.user);
     });
-    window.logout=()=>{localStorage.clear();window.location.replace("login.html");};
+
+    async function handleLogin(user){
+      const email = user.email.toLowerCase();
+      const ref = doc(db,"usuariosGoogle",email);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) await setDoc(ref,{email,premium:false,removeAds:false,createdAt:new Date().toISOString()});
+      const userData = (await getDoc(ref)).data();
+
+      // 🔹 Salva nome real também
+      localStorage.setItem("displayName", user.displayName || "");
+      localStorage.setItem("savedEmail", email);
+      localStorage.setItem("isLogged", "true");
+      localStorage.setItem("premium", userData.premium ? "true" : "false");
+      localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
+
+      errorMsg.textContent="✅ Login realizado com sucesso!";
+      errorMsg.style.color="green";
+      setTimeout(()=>window.location.replace("/index.html"),800);
+    }
+
+    loginBtn.addEventListener("click",async()=>{
+      errorMsg.textContent="";
+      loginBtn.disabled=true;
+      loading.classList.add("active");
+      try{
+        const result=await signInWithPopup(auth,provider);
+        await handleLogin(result.user);
+      }catch(err){
+        if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
+          await signInWithRedirect(auth,provider);
+        }else{
+          console.error(err);
+          errorMsg.textContent="⚠️ Erro ao autenticar com o Google.";
+          errorMsg.style.color="red";
+          loginBtn.disabled=false;
+          loading.classList.remove("active");
+        }
+      }
+    });
   </script>
 </body>
 </html>
