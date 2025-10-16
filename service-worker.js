@@ -1,11 +1,15 @@
-/* Service Worker - versão universal para Vercel */
-const CACHE_NAME = 'app-v3';  // ✅ nova versão (força reinstalação)
+/* Service Worker - versão estável com cache do menu */
+const CACHE_NAME = 'app-v4';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE = [
   '/index.html',
-  OFFLINE_URL,
-  '/manifest.json'
+  '/menu/index.html',
+  '/app/index.html',
+  '/offline.html',
+  '/manifest.json',
+  '/css/style.css',
+  '/js/script.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -33,16 +37,15 @@ self.addEventListener('fetch', (event) => {
 
     try {
       const fresh = await fetch(req);
-
-      // Só salva no cache se a resposta for completa (200 OK)
       if (fresh && fresh.ok && fresh.status === 200) {
         const cache = await caches.open(CACHE_NAME);
         cache.put(req, fresh.clone());
       }
-
       return fresh;
     } catch (e) {
       if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+        const cachedMenu = await caches.match('/menu/index.html');
+        if (cachedMenu) return cachedMenu;
         const offline = await caches.match(OFFLINE_URL);
         if (offline) return offline;
       }
