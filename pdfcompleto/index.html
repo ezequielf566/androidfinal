@@ -77,36 +77,6 @@
       animation:spin 1s linear infinite;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
-    .modal{
-      position:fixed;inset:0;background:rgba(0,0,0,.35);
-      display:none;align-items:center;justify-content:center;z-index:1000;padding:16px;
-    }
-    .modal.open{display:flex;}
-    .sheet{
-      width:min(960px,96vw);max-height:90vh;background:#fff;border-radius:18px;overflow:hidden;
-      box-shadow:0 12px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;
-      animation:pop .18s ease;
-    }
-    @keyframes pop{from{transform:scale(.96);opacity:.8}to{transform:scale(1);opacity:1}}
-    .sheet header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 14px;background:linear-gradient(90deg,var(--gold),var(--gold-2));
-    }
-    .sheet header h3{margin:0;font-size:1.1rem;}
-    .close{border:none;background:transparent;font-size:22px;cursor:pointer;}
-    .gallery{
-      padding:14px;overflow:auto hidden;display:flex;gap:12px;scroll-snap-type:x mandatory;background:#fffef6;
-    }
-    .gallery img{
-      height:62vh;max-height:620px;border-radius:12px;object-fit:cover;scroll-snap-align:center;
-      box-shadow:0 4px 14px rgba(0,0,0,.18);background:#fff6d1;
-    }
-    .sheet footer{
-      display:flex;gap:10px;padding:12px;border-top:1px solid #f0e6be;background:#fffef6;
-      flex-wrap:wrap;justify-content:flex-end;
-    }
-    .btn-secondary{background:#f2f2f2;color:#333;}
-    .btn-primary{background:var(--gold);color:#222;}
     .upgrade{
       position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;
     }
@@ -114,10 +84,13 @@
     .upgrade .box{
       width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;
       box-shadow:0 14px 46px rgba(0,0,0,.32);
+      text-align:center;
     }
     .upgrade h3{margin:0 0 8px;}
     .benefits{margin:8px 0 14px;line-height:1.6;}
-    .upgrade .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
+    .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+    .btn-secondary{background:#f2f2f2;color:#333;}
+    .btn-primary{background:var(--gold);color:#222;}
     .link{color:#1565c0;text-decoration:none;font-weight:700;}
   </style>
 </head>
@@ -135,27 +108,13 @@
   <header><h1>PDFs Completos</h1></header>
 
   <main>
-    <p class="intro">Veja as prévias das histórias e parábolas e baixe os PDFs completos quando quiser.</p>
+    <p class="intro">Veja as histórias e parábolas e baixe os PDFs completos quando quiser.</p>
     <section class="grid" id="grid"></section>
   </main>
 
-  <div class="modal" id="modal">
-    <div class="sheet">
-      <header>
-        <h3 id="modalTitle">Prévia</h3>
-        <button class="close" id="closeModal">✕</button>
-      </header>
-      <div class="gallery" id="gallery"></div>
-      <footer>
-        <button class="btn btn-secondary" id="btnVoltar">Voltar</button>
-        <button class="btn btn-primary" id="btnBaixar">📥 Baixar PDF completo</button>
-      </footer>
-    </div>
-  </div>
-
   <div class="upgrade" id="upgrade">
     <div class="box">
-      <h3>🔒 Conteúdo Premium</h3>
+      <h3>💾 Baixar PDFs Completos</h3>
       <p class="benefits">
         ✅ Acesso ilimitado a todos os PDFs e histórias<br/>
         ✅ Sem anúncios e com melhorias exclusivas<br/>
@@ -170,51 +129,28 @@
 
   <script>
     const CONTENT = [
-      { id:'historias', cover:'img/historias-capa.png', previews:['historias-1.png','historias-2.png','historias-3.png','historias-4.png','historias-5.png','historias-6.png','historias-7.png','historias-8.png','historias-9.png','historias-10.png'], pdf:'pdfs/historias.pdf' },
-      { id:'parabolas', cover:'img/parabolas-capa.png', previews:['parabolas-1.png','parabolas-2.png','parabolas-3.png','parabolas-4.png','parabolas-5.png','parabolas-6.png'], pdf:'pdfs/parabolas.pdf' }
+      { id:'historias', cover:'img/historias-capa.png' },
+      { id:'parabolas', cover:'img/parabolas-capa.png' }
     ];
 
     const grid=document.getElementById('grid');
-    const modal=document.getElementById('modal');
-    const gallery=document.getElementById('gallery');
-    const modalTitle=document.getElementById('modalTitle');
     const loading=document.getElementById('loading');
-    const entradaAudio=document.getElementById('entradaAudio');
     const upgrade=document.getElementById('upgrade');
 
     function render(){
       grid.innerHTML = CONTENT.map(item => `
         <article class="card">
           <img class="cover" src="${item.cover}" alt="Capa" />
-          <button class="btn" data-id="${item.id}">Ver prévias</button>
+          <button class="btn" data-id="${item.id}">📥 Baixar PDF</button>
         </article>`).join('');
     }
 
-    function openPreview(id){
-      const item = CONTENT.find(x => x.id === id);
-      if(!item)return;
-      modalTitle.textContent = "Prévia";
-      const basePath = 'img/'; // ✅ caminho fixo correto
-      gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia">`).join('');
-      modal.classList.add('open');
-    }
-
-    function closePreview(){
-      modal.classList.remove('open');
-      gallery.innerHTML = '';
-    }
-
-    function handleDownload(){ upgrade.classList.add('open'); }
-    function closeUpgrade(){ upgrade.classList.remove('open'); }
-
     document.addEventListener('click',e=>{
       const btn=e.target.closest('button.btn');
-      if(btn&&btn.dataset.id){openPreview(btn.dataset.id);}
+      if(btn){ upgrade.classList.add('open'); }
     });
-    document.getElementById('closeModal').addEventListener('click',closePreview);
-    document.getElementById('btnVoltar').addEventListener('click',closePreview);
-    document.getElementById('btnBaixar').addEventListener('click',handleDownload);
-    document.getElementById('btnFecharUpgrade').addEventListener('click',closeUpgrade);
+
+    document.getElementById('btnFecharUpgrade').addEventListener('click',()=>upgrade.classList.remove('open'));
 
     window.addEventListener('load',()=>{loading.classList.remove('active');render();});
   </script>
