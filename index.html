@@ -17,24 +17,7 @@
       flex-direction: column;
       background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
       background-attachment: fixed;
-      position: relative;
       overflow-x: hidden;
-    }
-    body::before {
-      content: "";
-      position: absolute;
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%) rotate(-10deg);
-      width: 420px;
-      height: 420px;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/6212/6212478.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.07;
-      pointer-events: none;
-      z-index: 0;
     }
     header {
       background: linear-gradient(90deg, #ffd54f, #ffea80);
@@ -49,22 +32,8 @@
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
-    .notif-icon {
-      position: relative;
-      cursor: pointer;
-      animation: pulse 2s infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
     .notif-icon svg { width: 28px; height: 28px; stroke: #222; }
-    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }
-    .notif-badge {
-      position: absolute; top: 2px; right: 2px;
-      width: 10px; height: 10px;
-      background: #ff3b30; border-radius: 50%;
-      border: 2px solid #fff;
-    }
+    .notif-badge { position:absolute;top:2px;right:2px;width:10px;height:10px;background:#ff3b30;border-radius:50%;border:2px solid #fff; }
     header .btn {
       background: #fff;
       border: none;
@@ -86,8 +55,6 @@
       align-items: center;
       padding: 2.5rem 1rem 3rem;
       text-align: center;
-      position: relative;
-      z-index: 2;
     }
     .saudacao {
       font-size: 1.6rem;
@@ -102,9 +69,13 @@
       backdrop-filter: blur(5px);
       display: inline-block;
       opacity: 0;
-      animation: fadeIn 0.6s ease forwards;
     }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+    .typing span {
+      display:inline-block;
+      opacity:0;
+      animation: appear 0.03s forwards;
+    }
+    @keyframes appear { to { opacity:1; } }
     .menu {
       display: flex;
       flex-direction: column;
@@ -122,8 +93,7 @@
       font-size: 1.15rem;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
-                  0 4px 10px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       transition: all 0.25s ease;
       color: #222;
     }
@@ -134,7 +104,6 @@
       justify-content: center;
       align-items: center;
       gap: 1rem;
-      flex-wrap: nowrap;
       margin-top: 1.5rem;
       opacity: 0;
       transition: opacity 0.8s ease;
@@ -161,16 +130,15 @@
 
   <div id="menuContainer">
     <header>
-      <div class="notif-icon" id="notifBtn" title="Notificações">
+      <div class="notif-icon">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
           <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
           <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
         </svg>
         <span class="notif-badge"></span>
       </div>
-
-      <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+      <div style="display:flex;gap:0.5rem;margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar</button>
         <button onclick="logout()" class="btn">🚪 Sair</button>
       </div>
     </header>
@@ -195,36 +163,31 @@
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const sound = document.getElementById("welcomeSound");
-      setTimeout(() => sound.play().catch(() => {}), 800);
+    document.addEventListener("DOMContentLoaded",()=>{
+      const sound=document.getElementById("welcomeSound");
+      setTimeout(()=>sound.play().catch(()=>{}),800);
     });
-
-    function abrirApp() {
-      document.getElementById("menuContainer").style.display = "none";
-      const iframe = document.getElementById("conteudo");
-      iframe.style.display = "block";
-      iframe.src = "app/index.html"; 
-      history.pushState({tela: "app"}, "", "#app");
+    function abrirApp(){
+      document.getElementById("menuContainer").style.display="none";
+      const iframe=document.getElementById("conteudo");
+      iframe.style.display="block";
+      iframe.src="app/index.html";
+      history.pushState({tela:"app"},"","#app");
     }
-    window.onpopstate = function(event) {
-      if (!event.state || event.state.tela !== "app") {
-        document.getElementById("conteudo").style.display = "none";
-        document.getElementById("menuContainer").style.display = "block";
+    window.onpopstate=function(e){
+      if(!e.state||e.state.tela!=="app"){
+        document.getElementById("conteudo").style.display="none";
+        document.getElementById("menuContainer").style.display="block";
       }
     };
-
     let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      const installBtn = document.getElementById("installBtn");
-      installBtn.style.display = "inline-block";
-      installBtn.addEventListener("click", async () => {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        installBtn.remove();
+    window.addEventListener('beforeinstallprompt',(e)=>{
+      e.preventDefault();deferredPrompt=e;
+      const b=document.getElementById("installBtn");
+      b.style.display="inline-block";
+      b.addEventListener("click",async()=>{
+        deferredPrompt.prompt();await deferredPrompt.userChoice;
+        deferredPrompt=null;b.remove();
       });
     });
   </script>
@@ -233,58 +196,56 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    const firebaseConfig={
+      apiKey:"AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain:"pintando-a-palavra-fnl.firebaseapp.com",
+      projectId:"pintando-a-palavra-fnl",
+      storageBucket:"pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId:"394858613454",
+      appId:"1:394858613454:web:68ecc607c0414bd7779e9f"
     };
+    const app=initializeApp(firebaseConfig);
+    const db=getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    async function exibirSaudacao() {
-      const div = document.getElementById("saudacao");
-      const nomeCompleto = localStorage.getItem("displayName") || "";
-      const primeiroNome = nomeCompleto.split(" ")[0] || "Amigo";
-      div.innerHTML = `👋 Olá, <strong>${primeiroNome}</strong>!<br>Que bom ter você aqui 💛`;
-      div.style.opacity = 1;
-      setTimeout(() => {
-        document.getElementById("menuPrincipal").style.opacity = 1;
-        document.getElementById("socialsBlock").style.opacity = 1;
-        document.getElementById("socialTitle").style.opacity = 1;
-      }, 800);
+    async function exibirSaudacao(){
+      const div=document.getElementById("saudacao");
+      const nomeCompleto=localStorage.getItem("displayName")||"";
+      const primeiroNome=nomeCompleto.split(" ")[0]||"Amigo";
+      const texto=`👋 Olá, ${primeiroNome}! Que bom ter você aqui 💛`;
+      div.innerHTML="";
+      div.classList.add("typing");
+      texto.split("").forEach((char,i)=>{
+        const span=document.createElement("span");
+        span.innerText=char;
+        span.style.animationDelay=`${i*0.04}s`;
+        div.appendChild(span);
+      });
+      div.style.opacity=1;
+      const total=texto.length*40+800;
+      setTimeout(()=>{
+        document.getElementById("menuPrincipal").style.opacity=1;
+        document.getElementById("socialsBlock").style.opacity=1;
+        document.getElementById("socialTitle").style.opacity=1;
+      },total);
     }
 
-    async function validarAcesso() {
-      const email = localStorage.getItem("savedEmail");
-      const isLogged = localStorage.getItem("isLogged") === "true";
-      if (!isLogged || !email) {
-        window.location.replace("login.html");
-        return;
-      }
-      if (!navigator.onLine) return;
-      try {
-        const ref = doc(db, "usuariosGoogle", email.toLowerCase());
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          localStorage.clear();
-          window.location.replace("login.html");
-        }
-      } catch {}
+    async function validarAcesso(){
+      const email=localStorage.getItem("savedEmail");
+      const isLogged=localStorage.getItem("isLogged")==="true";
+      if(!isLogged||!email){window.location.replace("login.html");return;}
+      if(!navigator.onLine)return;
+      try{
+        const ref=doc(db,"usuariosGoogle",email.toLowerCase());
+        const snap=await getDoc(ref);
+        if(!snap.exists()){localStorage.clear();window.location.replace("login.html");}
+      }catch{}
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded",()=>{
       exibirSaudacao();
       validarAcesso();
     });
-
-    window.logout = () => {
-      localStorage.clear();
-      window.location.replace("login.html");
-    };
+    window.logout=()=>{localStorage.clear();window.location.replace("login.html");};
   </script>
 </body>
 </html>
