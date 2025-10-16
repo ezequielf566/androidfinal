@@ -20,22 +20,7 @@
       position: relative;
       overflow-x: hidden;
     }
-    body::before {
-      content: "";
-      position: absolute;
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%) rotate(-10deg);
-      width: 420px;
-      height: 420px;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/6212/6212478.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.07;
-      pointer-events: none;
-      z-index: 0;
-    }
+
     header {
       background: linear-gradient(90deg, #ffd54f, #ffea80);
       padding: 0.8rem 1.2rem;
@@ -49,6 +34,7 @@
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
+
     .notif-icon {
       position: relative;
       cursor: pointer;
@@ -65,6 +51,7 @@
       background: #ff3b30; border-radius: 50%;
       border: 2px solid #fff;
     }
+
     header .btn {
       background: #fff;
       border: none;
@@ -79,6 +66,7 @@
       gap: 6px;
     }
     header .btn:hover { transform: scale(1.05); background: #fff7d1; }
+
     main {
       flex: 1;
       display: flex;
@@ -89,6 +77,7 @@
       position: relative;
       z-index: 2;
     }
+
     .saudacao {
       font-size: 1.6rem;
       line-height: 1.5;
@@ -104,7 +93,12 @@
       opacity: 0;
       animation: fadeIn 0.6s ease forwards;
     }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(10px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
     .menu {
       display: flex;
       flex-direction: column;
@@ -114,6 +108,7 @@
       opacity: 0;
       transition: opacity 0.8s ease;
     }
+
     .menu button {
       background: #ffd54f;
       border: none;
@@ -128,7 +123,16 @@
       color: #222;
     }
     .menu button:hover { transform: scale(1.03); background: #ffe066; }
-    h2 { margin-top: 2.2rem; font-size: 1.25rem; font-weight: 600; color: #222; opacity: 0; transition: opacity 0.8s ease; }
+
+    h2 {
+      margin-top: 2.2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #222;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
     .socials {
       display: flex;
       justify-content: center;
@@ -139,6 +143,7 @@
       opacity: 0;
       transition: opacity 0.8s ease;
     }
+
     .socials button {
       background: #fffbe6;
       border: 2px solid #ffe066;
@@ -207,6 +212,7 @@
       iframe.src = "app/index.html"; 
       history.pushState({tela: "app"}, "", "#app");
     }
+
     window.onpopstate = function(event) {
       if (!event.state || event.state.tela !== "app") {
         document.getElementById("conteudo").style.display = "none";
@@ -214,6 +220,7 @@
       }
     };
 
+    // 🔹 Botão instalar PWA
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
