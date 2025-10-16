@@ -183,7 +183,7 @@
       <div class="menu" id="menuPrincipal">
         <button onclick="abrirApp()">📖 Histórias</button>
         <button onclick="abrirAtividades()">🎨 Atividades</button>
-        <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
+        <button onclick="abrirPdf()">📚 PDF Completo</button>
       </div>
 
       <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
@@ -202,13 +202,9 @@
       setTimeout(() => sound.play().catch(() => {}), 800);
     });
 
-    function abrirApp() {
-      abrirTela("app/index.html", "app");
-    }
-
-    function abrirAtividades() {
-      abrirTela("atividades/index.html", "atividades");
-    }
+    function abrirApp() { abrirTela("app/index.html", "app"); }
+    function abrirAtividades() { abrirTela("atividades/index.html", "atividades"); }
+    function abrirPdf() { abrirTela("pdfcompleto/index.html", "pdfcompleto"); }
 
     function abrirTela(src, tela) {
       document.getElementById("menuContainer").style.display = "none";
@@ -221,7 +217,7 @@
     window.onpopstate = function(event) {
       const conteudo = document.getElementById("conteudo");
       const menu = document.getElementById("menuContainer");
-      if (!event.state || (event.state.tela !== "app" && event.state.tela !== "atividades")) {
+      if (!event.state || !["app","atividades","pdfcompleto"].includes(event.state.tela)) {
         conteudo.style.display = "none";
         menu.style.display = "block";
       }
