@@ -1,5 +1,5 @@
 /* Service Worker - versão universal para Vercel */
-const CACHE_NAME = 'app-v2';  // versão atualizada
+const CACHE_NAME = 'app-v3';  // ✅ nova versão (força reinstalação)
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE = [
