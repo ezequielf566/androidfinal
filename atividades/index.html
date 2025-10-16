@@ -40,20 +40,24 @@
       background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;
       box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
-    @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
+    @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}
     .card{
-      background:var(--card);border-radius:18px;padding:12px;
+      background:var(--card);border-radius:20px;padding:12px;
       box-shadow:0 6px 16px rgba(0,0,0,.12);
       transition:transform .18s ease,box-shadow .18s ease;
       display:flex;flex-direction:column;align-items:center;
     }
-    .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(0,0,0,.16);}
+    .card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.16);}
     .cover{
-      width:100%;aspect-ratio:4/5;border-radius:14px;object-fit:cover;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.6);background:#fff6d1;
+      width:100%;
+      aspect-ratio:1/1.2;
+      border-radius:16px;
+      object-fit:cover;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
+      background:#fff6d1;
+      margin-bottom:12px;
     }
-    .title{font-weight:800;margin:10px 0 6px;text-align:center;font-size:1.05rem;}
     .btn{
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
       background:var(--gold);color:#2a2a2a;
@@ -159,19 +163,19 @@
       </p>
       <div class="actions">
         <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>
-        <a class="btn btn-primary link" id="btnCheckout" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade</a>
+        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade</a>
       </div>
     </div>
   </div>
 
   <script>
     const CONTENT = [
-      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png','img/biblia-3.png'], pdf:'pdfs/biblia.pdf' },
-      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png','img/caca-3.png'], pdf:'pdfs/caca.pdf' },
-      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png','img/ligar-3.png'], pdf:'pdfs/ligar.pdf' },
-      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png','img/cruzadinha-3.png'], pdf:'pdfs/cruzadinha.pdf' },
-      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png','img/caca-es-3.png'], pdf:'pdfs/caca-es.pdf' },
-      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png','img/atividades-es-3.png'], pdf:'pdfs/atividades-es.pdf' }
+      { id:'biblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png','img/biblia-3.png'], pdf:'pdfs/biblia.pdf' },
+      { id:'caca', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png','img/caca-3.png'], pdf:'pdfs/caca.pdf' },
+      { id:'ligar', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png','img/ligar-3.png'], pdf:'pdfs/ligar.pdf' },
+      { id:'cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png','img/cruzadinha-3.png'], pdf:'pdfs/cruzadinha.pdf' },
+      { id:'caca-es', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png','img/caca-es-3.png'], pdf:'pdfs/caca-es.pdf' },
+      { id:'atividades-es', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png','img/atividades-es-3.png'], pdf:'pdfs/atividades-es.pdf' }
     ];
 
     const grid = document.getElementById('grid');
@@ -182,13 +186,10 @@
     const entradaAudio = document.getElementById('entradaAudio');
     const upgrade = document.getElementById('upgrade');
 
-    function playEntrance(){ if(!entradaAudio)return; setTimeout(()=>entradaAudio.play().catch(()=>{}),400); }
-
     function render(){
       grid.innerHTML = CONTENT.map(item => `
         <article class="card">
-          <img class="cover" src="${item.cover}" alt="Capa - ${item.title}" />
-          <div class="title">${item.title}</div>
+          <img class="cover" src="${item.cover}" alt="Atividade" />
           <button class="btn" data-id="${item.id}">Ver prévias</button>
         </article>`).join('');
     }
@@ -196,24 +197,18 @@
     function openPreview(id){
       const item = CONTENT.find(x => x.id === id);
       if(!item)return;
-      modalTitle.textContent = item.title;
-      const basePath = window.location.pathname.includes('/atividades') ? './' : 'atividades/';
-      gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia de ${item.title}">`).join('');
+      modalTitle.textContent = "Prévia";
+      gallery.innerHTML = item.previews.map(src => `<img src="${src}" alt="Prévia">`).join('');
       modal.classList.add('open');
-      modal.dataset.current = id;
-      history.pushState({preview:id},"","#preview-"+id);
     }
 
     function closePreview(){
       modal.classList.remove('open');
       gallery.innerHTML = '';
-      modal.dataset.current = '';
-      if(location.hash.startsWith('#preview-')) history.back();
     }
 
-    function handleDownload(){ openUpgrade(); }
-    function openUpgrade(){ upgrade.classList.add('open'); history.pushState({upgrade:true},"","#upgrade"); }
-    function closeUpgrade(){ upgrade.classList.remove('open'); if(location.hash==="#upgrade") history.back(); }
+    function handleDownload(){ upgrade.classList.add('open'); }
+    function closeUpgrade(){ upgrade.classList.remove('open'); }
 
     document.addEventListener('click',e=>{
       const btn=e.target.closest('button.btn');
@@ -224,15 +219,7 @@
     document.getElementById('btnBaixar').addEventListener('click',handleDownload);
     document.getElementById('btnFecharUpgrade').addEventListener('click',closeUpgrade);
 
-    modal.addEventListener('click',e=>{if(e.target===modal)closePreview();});
-    upgrade.addEventListener('click',e=>{if(e.target===upgrade)closeUpgrade();});
-
-    window.addEventListener('load',()=>{loading.classList.remove('active');playEntrance();render();});
-
-    window.addEventListener('popstate',()=>{
-      if(upgrade.classList.contains('open')){upgrade.classList.remove('open');return;}
-      if(modal.classList.contains('open')){closePreview();return;}
-    });
+    window.addEventListener('load',()=>{loading.classList.remove('active');render();});
   </script>
 </body>
 </html>
