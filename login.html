@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Pintando a Palavra</title>
-  <link rel="stylesheet" href="style.css">
 
-  <!-- Meta Pixel Code -->
+  <!-- Meta Pixel (mantido, opcional) -->
   <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -18,115 +17,6 @@
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1116979890524870'); 
     fbq('track', 'PageView');
-  </script>
-</head>
-<body>
-  <div class="login-container">
-    <img src="icon-512.png" alt="Logo" class="logo">
-    <h1>Pintando a Palavra</h1>
-    <p class="subtitle">Colorindo histórias da Bíblia</p>
-
-    <!-- 🟢 Botão principal -->
-    <button id="freeAccess" class="btn-primary">🎨 Entrar gratuito</button>
-
-    <!-- 🔐 Botão Premium -->
-    <button id="showLogin" class="btn-secondary">🔑 Já sou Premium</button>
-
-    <!-- ✉️ Campo Gmail (sem placeholder) -->
-    <form id="loginForm" class="hidden">
-      <input type="email" id="email" placeholder="" required>
-      <button type="submit" class="btn-login">Entrar com Gmail</button>
-    </form>
-
-    <p id="errorMsg" class="error"></p>
-
-    <div class="checkout">
-      <p>Ainda não possui acesso Premium?</p>
-      <a id="checkoutBtn" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH" target="_blank">
-        💳 Fazer upgrade
-      </a>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const errorMsg = document.getElementById("errorMsg");
-    const loginForm = document.getElementById("loginForm");
-    const showLoginBtn = document.getElementById("showLogin");
-
-    // Mostrar o campo Gmail uma vez
-    showLoginBtn.addEventListener("click", () => {
-      loginForm.classList.remove("hidden");
-      showLoginBtn.disabled = true;
-      showLoginBtn.style.opacity = "0.7";
-      showLoginBtn.style.cursor = "default";
-    });
-
-    // Entrar gratuito
-    document.getElementById("freeAccess").addEventListener("click", () => {
-      localStorage.setItem("isLogged", "true");
-      localStorage.setItem("premium", "false");
-      errorMsg.textContent = "🎨 Entrando no modo gratuito...";
-      errorMsg.style.color = "orange";
-      setTimeout(() => window.location.href = "index.html", 800);
-    });
-
-    // Entrar com Gmail
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim().toLowerCase();
-      errorMsg.textContent = "⏳ Verificando...";
-      errorMsg.style.color = "#333";
-
-      try {
-        const ref = doc(db, "usuarios", email);
-        const snap = await getDoc(ref);
-
-        if (snap.exists()) {
-          fbq('track', 'CompleteRegistration', {
-            content_name: 'Login Gmail Premium',
-            method: 'EmailForm'
-          });
-
-          localStorage.setItem("savedEmail", email);
-          localStorage.setItem("isLogged", "true");
-          localStorage.setItem("premium", "true");
-
-          errorMsg.textContent = "✅ Acesso Premium confirmado!";
-          errorMsg.style.color = "green";
-          setTimeout(() => window.location.href = "index.html", 600);
-        } else {
-          localStorage.setItem("premium", "false");
-          errorMsg.innerHTML = `
-            <span style="color:red;">
-              ❌ E-mail não encontrado em nossa base Premium.<br>
-              Caso tenha feito a compra, entre em contato com o suporte:<br>
-              <a href="https://wa.me/5592999999999?text=Olá,%20fiz%20a%20compra%20do%20Pintando%20Premium%20mas%20não%20consigo%20acessar."
-              target="_blank" style="color:#007BFF;text-decoration:none;">
-              📞 Falar no WhatsApp
-              </a>
-            </span>
-          `;
-        }
-      } catch (err) {
-        console.error(err);
-        errorMsg.textContent = "⚠️ Erro ao verificar, tente novamente.";
-        errorMsg.style.color = "red";
-      }
-    });
   </script>
 
   <style>
@@ -151,71 +41,119 @@
     .logo { width: 90px; margin-bottom: 10px; }
     .subtitle { color: #555; margin-bottom: 25px; }
 
-    .btn-primary {
-      background: #FFD54F;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-size: 18px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: 600;
-      transition: 0.2s;
-    }
-    .btn-primary:hover { background: #ffcf33; }
-
-    .btn-secondary {
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       background: #fff;
-      border: 2px solid #FFD54F;
-      color: #444;
-      padding: 10px 24px;
-      border-radius: 10px;
-      font-weight: 500;
-      margin-top: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-    }
-    .btn-secondary:hover { background: #FFF4C1; }
-
-    .btn-login {
-      margin-top: 10px;
-      background: #FFD54F;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-weight: 600;
-      width: 100%;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: 2px solid #FFD54F;
+      border: 2px solid #dadce0;
       border-radius: 8px;
+      padding: 12px 20px;
       font-size: 16px;
-      text-align: center;
+      font-weight: 500;
+      color: #3c4043;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-
-    .hidden { display: none; }
-
+    .google-btn:hover {
+      background: #f7f8f8;
+    }
+    .google-icon {
+      width: 22px;
+      height: 22px;
+    }
     .error {
       margin-top: 15px;
       font-size: 15px;
       min-height: 30px;
     }
-
-    .checkout {
-      margin-top: 25px;
-      font-size: 14px;
-    }
-    .checkout a {
-      color: #007BFF;
-      text-decoration: none;
-      font-weight: 500;
-    }
   </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <img src="icon-512.png" alt="Logo" class="logo">
+    <h1>Pintando a Palavra</h1>
+    <p class="subtitle">Colorindo histórias da Bíblia</p>
+
+    <!-- 🔹 Novo botão Google -->
+    <button id="loginGoogle" class="google-btn">
+      <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.15 0 5.91 1.09 8.12 2.88l6.03-6.03C34.21 3.41 29.42 1.5 24 1.5 14.64 1.5 6.56 7.24 3.04 15.09l7.35 5.71C12.18 13.03 17.61 9.5 24 9.5z"/>
+        <path fill="#34A853" d="M46.5 24.5c0-1.6-.14-3.13-.39-4.63H24v9.13h12.7c-.57 2.9-2.26 5.36-4.83 7.03l7.48 5.83C43.51 38.02 46.5 31.76 46.5 24.5z"/>
+        <path fill="#4A90E2" d="M9.39 28.8C8.72 26.95 8.33 24.83 8.33 22.5c0-2.33.39-4.45 1.06-6.3L2.04 10.49C.75 13.64 0 17.03 0 20.5c0 7.26 2.99 13.52 7.77 17.87l7.48-5.83c-2.35-1.6-4.05-4.06-4.71-6.74l-.15-.43z"/>
+        <path fill="#FBBC05" d="M24 47.5c6.3 0 11.6-2.07 15.46-5.61l-7.48-5.83c-2.13 1.4-4.87 2.2-7.98 2.2-6.39 0-11.82-3.53-14.61-8.7l-7.35 5.71C6.56 40.76 14.64 47.5 24 47.5z"/>
+      </svg>
+      Entrar com Google
+    </button>
+
+    <p id="errorMsg" class="error"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    const loginBtn = document.getElementById("loginGoogle");
+    const errorMsg = document.getElementById("errorMsg");
+
+    loginBtn.addEventListener("click", async () => {
+      errorMsg.textContent = "⏳ Conectando com o Google...";
+      errorMsg.style.color = "#333";
+
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const email = user.email.toLowerCase();
+
+        // 🔹 Nova coleção: usuariosGoogle
+        const ref = doc(db, "usuariosGoogle", email);
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+          await setDoc(ref, {
+            email: email,
+            premium: false,
+            removeAds: false,
+            createdAt: new Date().toISOString()
+          });
+        }
+
+        const userData = (await getDoc(ref)).data();
+
+        // 🔹 Salva localmente
+        localStorage.setItem("savedEmail", email);
+        localStorage.setItem("isLogged", "true");
+        localStorage.setItem("premium", userData.premium ? "true" : "false");
+        localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
+
+        errorMsg.textContent = "✅ Login realizado com sucesso!";
+        errorMsg.style.color = "green";
+        setTimeout(() => window.location.href = "index.html", 800);
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "⚠️ Erro ao autenticar com o Google.";
+        errorMsg.style.color = "red";
+      }
+    });
+  </script>
 </body>
 </html>
