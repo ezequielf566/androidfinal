@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pintando a Palavra — Menu</title>
 
-  <!-- 🧹 Removido AdSense -->
-  <!-- Nenhum script de anúncios é carregado -->
-
+  <!-- ✅ Nenhum script de anúncios -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ffffff">
 
@@ -145,7 +143,7 @@
   </main>
 </div>
 
-<!-- 🔔 Notificação explicativa -->
+<!-- 🔔 Banner de dicas -->
 <div class="notif-banner" id="notifBanner">
   <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
   <p><strong>Primeiro acesso:</strong> abra com internet para baixar tudo.</p>
@@ -173,7 +171,7 @@ window.onpopstate = function(event) {
   }
 };
 
-// 🔹 Botão Instalar PWA
+// 🔹 Instalar PWA
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -208,23 +206,34 @@ window.addEventListener('beforeinstallprompt', (e) => {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // 🔒 Validação de login
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
-    const isPremium = localStorage.getItem("premium") === "true";
-    if (!isPremium) return;
-    if (navigator.onLine) {
-      try {
-        const ref = doc(db, "usuarios", (email || "").toLowerCase());
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          localStorage.clear();
-          window.location.replace("login.html");
-        }
-      } catch {}
+    const isLogged = localStorage.getItem("isLogged") === "true";
+    if (!isLogged || !email) {
+      window.location.replace("login.html");
+      return;
+    }
+
+    try {
+      const ref = doc(db, "usuariosGoogle", email.toLowerCase());
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        localStorage.clear();
+        window.location.replace("login.html");
+      }
+    } catch (err) {
+      console.error("Erro ao validar acesso:", err);
+      window.location.replace("login.html");
     }
   }
+
   document.addEventListener("DOMContentLoaded", validarAcesso);
-  window.logout = () => { localStorage.clear(); window.location.replace("login.html"); };
+
+  window.logout = () => {
+    localStorage.clear();
+    window.location.replace("login.html");
+  };
 </script>
 </body>
 </html>
