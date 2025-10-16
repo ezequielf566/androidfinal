@@ -6,11 +6,49 @@
   <title>Pintando a Palavra — Colorir</title>
   <link rel="stylesheet" href="css/style.css" />
 
-  <!-- ✅ Google AdSense -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+  <style>
+    /* Tela de carregamento */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: #fff9e6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #loadingOverlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #ffd54f;
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.1rem;
+      color: #444;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
+  <!-- 🎨 Tela de carregamento -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">🎨 Carregando artes...</div>
+  </div>
+
   <header class="topbar">
     <div id="progressWidget" class="progress-widget" aria-label="Progresso do livro">
       <div class="counter">
@@ -64,13 +102,22 @@
     </section>
 
     <div class="zoom-controls">
-      <button id="zoom-in" class="zoom-btn"><svg width="28" height="28" viewBox="0 0 20 20"><line x1="10" y1="4" x2="10" y2="16" stroke="black" stroke-width="2"/><line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/></svg></button>
-      <button id="zoom-out" class="zoom-btn"><svg width="28" height="28" viewBox="0 0 20 20"><line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/></svg></button>
+      <button id="zoom-in" class="zoom-btn" aria-label="Ampliar">
+        <svg width="28" height="28" viewBox="0 0 20 20">
+          <line x1="10" y1="4" x2="10" y2="16" stroke="black" stroke-width="2"/>
+          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
+        </svg>
+      </button>
+      <button id="zoom-out" class="zoom-btn" aria-label="Reduzir">
+        <svg width="28" height="28" viewBox="0 0 20 20">
+          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
+        </svg>
+      </button>
     </div>
 
     <div class="zoom-arrows">
-      <button id="arrow-left">←</button>
-      <button id="arrow-right">→</button>
+      <button id="arrow-left" aria-label="Mover para a esquerda">←</button>
+      <button id="arrow-right" aria-label="Mover para a direita">→</button>
     </div>
   </main>
 
@@ -78,6 +125,7 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
+  // 🎨 Cor personalizada
   document.addEventListener("DOMContentLoaded", function() {
     const picker = document.getElementById("picker");
     const customBtn = document.getElementById("customColorBtn");
@@ -89,102 +137,17 @@
       });
     }
   });
-  </script>
 
-  <!-- 🔸 Banner AdSense fixo -->
-  <div id="adBannerApp" style="
-    display:none;
-    position:fixed;
-    left:50%;
-    bottom:12px;
-    transform:translateX(-50%);
-    width:95%;
-    max-width:360px;
-    background:#fff8e1;
-    border:3px solid #ffd54f;
-    border-radius:12px;
-    text-align:center;
-    box-shadow:0 4px 10px rgba(0,0,0,0.25);
-    z-index:999999;
-    font-family:'Fredoka',sans-serif;
-    padding:20px 8px 12px;
-    overflow:hidden;">
-
-    <div style="position:absolute;top:4px;right:6px;z-index:1000000;">
-      <button onclick="AdsCtl.hideBanner()" aria-label="Fechar" style="
-        border:none;
-        background:none;
-        color:#555;
-        font-size:18px;
-        font-weight:bold;
-        cursor:pointer;
-        line-height:1;">✕</button>
-    </div>
-
-    <!-- 🔁 Bloco AdSense -->
-    <div id="adContent" style="margin-top:10px;">
-      <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-        data-ad-slot="XXXXXXXXXX"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
-
-  <script>
-  const AdsCtl = {
-    keyLast: 'ad:lastTs',
-    minIntervalMs: 60000,
-    autoHideMs: 10000,
-    isPremium() { return localStorage.getItem('premium') === 'true'; },
-    now() { return Date.now(); },
-    canShow() {
-      const last = +(localStorage.getItem(this.keyLast) || 0);
-      return (this.now() - last) >= this.minIntervalMs;
-    },
-    markShown() { localStorage.setItem(this.keyLast, String(this.now())); },
-    showBanner() {
-      const el = document.getElementById('adBannerApp');
-      if (!el) return;
-      el.style.display = 'block';
-      clearTimeout(this._hideT);
-      this._hideT = setTimeout(() => this.hideBanner(), this.autoHideMs);
-    },
-    hideBanner() {
-      const el = document.getElementById('adBannerApp');
-      if (el) el.style.display = 'none';
+  // ⏳ Mostra tela de carregamento até o primeiro SVG ser lido
+  const overlay = document.getElementById("loadingOverlay");
+  const observer = new MutationObserver(() => {
+    const svgLoaded = document.querySelector("#svgMount svg");
+    if (svgLoaded) {
+      setTimeout(() => overlay.classList.add("hidden"), 400);
+      observer.disconnect();
     }
-  };
-
-  function regraTempoIniciar() {
-    if (AdsCtl.isPremium()) return;
-
-    const isFirstOpen = !localStorage.getItem('ad:firstOpenShown');
-    const primeiroDelay = isFirstOpen ? 180000 : 60000;
-
-    setTimeout(() => {
-      if (!AdsCtl.isPremium()) {
-        AdsCtl.showBanner();
-        AdsCtl.markShown();
-        localStorage.setItem('ad:firstOpenShown', 'true');
-      }
-    }, primeiroDelay);
-
-    setInterval(() => {
-      if (AdsCtl.isPremium()) return;
-      if (AdsCtl.canShow()) {
-        AdsCtl.showBanner();
-        AdsCtl.markShown();
-      }
-    }, 15000);
-  }
-
-  window.addEventListener('load', () => {
-    if (!localStorage.getItem('premium')) localStorage.setItem('premium', 'false');
-    regraTempoIniciar();
   });
+  observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
