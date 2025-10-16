@@ -17,12 +17,9 @@
       flex-direction: column;
       background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
       background-attachment: fixed;
-      animation: fadeIn 0.8s ease;
       position: relative;
       overflow-x: hidden;
     }
-
-    /* 🌟 Ícone translúcido da Bíblia no fundo */
     body::before {
       content: "";
       position: absolute;
@@ -36,25 +33,9 @@
       background-repeat: no-repeat;
       background-position: center;
       opacity: 0.07;
-      filter: blur(1px);
       pointer-events: none;
       z-index: 0;
     }
-
-    @media (max-width: 600px) {
-      body::before {
-        width: 280px;
-        height: 280px;
-        top: 10%;
-        opacity: 0.08;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     header {
       background: linear-gradient(90deg, #ffd54f, #ffea80);
       padding: 0.8rem 1.2rem;
@@ -68,7 +49,6 @@
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
-
     .notif-icon {
       position: relative;
       cursor: pointer;
@@ -85,7 +65,6 @@
       background: #ff3b30; border-radius: 50%;
       border: 2px solid #fff;
     }
-
     header .btn {
       background: #fff;
       border: none;
@@ -99,36 +78,22 @@
       align-items: center;
       gap: 6px;
     }
-    header .btn:hover {
-      transform: scale(1.05);
-      background: #fff7d1;
-    }
-
+    header .btn:hover { transform: scale(1.05); background: #fff7d1; }
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
       padding: 2.5rem 1rem 3rem;
       text-align: center;
       position: relative;
       z-index: 2;
-      animation: slideUp 0.8s ease both;
     }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 👋 Saudação personalizada animada */
     .saudacao {
       font-size: 1.6rem;
       line-height: 1.5;
       color: #222;
       font-weight: 600;
-      text-align: center;
       margin-bottom: 2rem;
       background: rgba(255, 255, 255, 0.6);
       padding: 1rem 1.5rem;
@@ -136,43 +101,19 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       backdrop-filter: blur(5px);
       display: inline-block;
-      animation: slideIn 1s ease forwards;
       opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
     }
-
-    .saudacao strong {
-      color: #000;
-      text-shadow: 0 2px 3px rgba(255, 213, 79, 0.3);
-    }
-
-    @keyframes slideIn {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Efeito de digitação suave */
-    .typing span {
-      display: inline-block;
-      opacity: 0;
-      transform: translateY(5px);
-      animation: typingEffect 0.04s forwards;
-    }
-
-    @keyframes typingEffect {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
     .menu {
       display: flex;
       flex-direction: column;
       gap: 1.2rem;
       width: 100%;
       max-width: 340px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
-
     .menu button {
       background: #ffd54f;
       border: none;
@@ -186,12 +127,8 @@
       transition: all 0.25s ease;
       color: #222;
     }
-
-    .menu button:hover {
-      transform: scale(1.03);
-      background: #ffe066;
-    }
-
+    .menu button:hover { transform: scale(1.03); background: #ffe066; }
+    h2 { margin-top: 2.2rem; font-size: 1.25rem; font-weight: 600; color: #222; opacity: 0; transition: opacity 0.8s ease; }
     .socials {
       display: flex;
       justify-content: center;
@@ -199,8 +136,9 @@
       gap: 1rem;
       flex-wrap: nowrap;
       margin-top: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
-
     .socials button {
       background: #fffbe6;
       border: 2px solid #ffe066;
@@ -212,25 +150,11 @@
       transition: all 0.25s ease;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-
-    .socials button:hover {
-      background: #fff2b3;
-      transform: scale(1.05);
-    }
-
-    h2 {
-      margin-top: 2.2rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #222;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
+    .socials button:hover { background: #fff2b3; transform: scale(1.05); }
   </style>
 </head>
 
 <body>
-  <!-- 🎵 Som suave ao abrir -->
   <audio id="welcomeSound" preload="auto">
     <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_28e5acb5ac.mp3" type="audio/mpeg">
   </audio>
@@ -254,14 +178,14 @@
     <main>
       <div id="saudacao" class="saudacao"></div>
 
-      <div class="menu" id="menuPrincipal" style="opacity:0;">
+      <div class="menu" id="menuPrincipal">
         <button onclick="abrirApp()">📖 Histórias</button>
         <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">🎨 Atividades</button>
         <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
       </div>
 
       <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
-      <div class="socials" id="socialsBlock" style="opacity:0;">
+      <div class="socials" id="socialsBlock">
         <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
         <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
       </div>
@@ -271,7 +195,6 @@
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
   <script>
-    // 🎵 Som de boas-vindas
     document.addEventListener("DOMContentLoaded", () => {
       const sound = document.getElementById("welcomeSound");
       setTimeout(() => sound.play().catch(() => {}), 800);
@@ -291,7 +214,6 @@
       }
     };
 
-    // 🔹 Instalar PWA
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -323,42 +245,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 👋 Saudação animada (letra por letra)
     async function exibirSaudacao() {
-      const saudacaoDiv = document.getElementById("saudacao");
-      const menu = document.getElementById("menuPrincipal");
-      const socials = document.getElementById("socialsBlock");
-      const title = document.getElementById("socialTitle");
-      const email = localStorage.getItem("savedEmail");
-      if (!email) return;
-
-      const nome = email.split("@")[0];
-      const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
-      const texto = `👋 Olá, <strong>${nomeFormatado}</strong>!<br>Que bom ter você aqui 💛`;
-
-      saudacaoDiv.innerHTML = "";
-      saudacaoDiv.classList.add("typing");
-
-      let letras = "";
-      for (const char of texto) {
-        letras += `<span>${char === " " ? "&nbsp;" : char}</span>`;
-      }
-      saudacaoDiv.innerHTML = letras;
-
-      const spans = saudacaoDiv.querySelectorAll("span");
-      spans.forEach((span, i) => {
-        span.style.animationDelay = `${i * 0.04}s`;
-      });
-
-      // Exibe menu e redes após saudação
+      const div = document.getElementById("saudacao");
+      const nomeCompleto = localStorage.getItem("displayName") || "";
+      const primeiroNome = nomeCompleto.split(" ")[0] || "Amigo";
+      div.innerHTML = `👋 Olá, <strong>${primeiroNome}</strong>!<br>Que bom ter você aqui 💛`;
+      div.style.opacity = 1;
       setTimeout(() => {
-        menu.style.transition = "opacity 0.8s ease";
-        socials.style.transition = "opacity 0.8s ease";
-        title.style.transition = "opacity 0.8s ease";
-        menu.style.opacity = 1;
-        socials.style.opacity = 1;
-        title.style.opacity = 1;
-      }, spans.length * 40 + 800);
+        document.getElementById("menuPrincipal").style.opacity = 1;
+        document.getElementById("socialsBlock").style.opacity = 1;
+        document.getElementById("socialTitle").style.opacity = 1;
+      }, 800);
     }
 
     async function validarAcesso() {
@@ -368,9 +265,7 @@
         window.location.replace("login.html");
         return;
       }
-
       if (!navigator.onLine) return;
-
       try {
         const ref = doc(db, "usuariosGoogle", email.toLowerCase());
         const snap = await getDoc(ref);
@@ -378,9 +273,7 @@
           localStorage.clear();
           window.location.replace("login.html");
         }
-      } catch (err) {
-        console.error("Erro ao validar acesso:", err);
-      }
+      } catch {}
     }
 
     document.addEventListener("DOMContentLoaded", () => {
