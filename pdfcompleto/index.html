@@ -170,8 +170,8 @@
 
   <script>
     const CONTENT = [
-      { id:'historias', cover:'img/historias-capa.png', previews:['img/historias-1.png','img/historias-2.png','img/historias-3.png','img/historias-4.png','img/historias-5.png','img/historias-6.png','img/historias-7.png','img/historias-8.png','img/historias-9.png','img/historias-10.png'], pdf:'pdfs/historias.pdf' },
-      { id:'parabolas', cover:'img/parabolas-capa.png', previews:['img/parabolas-1.png','img/parabolas-2.png','img/parabolas-3.png','img/parabolas-4.png','img/parabolas-5.png','img/parabolas-6.png'], pdf:'pdfs/parabolas.pdf' }
+      { id:'historias', cover:'img/historias-capa.png', previews:['historias-1.png','historias-2.png','historias-3.png','historias-4.png','historias-5.png','historias-6.png','historias-7.png','historias-8.png','historias-9.png','historias-10.png'], pdf:'pdfs/historias.pdf' },
+      { id:'parabolas', cover:'img/parabolas-capa.png', previews:['parabolas-1.png','parabolas-2.png','parabolas-3.png','parabolas-4.png','parabolas-5.png','parabolas-6.png'], pdf:'pdfs/parabolas.pdf' }
     ];
 
     const grid=document.getElementById('grid');
@@ -194,7 +194,7 @@
       const item = CONTENT.find(x => x.id === id);
       if(!item)return;
       modalTitle.textContent = "Prévia";
-      const basePath = window.location.pathname.includes('/pdfcompleto') ? './' : 'pdfcompleto/';
+      const basePath = 'img/'; // ✅ caminho fixo correto
       gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia">`).join('');
       modal.classList.add('open');
     }
