@@ -245,7 +245,9 @@
         localStorage.setItem("isLogged", "true");
         localStorage.setItem("premium", userData.premium ? "true" : "false");
         localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
-        window.location.href = "index.html";
+
+        // ✅ Redireciona sempre pro menu da raiz
+        window.location.replace("/index.html");
       })
       .catch((error) => {
         console.error(error);
