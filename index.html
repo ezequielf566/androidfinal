@@ -143,7 +143,6 @@
   </main>
 </div>
 
-<!-- 🔔 Banner de dicas -->
 <div class="notif-banner" id="notifBanner">
   <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
   <p><strong>Primeiro acesso:</strong> abra com internet para baixar tudo.</p>
@@ -153,7 +152,6 @@
   <button id="closeNotif">Fechar</button>
 </div>
 
-<div id="msg"></div>
 <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
 <script>
@@ -183,7 +181,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
   installBtn.addEventListener("click", async () => {
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    await deferredPrompt.userChoice;
     deferredPrompt = null;
     installBtn.remove();
   });
@@ -206,25 +204,31 @@ window.addEventListener('beforeinstallprompt', (e) => {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 🔒 Validação de login
   async function validarAcesso() {
     const email = localStorage.getItem("savedEmail");
     const isLogged = localStorage.getItem("isLogged") === "true";
+
     if (!isLogged || !email) {
       window.location.replace("login.html");
       return;
     }
 
+    // 🔹 Permite uso offline
+    if (!navigator.onLine) return;
+
     try {
       const ref = doc(db, "usuariosGoogle", email.toLowerCase());
       const snap = await getDoc(ref);
+
       if (!snap.exists()) {
+        console.warn("Usuário não encontrado no Firestore");
         localStorage.clear();
         window.location.replace("login.html");
+      } else {
+        console.log("✅ Usuário verificado:", email);
       }
     } catch (err) {
       console.error("Erro ao validar acesso:", err);
-      window.location.replace("login.html");
     }
   }
 
