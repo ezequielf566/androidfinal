@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pintando a Palavra — Menu</title>
-
-  <!-- ✅ Nenhum script de anúncios -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ffffff">
 
@@ -13,231 +11,387 @@
     body {
       margin: 0;
       font-family: "Fredoka", sans-serif;
-      background: #fff9e6;
-      color: #000;
+      color: #222;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
+      background-attachment: fixed;
+      animation: fadeIn 0.8s ease;
+      position: relative;
+      overflow-x: hidden;
     }
+
+    /* 🌟 Ícone translúcido da Bíblia no fundo */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%) rotate(-10deg);
+      width: 420px;
+      height: 420px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/6212/6212478.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.07;
+      filter: blur(1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @media (max-width: 600px) {
+      body::before {
+        width: 280px;
+        height: 280px;
+        top: 10%;
+        opacity: 0.08;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     header {
-      background: #ffd54f;
-      padding: 1rem;
+      background: linear-gradient(90deg, #ffd54f, #ffea80);
+      padding: 0.8rem 1.2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
     }
+
     .notif-icon {
       position: relative;
       cursor: pointer;
-      animation: pulse 1.5s infinite;
+      animation: pulse 2s infinite;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .notif-icon svg { width: 28px; height: 28px; }
-    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.15);} }
+    .notif-icon svg { width: 28px; height: 28px; stroke: #222; }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }
     .notif-badge {
-      position: absolute; top: 0; right: 0;
-      width: 12px; height: 12px; background: red;
-      border-radius: 50%; border: 2px solid white;
-      animation: blink 1s infinite;
+      position: absolute; top: 2px; right: 2px;
+      width: 10px; height: 10px;
+      background: #ff3b30; border-radius: 50%;
+      border: 2px solid #fff;
     }
-    @keyframes blink {0%,100%{opacity:1;}50%{opacity:0.3;}}
+
     header .btn {
-      background: #fff; border: none; padding: 0.5rem 1rem;
-      border-radius: 8px; cursor: pointer; font-weight: bold;
-      transition: background 0.2s; color: #000; margin-left: 0.5rem;
+      background: #fff;
+      border: none;
+      padding: 0.6rem 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    header .btn:hover { background: #f1f1f1; }
+    header .btn:hover {
+      transform: scale(1.05);
+      background: #fff7d1;
+    }
+
     main {
-      flex: 1; display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
-      text-align: center; padding: 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 2.5rem 1rem 3rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      animation: slideUp 0.8s ease both;
     }
-    h1 { font-size: 2rem; margin-bottom: 2rem; color: #000; }
-    h2 { margin-top: 2rem; font-size: 1.3rem; color: #000; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 👋 Saudação personalizada animada */
+    .saudacao {
+      font-size: 1.6rem;
+      line-height: 1.5;
+      color: #222;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      backdrop-filter: blur(5px);
+      display: inline-block;
+      animation: slideIn 1s ease forwards;
+      opacity: 0;
+    }
+
+    .saudacao strong {
+      color: #000;
+      text-shadow: 0 2px 3px rgba(255, 213, 79, 0.3);
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Efeito de digitação suave */
+    .typing span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(5px);
+      animation: typingEffect 0.04s forwards;
+    }
+
+    @keyframes typingEffect {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .menu {
-      display: flex; flex-direction: column;
-      gap: 1rem; margin-bottom: 2rem;
-      width: 100%; max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 340px;
     }
+
     .menu button {
-      background: #ffe082; border: none;
-      padding: 1rem; border-radius: 12px;
-      font-size: 1.1rem; cursor: pointer;
-      font-weight: bold; transition: transform 0.2s, background 0.2s;
-      width: 100%; color: #000;
+      background: #ffd54f;
+      border: none;
+      padding: 1rem;
+      border-radius: 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
+                  0 4px 10px rgba(0,0,0,0.15);
+      transition: all 0.25s ease;
+      color: #222;
     }
-    .menu button:hover { background: #ffd54f; transform: scale(1.02); }
+
+    .menu button:hover {
+      transform: scale(1.03);
+      background: #ffe066;
+    }
+
     .socials {
-      display: flex; justify-content:center; align-items:center;
-      gap: 1rem; flex-wrap: nowrap; margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+      margin-top: 1.5rem;
     }
+
     .socials button {
-      background: #fff59d; border: none;
-      padding: 0.8rem 1.2rem; border-radius: 12px;
-      font-size: 1rem; cursor: pointer; font-weight: bold;
-      transition: transform 0.2s, background 0.2s;
-      min-width: 120px; color: #000;
+      background: #fffbe6;
+      border: 2px solid #ffe066;
+      border-radius: 14px;
+      padding: 0.7rem 1.3rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-    .socials button:hover { background: #ffe082; transform: scale(1.03); }
-    #msg {
-      position: fixed; bottom: 20px; left: 50%;
-      transform: translateX(-50%); background: #323232;
-      color: #fff; padding: 12px 20px; border-radius: 8px;
-      font-size: 0.95rem; display: none; z-index: 9999;
+
+    .socials button:hover {
+      background: #fff2b3;
+      transform: scale(1.05);
     }
-    .notif-banner {
-      display: none; position: fixed; top: 70px; left: 50%;
-      transform: translateX(-50%); background: #fff9e6;
-      border: 3px solid #ffd54f; border-radius: 12px;
-      padding: 15px 20px; width: 90%; max-width: 450px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      z-index: 1000; font-family: "Fredoka", sans-serif;
-    }
-    .notif-banner p { margin: 0.6rem 0; font-size: 15px; color: #333; line-height: 1.4; }
-    .notif-banner strong { color: #000; }
-    #closeNotif {
-      margin-top: 10px; background: #ffd54f; border: none;
-      padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold;
-    }
-    @media (max-width:600px){
-      h1{font-size:1.6rem;} .menu{max-width:90%;}
-      .socials{flex-direction:row; justify-content:center;}
-      .socials button{flex:1; max-width:140px;}
+
+    h2 {
+      margin-top: 2.2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #222;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
   </style>
 </head>
 
 <body>
-<div id="menuContainer">
-  <header>
-    <div class="notif-icon" id="notifBtn" title="Notificações">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
-      </svg>
-      <span class="notif-badge"></span>
-    </div>
+  <!-- 🎵 Som suave ao abrir -->
+  <audio id="welcomeSound" preload="auto">
+    <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_28e5acb5ac.mp3" type="audio/mpeg">
+  </audio>
 
-    <div style="display:flex; gap:0.5rem; margin-left:auto;">
-      <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
-      <button onclick="logout()" class="btn">Sair da Conta</button>
-    </div>
-  </header>
+  <div id="menuContainer">
+    <header>
+      <div class="notif-icon" id="notifBtn" title="Notificações">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        </svg>
+        <span class="notif-badge"></span>
+      </div>
 
-  <main>
-    <h1>Seja bem-vindo ao<br>Pintando a Palavra</h1>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button onclick="logout()" class="btn">🚪 Sair</button>
+      </div>
+    </header>
 
-    <div class="menu">
-      <button onclick="abrirApp()">Histórias</button>
-      <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">Atividades</button>
-      <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">PDF Completo</button>
-    </div>
+    <main>
+      <div id="saudacao" class="saudacao"></div>
 
-    <h2>Siga-nos nas redes sociais</h2>
-    <div class="socials">
-      <button onclick="window.open('https://www.instagram.com/pintandoapalavra_?igsh=MTBzdjdnc2k3OG4yaQ==', '_blank')">Instagram</button>
-      <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">Facebook</button>
-    </div>
-  </main>
-</div>
+      <div class="menu" id="menuPrincipal" style="opacity:0;">
+        <button onclick="abrirApp()">📖 Histórias</button>
+        <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">🎨 Atividades</button>
+        <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
+      </div>
 
-<div class="notif-banner" id="notifBanner">
-  <p><strong>⚡ Funciona muito melhor off-line!</strong></p>
-  <p><strong>Primeiro acesso:</strong> abra com internet para baixar tudo.</p>
-  <p><strong>Depois disso:</strong> funciona 100% off-line.</p>
-  <hr>
-  <p><strong>📲 Como instalar o app:</strong><br> Clique em “📲 Instalar App”.</p>
-  <button id="closeNotif">Fechar</button>
-</div>
+      <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
+      <div class="socials" id="socialsBlock" style="opacity:0;">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
+  </div>
 
-<iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
+  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-<script>
-function abrirApp() {
-  document.getElementById("menuContainer").style.display = "none";
-  const iframe = document.getElementById("conteudo");
-  iframe.style.display = "block";
-  iframe.src = "app/index.html"; 
-  history.pushState({tela: "app"}, "", "#app");
-}
-window.onpopstate = function(event) {
-  if (!event.state || event.state.tela !== "app") {
-    document.getElementById("conteudo").style.display = "none";
-    document.getElementById("menuContainer").style.display = "block";
-  }
-};
+  <script>
+    // 🎵 Som de boas-vindas
+    document.addEventListener("DOMContentLoaded", () => {
+      const sound = document.getElementById("welcomeSound");
+      setTimeout(() => sound.play().catch(() => {}), 800);
+    });
 
-// 🔹 Instalar PWA
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installBtn = document.getElementById("installBtn");
-  installBtn.style.display = "inline-block";
-  installBtn.style.opacity = "0";
-  setTimeout(() => installBtn.style.opacity = "1", 600);
-
-  installBtn.addEventListener("click", async () => {
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBtn.remove();
-  });
-});
-</script>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-    authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-    projectId: "pintando-a-palavra-fnl",
-    storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-    messagingSenderId: "394858613454",
-    appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  async function validarAcesso() {
-    const email = localStorage.getItem("savedEmail");
-    const isLogged = localStorage.getItem("isLogged") === "true";
-
-    if (!isLogged || !email) {
-      window.location.replace("login.html");
-      return;
+    function abrirApp() {
+      document.getElementById("menuContainer").style.display = "none";
+      const iframe = document.getElementById("conteudo");
+      iframe.style.display = "block";
+      iframe.src = "app/index.html"; 
+      history.pushState({tela: "app"}, "", "#app");
     }
-
-    // 🔹 Permite uso offline
-    if (!navigator.onLine) return;
-
-    try {
-      const ref = doc(db, "usuariosGoogle", email.toLowerCase());
-      const snap = await getDoc(ref);
-
-      if (!snap.exists()) {
-        console.warn("Usuário não encontrado no Firestore");
-        localStorage.clear();
-        window.location.replace("login.html");
-      } else {
-        console.log("✅ Usuário verificado:", email);
+    window.onpopstate = function(event) {
+      if (!event.state || event.state.tela !== "app") {
+        document.getElementById("conteudo").style.display = "none";
+        document.getElementById("menuContainer").style.display = "block";
       }
-    } catch (err) {
-      console.error("Erro ao validar acesso:", err);
+    };
+
+    // 🔹 Instalar PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById("installBtn");
+      installBtn.style.display = "inline-block";
+      installBtn.addEventListener("click", async () => {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.remove();
+      });
+    });
+  </script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 👋 Saudação animada (letra por letra)
+    async function exibirSaudacao() {
+      const saudacaoDiv = document.getElementById("saudacao");
+      const menu = document.getElementById("menuPrincipal");
+      const socials = document.getElementById("socialsBlock");
+      const title = document.getElementById("socialTitle");
+      const email = localStorage.getItem("savedEmail");
+      if (!email) return;
+
+      const nome = email.split("@")[0];
+      const nomeFormatado = nome.charAt(0).toUpperCase() + nome.slice(1);
+      const texto = `👋 Olá, <strong>${nomeFormatado}</strong>!<br>Que bom ter você aqui 💛`;
+
+      saudacaoDiv.innerHTML = "";
+      saudacaoDiv.classList.add("typing");
+
+      let letras = "";
+      for (const char of texto) {
+        letras += `<span>${char === " " ? "&nbsp;" : char}</span>`;
+      }
+      saudacaoDiv.innerHTML = letras;
+
+      const spans = saudacaoDiv.querySelectorAll("span");
+      spans.forEach((span, i) => {
+        span.style.animationDelay = `${i * 0.04}s`;
+      });
+
+      // Exibe menu e redes após saudação
+      setTimeout(() => {
+        menu.style.transition = "opacity 0.8s ease";
+        socials.style.transition = "opacity 0.8s ease";
+        title.style.transition = "opacity 0.8s ease";
+        menu.style.opacity = 1;
+        socials.style.opacity = 1;
+        title.style.opacity = 1;
+      }, spans.length * 40 + 800);
     }
-  }
 
-  document.addEventListener("DOMContentLoaded", validarAcesso);
+    async function validarAcesso() {
+      const email = localStorage.getItem("savedEmail");
+      const isLogged = localStorage.getItem("isLogged") === "true";
+      if (!isLogged || !email) {
+        window.location.replace("login.html");
+        return;
+      }
 
-  window.logout = () => {
-    localStorage.clear();
-    window.location.replace("login.html");
-  };
-</script>
+      if (!navigator.onLine) return;
+
+      try {
+        const ref = doc(db, "usuariosGoogle", email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (!snap.exists()) {
+          localStorage.clear();
+          window.location.replace("login.html");
+        }
+      } catch (err) {
+        console.error("Erro ao validar acesso:", err);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      exibirSaudacao();
+      validarAcesso();
+    });
+
+    window.logout = () => {
+      localStorage.clear();
+      window.location.replace("login.html");
+    };
+  </script>
 </body>
 </html>
