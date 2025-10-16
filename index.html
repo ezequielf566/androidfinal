@@ -17,7 +17,6 @@
       flex-direction: column;
       background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
       background-attachment: fixed;
-      position: relative;
       overflow-x: hidden;
     }
 
@@ -74,8 +73,6 @@
       align-items: center;
       padding: 2.5rem 1rem 3rem;
       text-align: center;
-      position: relative;
-      z-index: 2;
     }
 
     .saudacao {
@@ -94,9 +91,9 @@
       animation: fadeIn 0.6s ease forwards;
     }
 
-    @keyframes fadeIn { 
-      from { opacity: 0; transform: translateY(10px); } 
-      to { opacity: 1; transform: translateY(0); } 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .menu {
@@ -236,6 +233,7 @@
     });
   </script>
 
+  <!-- 🔐 Firebase + Acesso offline restaurado -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -268,19 +266,27 @@
     async function validarAcesso() {
       const email = localStorage.getItem("savedEmail");
       const isLogged = localStorage.getItem("isLogged") === "true";
+
+      // ✅ Permite abrir offline se já houver login salvo
       if (!isLogged || !email) {
+        if (!navigator.onLine) return; // está offline mas tem cache → deixa abrir
         window.location.replace("login.html");
         return;
       }
-      if (!navigator.onLine) return;
-      try {
-        const ref = doc(db, "usuariosGoogle", email.toLowerCase());
-        const snap = await getDoc(ref);
-        if (!snap.exists()) {
-          localStorage.clear();
-          window.location.replace("login.html");
+
+      // 🔹 Só valida no Firebase quando online
+      if (navigator.onLine) {
+        try {
+          const ref = doc(db, "usuariosGoogle", email.toLowerCase());
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            localStorage.clear();
+            window.location.replace("login.html");
+          }
+        } catch {
+          console.warn("Falha na verificação Firebase (modo offline ativo).");
         }
-      } catch {}
+      }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
