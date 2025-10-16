@@ -1,153 +1,268 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pintando a Palavra — Colorir</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pintando a Palavra — Menu</title>
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
 
   <style>
-    /* Tela de carregamento */
-    #loadingOverlay {
-      position: fixed;
-      inset: 0;
-      background: #fff9e6;
+    body {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      background: #fff9e6; /* 🔹 Fundo limpo e sólido */
+      color: #000;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffd54f;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .notif-icon {
+      position: relative;
+      cursor: pointer;
+      animation: pulse 1.5s infinite;
+      display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    #loadingOverlay.hidden {
-      opacity: 0;
-      visibility: hidden;
+    .notif-icon svg { width: 28px; height: 28px; }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.15);} }
+
+    .notif-badge {
+      position: absolute; top: 0; right: 0;
+      width: 12px; height: 12px; background: red;
+      border-radius: 50%; border: 2px solid white;
+      animation: blink 1s infinite;
     }
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #ffd54f;
-      border-top: 6px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
+    @keyframes blink {0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+    header .btn {
+      background: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      color: #000;
+      margin-left: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text {
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.1rem;
-      color: #444;
+    header .btn:hover { background: #f1f1f1; }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
+      padding: 2rem;
+    }
+
+    .welcome-box {
+      background: #fff;
+      padding: 20px 25px;
+      border-radius: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-size: 1.3rem;
+      color: #222;
+      max-width: 400px;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .menu button {
+      background: #ffe082;
+      border: none;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+      width: 100%;
+      color: #000;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    .menu button:hover {
+      background: #ffd54f;
+      transform: scale(1.02);
+    }
+
+    .socials {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .socials button {
+      background: #fff;
+      border: 2px solid #ffd54f;
+      padding: 0.8rem 1.2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+      color: #000;
+      min-width: 120px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .socials button:hover {
+      background: #fffde7;
+      transform: scale(1.03);
+    }
+
+    h2 {
+      margin-top: 2rem;
+      font-size: 1.3rem;
+      color: #000;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width:600px){
+      h1{font-size:1.6rem;}
+      .menu{max-width:90%;}
+      .socials{flex-direction:row; justify-content:center;}
+      .socials button{flex:1; max-width:140px;}
     }
   </style>
 </head>
 
 <body>
-  <!-- 🎨 Tela de carregamento -->
-  <div id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">🎨 Carregando artes...</div>
-  </div>
+<div id="menuContainer">
+  <header>
+    <div class="notif-icon" id="notifBtn" title="Notificações">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      </svg>
+      <span class="notif-badge"></span>
+    </div>
 
-  <header class="topbar">
-    <div id="progressWidget" class="progress-widget" aria-label="Progresso do livro">
-      <div class="counter">
-        <span id="starCount" class="star-count">00</span>
-        <span class="sep">/</span>
-        <span id="totalPages" class="total-pages">00</span>
-        <span class="star-icon" aria-hidden="true">★</span>
-        <span id="progressPercent" class="percent">0%</span>
-      </div>
-      <div class="progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="track"><div id="progressFill" class="progress-fill"></div></div>
-      </div>
-      <audio id="starSound" src="assets/sounds/estrela.mp3" preload="auto"></audio>
+    <div style="display:flex; gap:0.5rem; margin-left:auto;">
+      <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+      <button onclick="logout()" class="btn">📦 Sair</button>
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="stage">
-      <div id="svgMount" class="svgMount"></div>
-    </section>
-
-    <section class="controls">
-      <div class="palette">
-        <div class="swatches" id="swatches">
-          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB" aria-label="Azul céu"></button>
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2" aria-label="Bege pele"></button>
-          <button class="sw" data-color="#E53935" style="--c:#E53935" aria-label="Vermelho"></button>
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00" aria-label="Laranja"></button>
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835" aria-label="Amarelo"></button>
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342" aria-label="Verde"></button>
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5" aria-label="Azul"></button>
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA" aria-label="Roxo"></button>
-          <button class="sw" data-color="#263238" style="--c:#263238" aria-label="Cinza escuro"></button>
-          <button class="sw custom" id="customColorBtn" aria-label="Cor personalizada"></button>
-          <input type="color" id="picker" style="display:none" value="#8D6E63" aria-label="Cor personalizada" />
-        </div>
-
-        <div class="tools">
-          <button id="eraserBtn" class="btn">Borracha</button>
-          <button id="undoBtn" class="btn">Desfazer</button>
-          <button id="redoBtn" class="btn">Refazer</button>
-          <button id="savePng" class="btn primary">Salvar PNG</button>
-        </div>
-
-        <div class="pager">
-          <button id="prevBtn" class="navbtn">◀</button>
-          <span id="pageLabel">1 / ?</span>
-          <button id="nextBtn" class="navbtn">▶</button>
-        </div>
-      </div>
-    </section>
-
-    <div class="zoom-controls">
-      <button id="zoom-in" class="zoom-btn" aria-label="Ampliar">
-        <svg width="28" height="28" viewBox="0 0 20 20">
-          <line x1="10" y1="4" x2="10" y2="16" stroke="black" stroke-width="2"/>
-          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
-        </svg>
-      </button>
-      <button id="zoom-out" class="zoom-btn" aria-label="Reduzir">
-        <svg width="28" height="28" viewBox="0 0 20 20">
-          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
-        </svg>
-      </button>
+  <main>
+    <div class="welcome-box" id="welcomeBox">
+      👋 <strong>Olá!</strong><br>Que bom ter você aqui 💛
     </div>
 
-    <div class="zoom-arrows">
-      <button id="arrow-left" aria-label="Mover para a esquerda">←</button>
-      <button id="arrow-right" aria-label="Mover para a direita">→</button>
+    <div class="menu">
+      <button onclick="abrirApp()">📖 Histórias</button>
+      <button onclick="window.open('https://drive.google.com/drive/folders/16yViJ5Ft9wIsLNxzTzNsygpvoBTYxnrT?usp=drive_link', '_blank')">🎨 Atividades</button>
+      <button onclick="window.open('https://drive.google.com/drive/folders/1MFnUpkdOk7yVpup7IRr1oHnJWdahEWUB?usp=drive_link', '_blank')">📚 PDF Completo</button>
+    </div>
+
+    <h2>Siga-nos nas redes sociais</h2>
+    <div class="socials">
+      <button onclick="window.open('https://www.instagram.com/pintandoapalavra_?igsh=MTBzdjdnc2k3OG4yaQ==', '_blank')">📸 Instagram</button>
+      <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
     </div>
   </main>
+</div>
 
-  <script src="js/script.js"></script>
-  <script src="js/patch-gestures-scroll.js"></script>
+<iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <script>
-  // 🎨 Cor personalizada
-  document.addEventListener("DOMContentLoaded", function() {
-    const picker = document.getElementById("picker");
-    const customBtn = document.getElementById("customColorBtn");
-    if (picker && customBtn) {
-      customBtn.addEventListener("click", () => picker.click());
-      picker.addEventListener("input", (e) => {
-        customBtn.style.background = e.target.value;
-        customBtn.setAttribute("data-color", e.target.value);
-      });
-    }
+<script>
+function abrirApp() {
+  document.getElementById("menuContainer").style.display = "none";
+  const iframe = document.getElementById("conteudo");
+  iframe.style.display = "block";
+  iframe.src = "app/index.html"; 
+  history.pushState({tela: "app"}, "", "#app");
+}
+
+window.onpopstate = function(event) {
+  if (!event.state || event.state.tela !== "app") {
+    document.getElementById("conteudo").style.display = "none";
+    document.getElementById("menuContainer").style.display = "block";
+  }
+};
+
+// 🔹 Botão Instalar PWA
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById("installBtn");
+  installBtn.style.display = "inline-block";
+  installBtn.style.opacity = "0";
+  setTimeout(() => installBtn.style.opacity = "1", 600);
+
+  installBtn.addEventListener("click", async () => {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBtn.remove();
+  });
+});
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+    authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+    projectId: "pintando-a-palavra-fnl",
+    storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+    messagingSenderId: "394858613454",
+    appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🎨 Saudação personalizada
+  document.addEventListener("DOMContentLoaded", async () => {
+    const email = localStorage.getItem("savedEmail");
+    if (!email) return;
+    const nome = email.split("@")[0].replace(/\d+/g, "").replace(".", " ");
+    const firstName = nome.charAt(0).toUpperCase() + nome.slice(1);
+    document.getElementById("welcomeBox").innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
   });
 
-  // ⏳ Mostra tela de carregamento até o primeiro SVG ser lido
-  const overlay = document.getElementById("loadingOverlay");
-  const observer = new MutationObserver(() => {
-    const svgLoaded = document.querySelector("#svgMount svg");
-    if (svgLoaded) {
-      setTimeout(() => overlay.classList.add("hidden"), 400);
-      observer.disconnect();
-    }
-  });
-  observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
-  </script>
+  // 🔐 Logout
+  window.logout = () => {
+    localStorage.clear();
+    window.location.replace("login.html");
+  };
+</script>
 </body>
 </html>
