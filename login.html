@@ -79,7 +79,7 @@
     <h1>Pintando a Palavra</h1>
     <p class="subtitle">Colorindo histórias da Bíblia</p>
 
-    <!-- 🔹 Novo botão Google -->
+    <!-- 🔹 Botão Google -->
     <button id="loginGoogle" class="google-btn">
       <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
         <path fill="#EA4335" d="M24 9.5c3.15 0 5.91 1.09 8.12 2.88l6.03-6.03C34.21 3.41 29.42 1.5 24 1.5 14.64 1.5 6.56 7.24 3.04 15.09l7.35 5.71C12.18 13.03 17.61 9.5 24 9.5z"/>
@@ -95,7 +95,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -114,44 +114,55 @@
     const loginBtn = document.getElementById("loginGoogle");
     const errorMsg = document.getElementById("errorMsg");
 
+    // 🔹 Detecta se está retornando de redirect (Play Store / WebView)
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) await handleLogin(result.user);
+    }).catch((err) => console.error("Redirect error:", err));
+
+    // 🔹 Função principal de login
+    async function handleLogin(user) {
+      const email = user.email.toLowerCase();
+      const ref = doc(db, "usuariosGoogle", email);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          email,
+          premium: false,
+          removeAds: false,
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      const userData = (await getDoc(ref)).data();
+      localStorage.setItem("savedEmail", email);
+      localStorage.setItem("isLogged", "true");
+      localStorage.setItem("premium", userData.premium ? "true" : "false");
+      localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
+
+      errorMsg.textContent = "✅ Login realizado com sucesso!";
+      errorMsg.style.color = "green";
+      setTimeout(() => window.location.replace("/index.html"), 800);
+    }
+
+    // 🔹 Botão Google
     loginBtn.addEventListener("click", async () => {
       errorMsg.textContent = "⏳ Conectando com o Google...";
       errorMsg.style.color = "#333";
 
       try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const email = user.email.toLowerCase();
-
-        // 🔹 Nova coleção: usuariosGoogle
-        const ref = doc(db, "usuariosGoogle", email);
-        const snap = await getDoc(ref);
-
-        if (!snap.exists()) {
-          await setDoc(ref, {
-            email: email,
-            premium: false,
-            removeAds: false,
-            createdAt: new Date().toISOString()
-          });
-        }
-
-        const userData = (await getDoc(ref)).data();
-
-        // 🔹 Salva localmente
-        localStorage.setItem("savedEmail", email);
-        localStorage.setItem("isLogged", "true");
-        localStorage.setItem("premium", userData.premium ? "true" : "false");
-        localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
-
-        errorMsg.textContent = "✅ Login realizado com sucesso!";
-        errorMsg.style.color = "green";
-        setTimeout(() => window.location.href = "index.html", 800);
-
+        await handleLogin(result.user);
       } catch (err) {
-        console.error(err);
-        errorMsg.textContent = "⚠️ Erro ao autenticar com o Google.";
-        errorMsg.style.color = "red";
+        console.warn("Popup falhou, tentando redirect...", err.code);
+        // ⚙️ Se popup for bloqueado (em Android / TWA), usa redirect
+        if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
+          await signInWithRedirect(auth, provider);
+        } else {
+          console.error(err);
+          errorMsg.textContent = "⚠️ Erro ao autenticar com o Google.";
+          errorMsg.style.color = "red";
+        }
       }
     });
   </script>
