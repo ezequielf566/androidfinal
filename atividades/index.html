@@ -77,6 +77,36 @@
       animation:spin 1s linear infinite;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
+    .modal{
+      position:fixed;inset:0;background:rgba(0,0,0,.35);
+      display:none;align-items:center;justify-content:center;z-index:1000;padding:16px;
+    }
+    .modal.open{display:flex;}
+    .sheet{
+      width:min(960px,96vw);max-height:90vh;background:#fff;border-radius:18px;overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;
+      animation:pop .18s ease;
+    }
+    @keyframes pop{from{transform:scale(.96);opacity:.8}to{transform:scale(1);opacity:1}}
+    .sheet header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 14px;background:linear-gradient(90deg,var(--gold),var(--gold-2));
+    }
+    .sheet header h3{margin:0;font-size:1.1rem;}
+    .close{border:none;background:transparent;font-size:22px;cursor:pointer;}
+    .gallery{
+      padding:14px;overflow:auto hidden;display:flex;gap:12px;scroll-snap-type:x mandatory;background:#fffef6;
+    }
+    .gallery img{
+      height:62vh;max-height:620px;border-radius:12px;object-fit:cover;scroll-snap-align:center;
+      box-shadow:0 4px 14px rgba(0,0,0,.18);background:#fff6d1;
+    }
+    .sheet footer{
+      display:flex;gap:10px;padding:12px;border-top:1px solid #f0e6be;background:#fffef6;
+      flex-wrap:wrap;justify-content:flex-end;
+    }
+    .btn-secondary{background:#f2f2f2;color:#333;}
+    .btn-primary{background:var(--gold);color:#222;}
     .upgrade{
       position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;
     }
@@ -84,13 +114,10 @@
     .upgrade .box{
       width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;
       box-shadow:0 14px 46px rgba(0,0,0,.32);
-      text-align:center;
     }
     .upgrade h3{margin:0 0 8px;}
     .benefits{margin:8px 0 14px;line-height:1.6;}
-    .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-    .btn-secondary{background:#f2f2f2;color:#333;}
-    .btn-primary{background:var(--gold);color:#222;}
+    .upgrade .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
     .link{color:#1565c0;text-decoration:none;font-weight:700;}
   </style>
 </head>
@@ -108,72 +135,92 @@
   <header><h1>Atividades Bíblicas</h1></header>
 
   <main>
-    <p class="intro">Explore atividades gratuitas e descubra os conteúdos completos disponíveis no pacote premium.</p>
+    <p class="intro">Veja as prévias das atividades e baixe os PDFs completos quando quiser.</p>
     <section class="grid" id="grid"></section>
   </main>
 
+  <div class="modal" id="modal">
+    <div class="sheet">
+      <header>
+        <h3 id="modalTitle">Prévia</h3>
+        <button class="close" id="closeModal">✕</button>
+      </header>
+      <div class="gallery" id="gallery"></div>
+      <footer>
+        <button class="btn btn-secondary" id="btnVoltar">Voltar</button>
+        <button class="btn btn-primary" id="btnBaixar">📥 Baixar PDF completo</button>
+      </footer>
+    </div>
+  </div>
+
   <div class="upgrade" id="upgrade">
     <div class="box">
-      <h3>💛 Conteúdo Premium</h3>
+      <h3>💾 Baixar PDFs</h3>
       <p class="benefits">
-        💾 Este PDF faz parte do pacote completo<br/>
-        🌟 Acesso ilimitado a todas as atividades e histórias<br/>
-        🕊️ Sem anúncios e com atualizações contínuas<br/><br/>
-        👉 Mas você também pode aproveitar nossos PDFs gratuitos!
+        🕊️ Alguns PDFs são gratuitos!<br>
+        💛 Outros fazem parte da versão Premium com acesso ilimitado.<br>
+        🌟 Experimente os gratuitos e depois explore o conteúdo completo.
       </p>
       <div class="actions">
-        <button class="btn btn-secondary" id="btnFecharUpgrade">Ver PDFs Gratuitos</button>
-        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">
-          💳 Fazer Upgrade
-        </a>
+        <button class="btn btn-secondary" id="btnFecharUpgrade">Fechar</button>
+        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade Premium</a>
       </div>
     </div>
   </div>
 
   <script>
     const CONTENT = [
-      { id:'biblia', cover:'img/biblia-capa.png', pdf:'pdfs/biblia.pdf', premium:true },
-      { id:'caca', cover:'img/caca-capa.png', pdf:'pdfs/caca.pdf', premium:false },
-      { id:'ligar', cover:'img/ligar-capa.png', pdf:'pdfs/ligar.pdf', premium:true },
-      { id:'cruzadinha', cover:'img/cruzadinha-capa.png', pdf:'pdfs/cruzadinha.pdf', premium:false },
-      { id:'caca-es', cover:'img/caca-es-capa.png', pdf:'pdfs/caca-es.pdf', premium:false },
-      { id:'atividades-es', cover:'img/atividades-es-capa.png', pdf:'pdfs/atividades-es.pdf', premium:true }
+      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png','img/biblia-3.png'], pdf:'pdfs/biblia.pdf' },
+      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png','img/caca-3.png'], pdf:'pdfs/caca.pdf' },
+      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png','img/ligar-3.png'], pdf:'pdfs/ligar.pdf' },
+      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png','img/cruzadinha-3.png'], pdf:'pdfs/cruzadinha.pdf' },
+      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png','img/caca-es-3.png'], pdf:'pdfs/caca-es.pdf' },
+      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png','img/atividades-es-3.png'], pdf:'pdfs/atividades-es.pdf' }
     ];
 
-    const grid=document.getElementById('grid');
-    const loading=document.getElementById('loading');
-    const upgrade=document.getElementById('upgrade');
+    const grid = document.getElementById('grid');
+    const modal = document.getElementById('modal');
+    const gallery = document.getElementById('gallery');
+    const modalTitle = document.getElementById('modalTitle');
+    const loading = document.getElementById('loading');
+    const entradaAudio = document.getElementById('entradaAudio');
+    const upgrade = document.getElementById('upgrade');
 
     function render(){
       grid.innerHTML = CONTENT.map(item => `
         <article class="card">
           <img class="cover" src="${item.cover}" alt="Atividade" />
-          <button class="btn" data-id="${item.id}">
-            ${item.premium ? '💳 Baixar PDF Completo' : '📥 Baixar PDF Gratuito'}
-          </button>
-        </article>`
-      ).join('');
+          <button class="btn" data-id="${item.id}">Ver prévias</button>
+        </article>`).join('');
     }
 
-    document.addEventListener('click', e => {
-      const btn = e.target.closest('button.btn');
-      if (!btn) return;
-
-      const id = btn.dataset.id;
+    function openPreview(id){
       const item = CONTENT.find(x => x.id === id);
-      if (!item) return;
+      if(!item)return;
+      modalTitle.textContent = item.title;
+      const basePath = window.location.pathname.includes('/atividades') ? './' : 'atividades/';
+      gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia de ${item.title}">`).join('');
+      modal.classList.add('open');
+    }
 
-      const isPremiumUser = localStorage.getItem("premium") === "true";
+    function closePreview(){
+      modal.classList.remove('open');
+      gallery.innerHTML = '';
+    }
 
-      if (item.premium && !isPremiumUser) {
-        upgrade.classList.add('open');
-      } else {
-        window.open(item.pdf, '_blank');
-      }
+    function handleDownload(){ upgrade.classList.add('open'); }
+    function closeUpgrade(){ upgrade.classList.remove('open'); }
+
+    document.addEventListener('click',e=>{
+      const btn=e.target.closest('button.btn');
+      if(btn&&btn.dataset.id){openPreview(btn.dataset.id);}
     });
+    document.getElementById('closeModal').addEventListener('click',closePreview);
+    document.getElementById('btnVoltar').addEventListener('click',closePreview);
+    document.getElementById('btnBaixar').addEventListener('click',handleDownload);
+    document.getElementById('btnFecharUpgrade').addEventListener('click',closeUpgrade);
 
-    document.getElementById('btnFecharUpgrade').addEventListener('click', ()=> upgrade.classList.remove('open'));
-    window.addEventListener('load', ()=>{ loading.classList.remove('active'); render(); });
+    window.addEventListener('load',()=>{loading.classList.remove('active');render();});
   </script>
 </body>
 </html>
