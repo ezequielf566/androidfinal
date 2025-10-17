@@ -66,7 +66,6 @@
       transition:transform .12s ease,background .12s ease;width:100%;
     }
     .btn:hover{transform:translateY(-1px);}
-    .btn:active{transform:translateY(0);}
     .btn.premium{background:var(--gold);color:#2a2a2a;}
     .btn.premium:hover{background:#ffe066;}
     .btn.free{background:var(--green);color:#1b5e20;}
@@ -169,7 +168,7 @@
       </p>
       <div class="actions">
         <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>
-        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade</a>
+        <button class="btn btn-primary" id="btnUpgradePlay">💳 Fazer upgrade</button>
       </div>
     </div>
   </div>
@@ -177,14 +176,14 @@
   <script>
     const CONTENT = [
       // 🔒 PREMIUM
-      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png'], pdf:'pdfs/biblia.pdf', free:false },
-      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png'], pdf:'pdfs/ligar.pdf', free:false },
-      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png'], pdf:'pdfs/atividades-es.pdf', free:false },
+      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1RqqKXDMUaOH4WAAz1RxbHnueXbnl3mmF&confirm=no_antivirus', free:false },
+      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1-Y7BHqx6ITiXqLM6R_YUFeNiVswre8O_&confirm=no_antivirus', free:false },
+      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1h33AqkbNEe1Z00-_16QcRV0fTxondQLt&confirm=no_antivirus', free:false },
 
       // 🟢 GRATUITOS
-      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png'], pdf:'pdfs/caca.pdf', free:true },
-      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png'], pdf:'pdfs/cruzadinha.pdf', free:true },
-      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png'], pdf:'pdfs/caca-es.pdf', free:true }
+      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png'], pdf:'https://drive.google.com/uc?export=download&id=19h9WA8LYGwEiL6687bLseYp5FAv1ZizR&confirm=no_antivirus', free:true },
+      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1Mt1zJNV1qmp3tHGawXKHDJe3KuYlfSMi&confirm=no_antivirus', free:true },
+      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1zJjkWBT1aXrLSDOnRCDpT7ykW0Hl_sdS&confirm=no_antivirus', free:true }
     ];
 
     const grid = document.getElementById('grid');
@@ -226,6 +225,14 @@
 
     function handleDownload(){ upgrade.classList.add('open'); }
     function closeUpgrade(){ upgrade.classList.remove('open'); }
+
+    // Compra interna (Google Play)
+    document.getElementById('btnUpgradePlay').addEventListener('click',()=>{
+      closeUpgrade();
+      alert('🛒 Redirecionando para compra interna do Google Play...');
+      // Aqui entrará a chamada real da Billing Library:
+      // billing.purchase('premium_access');
+    });
 
     document.addEventListener('click',e=>{
       const btn=e.target.closest('button.btn');
