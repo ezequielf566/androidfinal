@@ -1,68 +1,47 @@
-// ✅ Pintando a Palavra — Service Worker (v1.1.0)
-// Corrigido: áudio local + cache dinâmico e offline resiliente
-
-const CACHE_NAME = 'pintando-a-palavra-v1.1.0';
-const OFFLINE_URL = '/offline.html';
-
-const FILES_TO_CACHE = [
+// ✅ Pintando a Palavra — Service Worker Final
+const CACHE_NAME = 'pintandoapalavra-v1.0.9';
+const CACHE_FILES = [
   '/',
   '/index.html',
-  '/menu.html',
-  '/login.html',
   '/manifest.json',
   '/audio/entrada.mp3',
-  '/audio/fundo.mp3', // 🔊 fundo musical offline
-  '/img/icon-512.png',
-  '/img/icon-192.png',
   '/app/index.html',
   '/atividades/index.html',
   '/pdfcompleto/index.html',
-  '/offline.html'
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
-// 🛠️ Instalação
+// Instala e faz o cache inicial
 self.addEventListener('install', event => {
-  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async cache => {
-      try {
-        await cache.addAll(FILES_TO_CACHE);
-        console.log('✅ Todos os arquivos foram cacheados!');
-      } catch (e) {
-        console.warn('⚠️ Falha ao cachear:', e);
-      }
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(CACHE_FILES))
+      .then(() => self.skipWaiting())
+      .catch(err => console.error('Erro ao adicionar ao cache:', err))
   );
 });
 
-// ♻️ Ativação
+// Ativa e limpa caches antigos
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => key !== CACHE_NAME && caches.delete(key))
-      )
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// 🌐 Interceptação
+// Intercepta requisições e serve offline
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then(response => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(OFFLINE_URL));
-    })
+    caches.match(event.request).then(response =>
+      response ||
+      fetch(event.request).then(fetchRes => {
+        const clone = fetchRes.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return fetchRes;
+      }).catch(() => caches.match('/index.html'))
+    )
   );
 });
