@@ -1,3 +1,4 @@
+<!-- 🔸 Pintando a Palavra — Menu (com suporte offline total) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -224,7 +225,7 @@
     });
   </script>
 
-  <!-- 🔐 Firebase + Acesso offline -->
+  <!-- 🔐 Firebase + Login offline -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -287,15 +288,24 @@
     };
   </script>
 
-  <!-- 🔄 Atualização automática -->
+  <!-- 🔄 Atualização automática + registro de Service Worker -->
   <script>
-    const APP_VERSION = '1.0.8'; // altere este número sempre que publicar nova versão
+    const APP_VERSION = '1.0.9';
     const savedVersion = localStorage.getItem('appVersion');
     if (savedVersion !== APP_VERSION) {
       console.log('🌀 Nova versão detectada — limpando cache e recarregando...');
       if ('caches' in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
       localStorage.setItem('appVersion', APP_VERSION);
       window.location.replace(window.location.pathname + '?v=' + APP_VERSION);
+    }
+
+    // 🧩 Registro do Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(() => console.log('✅ Service Worker ativo'))
+          .catch(err => console.error('❌ Falha ao registrar SW:', err));
+      });
     }
   </script>
 </body>
