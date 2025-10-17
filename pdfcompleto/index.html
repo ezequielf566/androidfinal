@@ -60,12 +60,14 @@
     }
     .btn{
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
-      background:var(--gold);color:#2a2a2a;
       box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
       transition:transform .12s ease,background .12s ease;width:100%;
+      background:var(--gold);color:#2a2a2a;
     }
     .btn:hover{transform:translateY(-1px);background:#ffe066;}
     .btn:active{transform:translateY(0);}
+    .btn.soon{background:#f0f0f0;color:#666;cursor:default;}
+    .btn.soon:hover{transform:none;background:#f0f0f0;}
     .loading{
       position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
       background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;
@@ -91,7 +93,6 @@
     .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
     .btn-secondary{background:#f2f2f2;color:#333;}
     .btn-primary{background:var(--gold);color:#222;}
-    .link{color:#1565c0;text-decoration:none;font-weight:700;}
   </style>
 </head>
 
@@ -108,29 +109,40 @@
   <header><h1>PDFs Completos</h1></header>
 
   <main>
-    <p class="intro">Veja as histórias e parábolas e baixe os PDFs completos quando quiser.</p>
+    <p class="intro">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>
     <section class="grid" id="grid"></section>
   </main>
 
   <div class="upgrade" id="upgrade">
     <div class="box">
-      <h3>💾 Baixar PDFs Completos</h3>
+      <h3>💾 Conteúdo Premium</h3>
       <p class="benefits">
-        ✅ Acesso ilimitado a todos os PDFs e histórias<br/>
-        ✅ Sem anúncios e com melhorias exclusivas<br/>
-        ✅ Atualizações contínuas de conteúdo<br/>
+        ✅ Baixe todos os PDFs completos<br/>
+        ✅ Receba atualizações futuras<br/>
+        ✅ Experiência sem anúncios
       </p>
       <div class="actions">
         <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>
-        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade</a>
+        <button class="btn btn-primary" id="btnUpgradePlay">💳 Fazer upgrade</button>
       </div>
     </div>
   </div>
 
   <script>
     const CONTENT = [
-      { id:'historias', cover:'img/historias-capa.png' },
-      { id:'parabolas', cover:'img/parabolas-capa.png' }
+      {
+        id:'historias',
+        title:'Histórias Bíblicas',
+        cover:'img/historias-capa.png',
+        pdf:'https://drive.google.com/uc?export=download&id=1Nh3iMFqpzP5jZzecTUQqRDD4XHfmlXiu',
+        available:true
+      },
+      {
+        id:'parabolas',
+        title:'Parábolas de Jesus',
+        cover:'img/parabolas-capa.png',
+        available:false
+      }
     ];
 
     const grid=document.getElementById('grid');
@@ -140,19 +152,40 @@
     function render(){
       grid.innerHTML = CONTENT.map(item => `
         <article class="card">
-          <img class="cover" src="${item.cover}" alt="Capa" />
-          <button class="btn" data-id="${item.id}">📥 Baixar PDF</button>
-        </article>`).join('');
+          <img class="cover" src="${item.cover}" alt="Capa ${item.title}" />
+          <button class="btn ${item.available ? '' : 'soon'}" data-id="${item.id}">
+            ${item.available ? "📥 Baixar PDF completo" : "🕓 Em breve no Premium"}
+          </button>
+        </article>
+      `).join('');
     }
 
-    document.addEventListener('click',e=>{
-      const btn=e.target.closest('button.btn');
-      if(btn){ upgrade.classList.add('open'); }
+    document.addEventListener('click', e => {
+      const btn = e.target.closest('button.btn');
+      if (!btn) return;
+      const item = CONTENT.find(x => x.id === btn.dataset.id);
+      if (!item) return;
+
+      if (item.available) {
+        // Premium: abre modal de upgrade (não baixa direto)
+        upgrade.classList.add('open');
+      } else {
+        // “Em breve”
+        upgrade.classList.add('open');
+      }
     });
 
-    document.getElementById('btnFecharUpgrade').addEventListener('click',()=>upgrade.classList.remove('open'));
+    document.getElementById('btnFecharUpgrade').addEventListener('click', () => upgrade.classList.remove('open'));
+    document.getElementById('btnUpgradePlay').addEventListener('click', () => {
+      upgrade.classList.remove('open');
+      alert('🛒 Redirecionando para compra interna do Google Play...');
+      // Aqui entrará a chamada da Billing Library futuramente
+    });
 
-    window.addEventListener('load',()=>{loading.classList.remove('active');render();});
+    window.addEventListener('load', () => {
+      loading.classList.remove('active');
+      render();
+    });
   </script>
 </body>
 </html>
