@@ -1,294 +1,305 @@
-<!-- 🔸 Pintando a Palavra — Menu (com suporte offline total) -->  <!DOCTYPE html>  <html lang="pt-BR">  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>Pintando a Palavra — Menu</title>  
-  <link rel="manifest" href="/manifest.json">  
-  <meta name="theme-color" content="#ffffff">  
-  <style>  
-    body {  
-      margin: 0;  
-      font-family: "Fredoka", sans-serif;  
-      color: #222;  
-      min-height: 100vh;  
-      display: flex;  
-      flex-direction: column;  
-      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);  
-      background-attachment: fixed;  
-      overflow-x: hidden;  
-    }  
-    header {  
-      background: linear-gradient(90deg, #ffd54f, #ffea80);  
-      padding: 0.8rem 1.2rem;  
-      display: flex;  
-      justify-content: space-between;  
-      align-items: center;  
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);  
-      position: sticky;  
-      top: 0;  
-      z-index: 10;  
-      border-bottom-left-radius: 12px;  
-      border-bottom-right-radius: 12px;  
-    }  
-    .notif-icon {  
-      position: relative;  
-      cursor: pointer;  
-      animation: pulse 2s infinite;  
-      display: flex;  
-      align-items: center;  
-      justify-content: center;  
-    }  
-    .notif-icon svg { width: 28px; height: 28px; stroke: #222; }  
-    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }  
-    .notif-badge {  
-      position: absolute; top: 2px; right: 2px;  
-      width: 10px; height: 10px;  
-      background: #ff3b30; border-radius: 50%;  
-      border: 2px solid #fff;  
-    }  
-    header .btn {  
-      background: #fff;  
-      border: none;  
-      padding: 0.6rem 1.1rem;  
-      border-radius: 12px;  
-      cursor: pointer;  
-      font-weight: 600;  
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);  
-      transition: all 0.25s ease;  
-      display: flex;  
-      align-items: center;  
-      gap: 6px;  
-    }  
-    header .btn:hover { transform: scale(1.05); background: #fff7d1; }  
-    main {  
-      flex: 1;  
-      display: flex;  
-      flex-direction: column;  
-      align-items: center;  
-      padding: 2.5rem 1rem 3rem;  
-      text-align: center;  
-    }  
-    .saudacao {  
-      font-size: 1.6rem;  
-      line-height: 1.5;  
-      color: #222;  
-      font-weight: 600;  
-      margin-bottom: 2rem;  
-      background: rgba(255, 255, 255, 0.6);  
-      padding: 1rem 1.5rem;  
-      border-radius: 16px;  
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);  
-      backdrop-filter: blur(5px);  
-      display: inline-block;  
-      opacity: 0;  
-      animation: fadeIn 0.6s ease forwards;  
-    }  
-    @keyframes fadeIn {  
-      from { opacity: 0; transform: translateY(10px); }  
-      to { opacity: 1; transform: translateY(0); }  
-    }  
-    .menu {  
-      display: flex;  
-      flex-direction: column;  
-      gap: 1.2rem;  
-      width: 100%;  
-      max-width: 340px;  
-      opacity: 0;  
-      transition: opacity 0.8s ease;  
-    }  
-    .menu button {  
-      background: #ffd54f;  
-      border: none;  
-      padding: 1rem;  
-      border-radius: 16px;  
-      font-size: 1.15rem;  
-      font-weight: 700;  
-      cursor: pointer;  
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),  
-                  0 4px 10px rgba(0,0,0,0.15);  
-      transition: all 0.25s ease;  
-      color: #222;  
-    }  
-    .menu button:hover { transform: scale(1.03); background: #ffe066; }  
-    h2 {  
-      margin-top: 2.2rem;  
-      font-size: 1.25rem;  
-      font-weight: 600;  
-      color: #222;  
-      opacity: 0;  
-      transition: opacity 0.8s ease;  
-    }  
-    .socials {  
-      display: flex;  
-      justify-content: center;  
-      align-items: center;  
-      gap: 1rem;  
-      flex-wrap: nowrap;  
-      margin-top: 1.5rem;  
-      opacity: 0;  
-      transition: opacity 0.8s ease;  
-    }  
-    .socials button {  
-      background: #fffbe6;  
-      border: 2px solid #ffe066;  
-      border-radius: 14px;  
-      padding: 0.7rem 1.3rem;  
-      font-size: 1rem;  
-      font-weight: 600;  
-      cursor: pointer;  
-      transition: all 0.25s ease;  
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);  
-    }  
-    .socials button:hover { background: #fff2b3; transform: scale(1.05); }  
-  </style>  
-</head>  <body>  
-  <audio id="welcomeSound" preload="auto">  
-    <source src="https://cdn.pixabay.com/audio/2023/02/28/audio_28e5acb5ac.mp3" type="audio/mpeg">  
-  </audio>    <div id="menuContainer">  
-    <header>  
-      <div class="notif-icon" id="notifBtn" title="Notificações">  
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">  
-          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>  
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>  
-        </svg>  
-        <span class="notif-badge"></span>  
-      </div>  
-      <div style="display:flex; gap:0.5rem; margin-left:auto;">  
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>  
-        <button onclick="logout()" class="btn">🚪 Sair</button>  
-      </div>  
-    </header>  <main>  
-  <div id="saudacao" class="saudacao"></div>  
-  <div class="menu" id="menuPrincipal">  
-    <button onclick="abrirApp()">📖 Histórias</button>  
-    <button onclick="abrirAtividades()">🎨 Atividades</button>  
-    <button onclick="abrirPdf()">📚 PDF Completo</button>  
-  </div>  
-  <h2 id="socialTitle">Siga-nos nas redes sociais</h2>  
-  <div class="socials" id="socialsBlock">  
-    <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>  
-    <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>  
-  </div>  
-</main>
+<!-- 🔸 Pintando a Palavra — Menu (com suporte offline total + fundo musical local) -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pintando a Palavra — Menu</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(90deg, #ffd54f, #ffea80);
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .notif-icon {
+      position: relative;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notif-icon svg { width: 28px; height: 28px; stroke: #222; }
+    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.1);} }
+    .notif-badge {
+      position: absolute; top: 2px; right: 2px;
+      width: 10px; height: 10px;
+      background: #ff3b30; border-radius: 50%;
+      border: 2px solid #fff;
+    }
+    header .btn {
+      background: #fff;
+      border: none;
+      padding: 0.6rem 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    header .btn:hover { transform: scale(1.05); background: #fff7d1; }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 3rem;
+      text-align: center;
+    }
+    .saudacao {
+      font-size: 1.6rem;
+      line-height: 1.5;
+      color: #222;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      backdrop-filter: blur(5px);
+      display: inline-block;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 340px;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .menu button {
+      background: #ffd54f;
+      border: none;
+      padding: 1rem;
+      border-radius: 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
+                  0 4px 10px rgba(0,0,0,0.15);
+      transition: all 0.25s ease;
+      color: #222;
+    }
+    .menu button:hover { transform: scale(1.03); background: #ffe066; }
+    h2 {
+      margin-top: 2.2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #222;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .socials {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: nowrap;
+      margin-top: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    .socials button {
+      background: #fffbe6;
+      border: 2px solid #ffe066;
+      border-radius: 14px;
+      padding: 0.7rem 1.3rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+    .socials button:hover { background: #fff2b3; transform: scale(1.05); }
+  </style>
+</head>
 
-  </div>    <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>    <script>  
-    document.addEventListener("DOMContentLoaded", () => {  
-      const sound = document.getElementById("welcomeSound");  
-      setTimeout(() => sound.play().catch(() => {}), 800);  
-    });  
-  
-    function abrirApp() { abrirTela("app/index.html", "app"); }  
-    function abrirAtividades() { abrirTela("atividades/index.html", "atividades"); }  
-    function abrirPdf() { abrirTela("pdfcompleto/index.html", "pdfcompleto"); }  
-  
-    function abrirTela(src, tela) {  
-      document.getElementById("menuContainer").style.display = "none";  
-      const iframe = document.getElementById("conteudo");  
-      iframe.style.display = "block";  
-      iframe.src = src;  
-      history.pushState({ tela }, "", "#" + tela);  
-    }  
-  
-    window.onpopstate = function(event) {  
-      const conteudo = document.getElementById("conteudo");  
-      const menu = document.getElementById("menuContainer");  
-      if (!event.state || !["app","atividades","pdfcompleto"].includes(event.state.tela)) {  
-        conteudo.style.display = "none";  
-        menu.style.display = "block";  
-      }  
-    };  
-  
-    // 🔹 Botão instalar PWA  
-    let deferredPrompt;  
-    window.addEventListener('beforeinstallprompt', (e) => {  
-      e.preventDefault();  
-      deferredPrompt = e;  
-      const installBtn = document.getElementById("installBtn");  
-      installBtn.style.display = "inline-block";  
-      installBtn.addEventListener("click", async () => {  
-        deferredPrompt.prompt();  
-        await deferredPrompt.userChoice;  
-        deferredPrompt = null;  
-        installBtn.remove();  
-      });  
-    });  
-  </script>    <!-- 🔐 Firebase + Login offline -->    <script type="module">  
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";  
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";  
-  
-    const firebaseConfig = {  
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",  
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",  
-      projectId: "pintando-a-palavra-fnl",  
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",  
-      messagingSenderId: "394858613454",  
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"  
-    };  
-  
-    const app = initializeApp(firebaseConfig);  
-    const db = getFirestore(app);  
-  
-    async function exibirSaudacao() {  
-      const div = document.getElementById("saudacao");  
-      const nomeCompleto = localStorage.getItem("displayName") || "";  
-      const primeiroNome = nomeCompleto.split(" ")[0] || "Amigo";  
-      div.innerHTML = `👋 Olá, <strong>${primeiroNome}</strong>!<br>Que bom ter você aqui 💛`;  
-      div.style.opacity = 1;  
-      setTimeout(() => {  
-        document.getElementById("menuPrincipal").style.opacity = 1;  
-        document.getElementById("socialsBlock").style.opacity = 1;  
-        document.getElementById("socialTitle").style.opacity = 1;  
-      }, 800);  
-    }  
-  
-    async function validarAcesso() {  
-      const email = localStorage.getItem("savedEmail");  
-      const isLogged = localStorage.getItem("isLogged") === "true";  
-      if (!isLogged || !email) {  
-        if (!navigator.onLine) return;  
-        window.location.replace("login.html");  
-        return;  
-      }  
-      if (navigator.onLine) {  
-        try {  
-          const ref = doc(db, "usuariosGoogle", email.toLowerCase());  
-          const snap = await getDoc(ref);  
-          if (!snap.exists()) {  
-            localStorage.clear();  
-            window.location.replace("login.html");  
-          }  
-        } catch {  
-          console.warn("Falha na verificação Firebase (modo offline ativo).");  
-        }  
-      }  
-    }  
-  
-    document.addEventListener("DOMContentLoaded", () => {  
-      exibirSaudacao();  
-      validarAcesso();  
-    });  
-  
-    window.logout = () => {  
-      localStorage.clear();  
-      window.location.replace("login.html");  
-    };  
-  </script>    <!-- 🔄 Atualização automática + registro de Service Worker -->    <script>  
-    const APP_VERSION = '1.0.11';  
-    const savedVersion = localStorage.getItem('appVersion');  
-    if (savedVersion !== APP_VERSION) {  
-      console.log('🌀 Nova versão detectada — limpando cache e recarregando...');  
-      if ('caches' in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));  
-      localStorage.setItem('appVersion', APP_VERSION);  
-      window.location.replace(window.location.pathname + '?v=' + APP_VERSION);  
-    }  
-  
-    // 🧩 Registro do Service Worker  
-    if ('serviceWorker' in navigator) {  
-      window.addEventListener('load', () => {  
-        navigator.serviceWorker.register('/service-worker.js')  
-          .then(() => console.log('✅ Service Worker ativo'))  
-          .catch(err => console.error('❌ Falha ao registrar SW:', err));  
-      });  
-    }  
-  </script>  </body>  
+<body>
+  <!-- 🎵 Som de fundo local -->
+  <script src="audio/audioController.js" defer></script>
+
+  <div id="menuContainer">
+    <header>
+      <div class="notif-icon" id="notifBtn" title="Notificações">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2z"></path>
+          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        </svg>
+        <span class="notif-badge"></span>
+      </div>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button onclick="logout()" class="btn">🚪 Sair</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="saudacao" class="saudacao"></div>
+      <div class="menu" id="menuPrincipal">
+        <button onclick="abrirApp()">📖 Histórias</button>
+        <button onclick="abrirAtividades()">🎨 Atividades</button>
+        <button onclick="abrirPdf()">📚 PDF Completo</button>
+      </div>
+      <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
+      <div class="socials" id="socialsBlock">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
+  </div>
+
+  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
+
+  <script>
+    function abrirApp() { abrirTela("app/index.html", "app"); }
+    function abrirAtividades() { abrirTela("atividades/index.html", "atividades"); }
+    function abrirPdf() { abrirTela("pdfcompleto/index.html", "pdfcompleto"); }
+
+    function abrirTela(src, tela) {
+      document.getElementById("menuContainer").style.display = "none";
+      const iframe = document.getElementById("conteudo");
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
+    }
+
+    window.onpopstate = function(event) {
+      const conteudo = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      if (!event.state || !["app","atividades","pdfcompleto"].includes(event.state.tela)) {
+        conteudo.style.display = "none";
+        menu.style.display = "block";
+      }
+    };
+
+    // 🔹 Botão instalar PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById("installBtn");
+      installBtn.style.display = "inline-block";
+      installBtn.addEventListener("click", async () => {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBtn.remove();
+      });
+    });
+  </script>
+
+  <!-- 🔐 Firebase + Login offline -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function exibirSaudacao() {
+      const div = document.getElementById("saudacao");
+      const nomeCompleto = localStorage.getItem("displayName") || "";
+      const primeiroNome = nomeCompleto.split(" ")[0] || "Amigo";
+      div.innerHTML = `👋 Olá, <strong>${primeiroNome}</strong>!<br>Que bom ter você aqui 💛`;
+      div.style.opacity = 1;
+      setTimeout(() => {
+        document.getElementById("menuPrincipal").style.opacity = 1;
+        document.getElementById("socialsBlock").style.opacity = 1;
+        document.getElementById("socialTitle").style.opacity = 1;
+      }, 800);
+    }
+
+    async function validarAcesso() {
+      const email = localStorage.getItem("savedEmail");
+      const isLogged = localStorage.getItem("isLogged") === "true";
+      if (!isLogged || !email) {
+        if (!navigator.onLine) return;
+        window.location.replace("login.html");
+        return;
+      }
+      if (navigator.onLine) {
+        try {
+          const ref = doc(db, "usuariosGoogle", email.toLowerCase());
+          const snap = await getDoc(ref);
+          if (!snap.exists()) {
+            localStorage.clear();
+            window.location.replace("login.html");
+          }
+        } catch {
+          console.warn("Falha na verificação Firebase (modo offline ativo).");
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      exibirSaudacao();
+      validarAcesso();
+    });
+
+    window.logout = () => {
+      localStorage.clear();
+      window.location.replace("login.html");
+    };
+  </script>
+
+  <!-- 🔄 Atualização automática + registro de Service Worker -->
+  <script>
+    const APP_VERSION = '1.0.13';
+    const savedVersion = localStorage.getItem('appVersion');
+    if (savedVersion !== APP_VERSION) {
+      console.log('🌀 Nova versão detectada — limpando cache e recarregando...');
+      if ('caches' in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+      localStorage.setItem('appVersion', APP_VERSION);
+      window.location.replace(window.location.pathname + '?v=' + APP_VERSION);
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(() => console.log('✅ Service Worker ativo'))
+          .catch(err => console.error('❌ Falha ao registrar SW:', err));
+      });
+    }
+  </script>
+</body>
 </html>
