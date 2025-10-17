@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pintando a Palavra — Login</title>
 
+  <!-- 🔧 Correção para GitHub Pages (evita erro 404 após login) -->
+  <script>
+    // Se o usuário cair em rota errada (ex: ?login=sucesso), redireciona para o app
+    if (!location.pathname.endsWith('/') && !location.pathname.endsWith('.html')) {
+      location.replace(location.origin + '/androidfinal/');
+    }
+  </script>
+
   <style>
     body {
       font-family: 'Fredoka', sans-serif;
@@ -63,7 +71,7 @@
 
   <div class="login-container">
     <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
-    <img src="icon-512.png" alt="Logo" class="logo">
+    <img src="./icon-512.png" alt="Logo" class="logo">
     <h1>Pintando a Palavra</h1>
     <p class="subtitle">Colorindo histórias da Bíblia</p>
     <p class="quote">🌈 “Deixem vir a mim as crianças...” — Mateus 19:14</p>
@@ -130,7 +138,6 @@
       if(!snap.exists()) await setDoc(ref,{email,premium:false,removeAds:false,createdAt:new Date().toISOString()});
       const userData = (await getDoc(ref)).data();
 
-      // 🔹 Salva nome real também
       localStorage.setItem("displayName", user.displayName || "");
       localStorage.setItem("savedEmail", email);
       localStorage.setItem("isLogged", "true");
@@ -139,7 +146,9 @@
 
       errorMsg.textContent="✅ Login realizado com sucesso!";
       errorMsg.style.color="green";
-      setTimeout(()=>window.location.replace("/index.html"),800);
+
+      // ✅ Caminho relativo corrigido para GitHub Pages
+      setTimeout(()=>window.location.replace("./index.html"),800);
     }
 
     loginBtn.addEventListener("click",async()=>{
