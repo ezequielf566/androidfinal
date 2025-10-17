@@ -8,6 +8,8 @@
     :root {
       --gold:#FFD54F;
       --gold-2:#FFE37A;
+      --green:#C8E6C9;
+      --green-hover:#A5D6A7;
       --bg1:#FFF8DC;
       --bg2:#FFEAA7;
       --ink:#222;
@@ -60,12 +62,15 @@
     }
     .btn{
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
-      background:var(--gold);color:#2a2a2a;
       box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
       transition:transform .12s ease,background .12s ease;width:100%;
     }
-    .btn:hover{transform:translateY(-1px);background:#ffe066;}
+    .btn:hover{transform:translateY(-1px);}
     .btn:active{transform:translateY(0);}
+    .btn.premium{background:var(--gold);color:#2a2a2a;}
+    .btn.premium:hover{background:#ffe066;}
+    .btn.free{background:var(--green);color:#1b5e20;}
+    .btn.free:hover{background:var(--green-hover);}
     .loading{
       position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
       background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;
@@ -135,7 +140,7 @@
   <header><h1>Atividades Bíblicas</h1></header>
 
   <main>
-    <p class="intro">Veja as prévias das atividades e baixe os PDFs completos quando quiser.</p>
+    <p class="intro">Veja as prévias das atividades e baixe os PDFs gratuitos ou completos.</p>
     <section class="grid" id="grid"></section>
   </main>
 
@@ -155,27 +160,31 @@
 
   <div class="upgrade" id="upgrade">
     <div class="box">
-      <h3>💾 Baixar PDFs</h3>
+      <h3>🔒 Conteúdo Premium</h3>
       <p class="benefits">
-        🕊️ Alguns PDFs são gratuitos!<br>
-        💛 Outros fazem parte da versão Premium com acesso ilimitado.<br>
-        🌟 Experimente os gratuitos e depois explore o conteúdo completo.
+        ✅ Acesso ilimitado a todos os PDFs e atividades<br/>
+        ✅ Sem anúncios e com melhorias exclusivas<br/>
+        ✅ Atualizações contínuas de conteúdo<br/>
+        💡 Também há atividades <strong>gratuitas</strong> disponíveis!
       </p>
       <div class="actions">
-        <button class="btn btn-secondary" id="btnFecharUpgrade">Fechar</button>
-        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade Premium</a>
+        <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>
+        <a class="btn btn-primary link" target="_blank" href="https://pintando-a-palavra.pay.yampi.com.br/r/B0H10Z6JLH">💳 Fazer upgrade</a>
       </div>
     </div>
   </div>
 
   <script>
     const CONTENT = [
-      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png','img/biblia-3.png'], pdf:'pdfs/biblia.pdf' },
-      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png','img/caca-3.png'], pdf:'pdfs/caca.pdf' },
-      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png','img/ligar-3.png'], pdf:'pdfs/ligar.pdf' },
-      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png','img/cruzadinha-3.png'], pdf:'pdfs/cruzadinha.pdf' },
-      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png','img/caca-es-3.png'], pdf:'pdfs/caca-es.pdf' },
-      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png','img/atividades-es-3.png'], pdf:'pdfs/atividades-es.pdf' }
+      // 🔒 PREMIUM
+      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png'], pdf:'pdfs/biblia.pdf', free:false },
+      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png'], pdf:'pdfs/ligar.pdf', free:false },
+      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png'], pdf:'pdfs/atividades-es.pdf', free:false },
+
+      // 🟢 GRATUITOS
+      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png'], pdf:'pdfs/caca.pdf', free:true },
+      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png'], pdf:'pdfs/cruzadinha.pdf', free:true },
+      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png'], pdf:'pdfs/caca-es.pdf', free:true }
     ];
 
     const grid = document.getElementById('grid');
@@ -183,20 +192,27 @@
     const gallery = document.getElementById('gallery');
     const modalTitle = document.getElementById('modalTitle');
     const loading = document.getElementById('loading');
-    const entradaAudio = document.getElementById('entradaAudio');
     const upgrade = document.getElementById('upgrade');
 
     function render(){
       grid.innerHTML = CONTENT.map(item => `
         <article class="card">
-          <img class="cover" src="${item.cover}" alt="Atividade" />
-          <button class="btn" data-id="${item.id}">Ver prévias</button>
+          <img class="cover" src="${item.cover}" alt="Atividade ${item.title}" />
+          <button class="btn ${item.free ? 'free' : 'premium'}" data-id="${item.id}">
+            ${item.free ? "📗 Baixar PDF gratuito" : "Ver prévias"}
+          </button>
         </article>`).join('');
     }
 
     function openPreview(id){
       const item = CONTENT.find(x => x.id === id);
       if(!item)return;
+
+      if(item.free){
+        window.open(item.pdf, '_blank');
+        return;
+      }
+
       modalTitle.textContent = item.title;
       const basePath = window.location.pathname.includes('/atividades') ? './' : 'atividades/';
       gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia de ${item.title}">`).join('');
