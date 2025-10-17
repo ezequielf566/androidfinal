@@ -1,16 +1,17 @@
-// ✅ Pintando a Palavra — Service Worker (v1.0.9)
-// Corrigido: falha 403 no áudio externo + instalação resiliente
+// ✅ Pintando a Palavra — Service Worker (v1.1.0)
+// Corrigido: áudio local + cache dinâmico e offline resiliente
 
-const CACHE_NAME = 'pintando-a-palavra-v1.0.9';
+const CACHE_NAME = 'pintando-a-palavra-v1.1.0';
 const OFFLINE_URL = '/offline.html';
 
-// 🗂️ Lista de arquivos essenciais a serem cacheados
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
+  '/menu.html',
   '/login.html',
   '/manifest.json',
-  '/audio/entrada.mp3', // 🔊 Som local (coloque o arquivo na pasta /audio/)
+  '/audio/entrada.mp3',
+  '/audio/fundo.mp3', // 🔊 fundo musical offline
   '/img/icon-512.png',
   '/img/icon-192.png',
   '/app/index.html',
@@ -19,54 +20,47 @@ const FILES_TO_CACHE = [
   '/offline.html'
 ];
 
-// 🛠️ Instalação do service worker
+// 🛠️ Instalação
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(async cache => {
       try {
         await cache.addAll(FILES_TO_CACHE);
-        console.log('✅ Todos os arquivos foram cacheados com sucesso!');
+        console.log('✅ Todos os arquivos foram cacheados!');
       } catch (e) {
-        console.warn('⚠️ Falha ao cachear algum arquivo:', e);
+        console.warn('⚠️ Falha ao cachear:', e);
       }
     })
   );
 });
 
-// ♻️ Ativação: limpa caches antigos automaticamente
+// ♻️ Ativação
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            console.log('🗑️ Apagando cache antigo:', key);
-            return caches.delete(key);
-          }
-        })
+        keys.map(key => key !== CACHE_NAME && caches.delete(key))
       )
     )
   );
   self.clients.claim();
 });
 
-// 🌐 Intercepta requisições e serve do cache quando offline
+// 🌐 Interceptação
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-
   event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      if (cachedResponse) return cachedResponse;
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
 
       return fetch(event.request)
-        .then(networkResponse => {
-          // Se resposta válida, salva no cache
-          if (networkResponse && networkResponse.status === 200) {
-            const cloned = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, cloned));
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
           }
-          return networkResponse;
+          return response;
         })
         .catch(() => caches.match(OFFLINE_URL));
     })
