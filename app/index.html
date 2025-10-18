@@ -39,6 +39,64 @@
       color: #444;
       text-align: center;
     }
+
+    /* 🎨 Pop-up de variações */
+    .shades-popup {
+      position: absolute;
+      display: flex;
+      gap: 6px;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 20;
+    }
+    .shades-popup.active {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      pointer-events: auto;
+    }
+    .shade {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .shade:active {
+      transform: scale(0.9);
+    }
+
+    /* 🎨 Cores base e animação de toque */
+    .sw {
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+    .sw:active {
+      transform: scale(0.9);
+      animation: pulseGlow 0.6s ease;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0.6); }
+      50% { box-shadow: 0 0 10px 6px rgba(255, 213, 79, 0.3); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0); }
+    }
+
+    /* 🎨 Cor personalizada refinada */
+    .sw.custom {
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+      background-size: 300% 300%;
+      animation: hueShift 8s ease infinite;
+    }
+    @keyframes hueShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
   </style>
 </head>
 
@@ -73,17 +131,17 @@
     <section class="controls">
       <div class="palette">
         <div class="swatches" id="swatches">
-          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB" aria-label="Azul céu"></button>
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2" aria-label="Bege pele"></button>
-          <button class="sw" data-color="#E53935" style="--c:#E53935" aria-label="Vermelho"></button>
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00" aria-label="Laranja"></button>
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835" aria-label="Amarelo"></button>
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342" aria-label="Verde"></button>
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5" aria-label="Azul"></button>
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA" aria-label="Roxo"></button>
-          <button class="sw" data-color="#263238" style="--c:#263238" aria-label="Cinza escuro"></button>
-          <button class="sw custom" id="customColorBtn" aria-label="Cor personalizada"></button>
-          <input type="color" id="picker" style="display:none" value="#8D6E63" aria-label="Cor personalizada" />
+          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB"></button>
+          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>
+          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>
+          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>
+          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>
+          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>
+          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>
+          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>
+          <button class="sw" data-color="#263238" style="--c:#263238"></button>
+          <button class="sw custom" id="customColorBtn"></button>
+          <input type="color" id="picker" style="display:none" value="#8D6E63" />
         </div>
 
         <div class="tools">
@@ -125,20 +183,77 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-  // 🎨 Cor personalizada
-  document.addEventListener("DOMContentLoaded", function() {
+  // 🌈 Clarear/escurecer cor
+  function lightenDarkenColor(col, amt) {
+    let usePound = false;
+    if (col[0] === "#") {
+      col = col.slice(1);
+      usePound = true;
+    }
+    let num = parseInt(col,16);
+    let r = (num >> 16) + amt;
+    let g = ((num >> 8) & 0x00FF) + amt;
+    let b = (num & 0x0000FF) + amt;
+    return (usePound ? "#" : "") +
+      (0x1000000 +
+       (r<255?r<0?0:r:255)*0x10000 +
+       (g<255?g<0?0:g:255)*0x100 +
+       (b<255?b<0?0:b:255))
+      .toString(16)
+      .slice(1);
+  }
+
+  // 🎨 Sistema de variações + animação
+  document.addEventListener("DOMContentLoaded", () => {
     const picker = document.getElementById("picker");
     const customBtn = document.getElementById("customColorBtn");
-    if (picker && customBtn) {
-      customBtn.addEventListener("click", () => picker.click());
-      picker.addEventListener("input", (e) => {
-        customBtn.style.background = e.target.value;
-        customBtn.setAttribute("data-color", e.target.value);
+
+    customBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      picker.click();
+    });
+    picker.addEventListener("input", (e) => {
+      customBtn.style.background = e.target.value;
+      customBtn.setAttribute("data-color", e.target.value);
+    });
+
+    document.querySelectorAll(".sw").forEach(sw => {
+      sw.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".shades-popup").forEach(p => p.remove());
+
+        const color = sw.getAttribute("data-color");
+        if (!color) return;
+
+        const lighter = lightenDarkenColor(color, 40);
+        const darker = lightenDarkenColor(color, -40);
+
+        const popup = document.createElement("div");
+        popup.className = "shades-popup";
+        popup.innerHTML = `
+          <div class="shade" style="background:${lighter}" data-color="${lighter}"></div>
+          <div class="shade" style="background:${darker}" data-color="${darker}"></div>
+        `;
+        sw.appendChild(popup);
+        setTimeout(() => popup.classList.add("active"), 10);
+
+        popup.querySelectorAll(".shade").forEach(sh => {
+          sh.addEventListener("click", ev => {
+            const selected = ev.target.getAttribute("data-color");
+            sw.style.boxShadow = `0 0 0 3px ${selected}`;
+            console.log("🎨 Cor selecionada:", selected);
+            popup.remove();
+          });
+        });
       });
-    }
+    });
+
+    document.body.addEventListener("click", () => {
+      document.querySelectorAll(".shades-popup").forEach(p => p.remove());
+    });
   });
 
-  // ⏳ Mostra tela de carregamento até o primeiro SVG ser lido
+  // ⏳ Tela de carregamento
   const overlay = document.getElementById("loadingOverlay");
   const observer = new MutationObserver(() => {
     const svgLoaded = document.querySelector("#svgMount svg");
