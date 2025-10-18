@@ -1,4 +1,4 @@
-// 🌍 Sistema multilíngue — versão 1.0.23 (corrigida e definitiva)
+// 🌍 Sistema multilíngue — versão 1.0.25 (corrigida e definitiva)
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
