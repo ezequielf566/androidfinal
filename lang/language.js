@@ -1,7 +1,8 @@
-// 🌍 Sistema multilíngue — versão 1.0.23 (corrigida e definitiva)
+// 🌍 Sistema multilíngue — versão 1.0.27 (corrigida com nome persistente)
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
+  // 🟡 Exibe banner visual em caso de erro
   function showLangError(msg) {
     const banner = document.createElement("div");
     banner.textContent = `⚠️ ${msg}`;
@@ -23,6 +24,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => banner.remove(), 5000);
   }
 
+  // 🔹 Obtém nome do usuário com fallback inteligente
+  function getUserName() {
+    let name = localStorage.getItem("displayName");
+    if (!name || name === "undefined" || name === "null" || name.trim() === "") {
+      name = localStorage.getItem("savedEmail")?.split("@")[0] || "Amigo";
+    }
+    return name.split(" ")[0];
+  }
+
   async function loadLanguage(selectedLang) {
     try {
       const res = await fetch(`/lang/${selectedLang}.json`);
@@ -30,13 +40,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const data = await res.json();
 
-      // 🟢 Saudação personalizada
-      const name = (localStorage.getItem("displayName") || "Amigo").split(" ")[0];
+      // 🟢 Saudação personalizada (agora com nome garantido)
+      const name = getUserName();
       const saudacao = document.querySelector("[data-i18n='menu.greeting']");
       if (saudacao && data.menu?.greeting) {
-        let texto = data.menu.greeting;
-        texto = texto.replace("{name}", name);
-        saudacao.innerHTML = texto;
+        saudacao.innerHTML = data.menu.greeting.replace("{name}", name);
       }
 
       // 🟢 Atualiza todos os elementos com data-i18n
@@ -55,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         storyContent.innerHTML = data.story.content.map(p => `<p>${p}</p>`).join("");
       }
 
-      console.log(`🌍 Idioma carregado: ${selectedLang}`);
+      console.log(`🌍 Idioma carregado: ${selectedLang} — Usuário: ${getUserName()}`);
     } catch (err) {
       console.warn("⚠️ Falha ao carregar idioma:", err);
       showLangError(`Idioma "${selectedLang}" não disponível — usando português padrão 💛`);
