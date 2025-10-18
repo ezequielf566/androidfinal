@@ -1,8 +1,9 @@
-// 🌍 Sistema multilíngue — versão 1.0.21
+// 🌍 Sistema multilíngue — versão 1.0.22 (definitiva)
+// Compatível com PWA, app nativo (Play Store) e carregamento offline parcial
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
-  // Adiciona banner de aviso em caso de erro
+  // 🟡 Exibe banner visual em caso de erro
   function showLangError(msg) {
     const banner = document.createElement("div");
     banner.textContent = `⚠️ ${msg}`;
@@ -26,12 +27,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadLanguage(selectedLang) {
     try {
-      const res = await fetch(`./lang/${selectedLang}.json`);
+      // ✅ Caminho absoluto (funciona na raiz e no PWA)
+      const res = await fetch(`/lang/${selectedLang}.json`);
       if (!res.ok) throw new Error(`Idioma "${selectedLang}" não encontrado (${res.status})`);
+
       const data = await res.json();
 
       // 🟢 Saudação personalizada
-      const name = localStorage.getItem("displayName")?.split(" ")[0] || "Amigo";
+      const name = (localStorage.getItem("displayName") || "Amigo").split(" ")[0];
       const saudacao = document.querySelector("[data-i18n='menu.greeting']");
       if (saudacao && data.menu?.greeting) {
         saudacao.innerHTML = data.menu.greeting.replace("{name}", name);
@@ -56,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log(`🌍 Idioma carregado: ${selectedLang}`);
     } catch (err) {
       console.warn("⚠️ Falha ao carregar idioma:", err);
-      showLangError(`Falha ao carregar idioma "${selectedLang}". Usando português padrão.`);
+      showLangError(`Idioma "${selectedLang}" não disponível — usando português padrão 💛`);
       if (selectedLang !== "pt") await loadLanguage("pt");
     }
   }
