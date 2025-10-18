@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "greeting": "👋 Olá, <strong>{name}</strong>!<br>Que bom ter você aqui 💛",
+    "stories": "📖 Histórias",
+    "activities": "🎨 Atividades",
+    "pdf": "📚 PDF Completo",
+    "follow": "Siga-nos nas redes sociais",
+    "instagram": "📸 Instagram",
+    "facebook": "📘 Facebook",
+    "logout": "🚪 Sair",
+    "install": "📲 Instalar app",
+    "storyTitle": "💛✨ A HISTÓRIA DO PINTANDO A PALAVRA ✨💛"
+  },
+  "story": {
+    "content": [
+      "Eu não sabia nada de programação.",
+      "Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.",
+      "Tudo começou pensando no meu filho e nas minhas irmãs, que sempre amaram colorir.",
+      "Com fé e dedicação, o sonho se tornou real: um app cristão infantil feito do zero.",
+      "Hoje o Pintando a Palavra alcança famílias em vários países 🌍💛",
+      "✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo."
+    ]
+  }
+}
