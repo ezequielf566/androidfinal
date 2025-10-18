@@ -8,95 +8,22 @@
 
   <style>
     /* Tela de carregamento */
-    #loadingOverlay {
-      position: fixed;
-      inset: 0;
-      background: #fff9e6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-    #loadingOverlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 6px solid #ffd54f;
-      border-top: 6px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text {
-      font-family: "Fredoka", sans-serif;
-      font-size: 1.1rem;
-      color: #444;
-      text-align: center;
-    }
+    #loadingOverlay{position:fixed;inset:0;background:#fff9e6;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s,visibility .5s}
+    #loadingOverlay.hidden{opacity:0;visibility:hidden}
+    .spinner{width:60px;height:60px;border:6px solid #ffd54f;border-top:6px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
+    @keyframes spin{to{transform:rotate(360deg)}} .loading-text{font-family:"Fredoka",sans-serif;font-size:1.1rem;color:#444;text-align:center}
 
-    /* 🎨 Pop-up de variações */
-    .shades-popup {
-      position: absolute;
-      display: flex;
-      gap: 6px;
-      top: -40px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.9);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.2s ease;
-      z-index: 20;
-    }
-    .shades-popup.active {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-      pointer-events: auto;
-    }
-    .shade {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 2px solid white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
-    .shade:active {
-      transform: scale(0.9);
-    }
+    /* 🎨 Aperfeiçoamentos visuais do painel */
+    .sw{border-radius:12px !important; /* quadradinho com cantos suaves */
+        transition:transform .1s, box-shadow .2s}
+    .sw:active{transform:scale(.92)}
+    .sw:focus-visible{outline:3px solid rgba(255,213,79,.8);outline-offset:2px}
 
-    /* 🎨 Cores base e animação de toque */
-    .sw {
-      transition: transform 0.1s, box-shadow 0.2s;
-    }
-    .sw:active {
-      transform: scale(0.9);
-      animation: pulseGlow 0.6s ease;
-    }
-
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0.6); }
-      50% { box-shadow: 0 0 10px 6px rgba(255, 213, 79, 0.3); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 213, 79, 0); }
-    }
-
-    /* 🎨 Cor personalizada refinada */
-    .sw.custom {
-      border-radius: 12px;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
-      background-size: 300% 300%;
-      animation: hueShift 8s ease infinite;
-    }
-    @keyframes hueShift {
-      0%,100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
+    /* Pop-up de duas variações (clara/escura) */
+    .shades-popup{position:absolute;display:flex;gap:6px;top:-40px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;pointer-events:none;transition:all .18s ease;z-index:20}
+    .shades-popup.active{opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
+    .shade{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .12s}
+    .shade:active{transform:scale(.9)}
   </style>
 </head>
 
@@ -110,8 +37,7 @@
   <header class="topbar">
     <div id="progressWidget" class="progress-widget" aria-label="Progresso do livro">
       <div class="counter">
-        <span id="starCount" class="star-count">00</span>
-        <span class="sep">/</span>
+        <span id="starCount" class="star-count">00</span><span class="sep">/</span>
         <span id="totalPages" class="total-pages">00</span>
         <span class="star-icon" aria-hidden="true">★</span>
         <span id="progressPercent" class="percent">0%</span>
@@ -130,18 +56,20 @@
 
     <section class="controls">
       <div class="palette">
+        <!-- 🎯 12 cores principais (sem branco) -->
         <div class="swatches" id="swatches">
-          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB"></button>
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>
-          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>
-          <button class="sw" data-color="#263238" style="--c:#263238"></button>
-          <button class="sw custom" id="customColorBtn"></button>
-          <input type="color" id="picker" style="display:none" value="#8D6E63" />
+          <button class="sw" data-color="#E53935" style="--c:#E53935"></button> <!-- vermelho -->
+          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button> <!-- laranja -->
+          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button> <!-- amarelo -->
+          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button> <!-- verde -->
+          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button> <!-- azul -->
+          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button> <!-- roxo -->
+          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB"></button> <!-- azul céu -->
+          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button> <!-- bege/pele -->
+          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button> <!-- marrom -->
+          <button class="sw" data-color="#FF4081" style="--c:#FF4081"></button> <!-- rosa -->
+          <button class="sw" data-color="#009688" style="--c:#009688"></button> <!-- verde água -->
+          <button class="sw" data-color="#263238" style="--c:#263238"></button> <!-- cinza escuro -->
         </div>
 
         <div class="tools">
@@ -183,86 +111,91 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-  // 🌈 Clarear/escurecer cor
-  function lightenDarkenColor(col, amt) {
-    let usePound = false;
-    if (col[0] === "#") {
-      col = col.slice(1);
-      usePound = true;
+    /* util: clarear/escurecer */
+    function lightenDarkenColor(col, amt){
+      let usePound = false;
+      if(col[0]==="#"){ col = col.slice(1); usePound = true; }
+      let num = parseInt(col,16);
+      let r = (num>>16) + amt, g = ((num>>8)&0xFF) + amt, b = (num & 0xFF) + amt;
+      r = Math.max(0, Math.min(255, r));
+      g = Math.max(0, Math.min(255, g));
+      b = Math.max(0, Math.min(255, b));
+      const out = (r<<16) + (g<<8) + b;
+      return (usePound ? "#" : "") + out.toString(16).padStart(6, "0");
     }
-    let num = parseInt(col,16);
-    let r = (num >> 16) + amt;
-    let g = ((num >> 8) & 0x00FF) + amt;
-    let b = (num & 0x0000FF) + amt;
-    return (usePound ? "#" : "") +
-      (0x1000000 +
-       (r<255?r<0?0:r:255)*0x10000 +
-       (g<255?g<0?0:g:255)*0x100 +
-       (b<255?b<0?0:b:255))
-      .toString(16)
-      .slice(1);
-  }
 
-  // 🎨 Sistema de variações + animação
-  document.addEventListener("DOMContentLoaded", () => {
-    const picker = document.getElementById("picker");
-    const customBtn = document.getElementById("customColorBtn");
+    /* 🎨 Delegação no container dos swatches.
+       IMPORTANTE: usamos capture:true para interceptar o 1º clique,
+       mostrar as variações e IMPEDIR o manipulador do seu script.js.
+       Quando a criança escolhe uma variação, re-disparamos um clique
+       no mesmo swatch com data-no-popup para deixar o script.js pintar. */
+    const swatches = document.getElementById("swatches");
+    swatches.addEventListener("click", function(ev){
+      const sw = ev.target.closest(".sw");
+      if(!sw) return;
 
-    customBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      picker.click();
-    });
-    picker.addEventListener("input", (e) => {
-      customBtn.style.background = e.target.value;
-      customBtn.setAttribute("data-color", e.target.value);
-    });
+      // se veio do clique programático, não abrir popup
+      if(sw.dataset.noPopup === "1"){
+        sw.removeAttribute("data-no-popup");
+        return; // deixa o seu script.js processar normalmente
+      }
 
-    document.querySelectorAll(".sw").forEach(sw => {
-      sw.addEventListener("click", (e) => {
-        e.stopPropagation();
-        document.querySelectorAll(".shades-popup").forEach(p => p.remove());
+      // 1º clique: bloquear o handler do seu script.js
+      ev.stopPropagation();
+      ev.stopImmediatePropagation();
+      ev.preventDefault();
 
-        const color = sw.getAttribute("data-color");
-        if (!color) return;
+      // remove popups abertos
+      document.querySelectorAll(".shades-popup").forEach(p => p.remove());
 
-        const lighter = lightenDarkenColor(color, 40);
-        const darker = lightenDarkenColor(color, -40);
+      const base = sw.getAttribute("data-color");
+      if(!base) return;
 
-        const popup = document.createElement("div");
-        popup.className = "shades-popup";
-        popup.innerHTML = `
-          <div class="shade" style="background:${lighter}" data-color="${lighter}"></div>
-          <div class="shade" style="background:${darker}" data-color="${darker}"></div>
-        `;
-        sw.appendChild(popup);
-        setTimeout(() => popup.classList.add("active"), 10);
+      const lighter = lightenDarkenColor(base, 40);
+      const darker  = lightenDarkenColor(base, -40);
 
-        popup.querySelectorAll(".shade").forEach(sh => {
-          sh.addEventListener("click", ev => {
-            const selected = ev.target.getAttribute("data-color");
-            sw.style.boxShadow = `0 0 0 3px ${selected}`;
-            console.log("🎨 Cor selecionada:", selected);
-            popup.remove();
-          });
-        });
+      const popup = document.createElement("div");
+      popup.className = "shades-popup";
+      popup.innerHTML = `
+        <div class="shade" style="background:${lighter}" data-color="${lighter}"></div>
+        <div class="shade" style="background:${darker}"  data-color="${darker}"></div>
+      `;
+      sw.style.position = "relative";
+      sw.appendChild(popup);
+      requestAnimationFrame(() => popup.classList.add("active"));
+
+      popup.querySelectorAll(".shade").forEach(sh => {
+        sh.addEventListener("click", e => {
+          e.stopPropagation();
+          const chosen = sh.getAttribute("data-color");
+          // visual no swatch
+          sw.style.boxShadow = `0 0 0 3px ${chosen}`;
+          // atualiza o valor que o seu script.js lê
+          sw.setAttribute("data-color", chosen);
+          sw.style.setProperty("--c", chosen);
+          // fecha popup e dispara clique "real" para o script.js pintar
+          popup.remove();
+          sw.dataset.noPopup = "1";
+          sw.dispatchEvent(new MouseEvent("click", {bubbles:true}));
+        }, {once:true});
       });
-    });
+    }, {capture:true});
 
-    document.body.addEventListener("click", () => {
+    // fechar popups tocando fora
+    document.addEventListener("click", () => {
       document.querySelectorAll(".shades-popup").forEach(p => p.remove());
     });
-  });
 
-  // ⏳ Tela de carregamento
-  const overlay = document.getElementById("loadingOverlay");
-  const observer = new MutationObserver(() => {
-    const svgLoaded = document.querySelector("#svgMount svg");
-    if (svgLoaded) {
-      setTimeout(() => overlay.classList.add("hidden"), 400);
-      observer.disconnect();
-    }
-  });
-  observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
+    // ⏳ oculta loading quando o 1º SVG entra
+    const overlay = document.getElementById("loadingOverlay");
+    const observer = new MutationObserver(() => {
+      const svgLoaded = document.querySelector("#svgMount svg");
+      if (svgLoaded) {
+        setTimeout(() => overlay.classList.add("hidden"), 400);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.getElementById("svgMount"), { childList:true, subtree:true });
   </script>
 </body>
 </html>
