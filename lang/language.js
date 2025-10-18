@@ -1,8 +1,8 @@
-// 🌍 Sistema multilíngue — versão 1.0.27 (corrigida com nome persistente)
+// 🌍 Sistema multilíngue — versão 1.0.28 (corrigida: saudação com nome)
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
-  // 🟡 Exibe banner visual em caso de erro
+  // 🟡 Banner visual em caso de erro
   function showLangError(msg) {
     const banner = document.createElement("div");
     banner.textContent = `⚠️ ${msg}`;
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => banner.remove(), 5000);
   }
 
-  // 🔹 Obtém nome do usuário com fallback inteligente
+  // 🔹 Garante nome do usuário
   function getUserName() {
     let name = localStorage.getItem("displayName");
     if (!name || name === "undefined" || name === "null" || name.trim() === "") {
@@ -39,31 +39,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!res.ok) throw new Error(`Idioma "${selectedLang}" não encontrado (${res.status})`);
 
       const data = await res.json();
-
-      // 🟢 Saudação personalizada (agora com nome garantido)
       const name = getUserName();
-      const saudacao = document.querySelector("[data-i18n='menu.greeting']");
-      if (saudacao && data.menu?.greeting) {
-        saudacao.innerHTML = data.menu.greeting.replace("{name}", name);
-      }
 
       // 🟢 Atualiza todos os elementos com data-i18n
       document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n").split(".");
+        const path = el.getAttribute("data-i18n").split(".");
         let value = data;
-        key.forEach(k => value = value?.[k]);
-        if (value && !Array.isArray(value)) el.innerHTML = value;
+        for (const p of path) value = value?.[p];
+        if (typeof value === "string") {
+          el.innerHTML = value.includes("{name}") ? value.replace("{name}", name) : value;
+        }
       });
 
       // 🟡 Modal da história
       const storyTitle = document.getElementById("storyTitle");
       const storyContent = document.getElementById("storyContent");
-      if (storyTitle && storyContent && data.menu?.storyTitle && data.story?.content) {
+      if (storyTitle && storyContent && data.menu?.storyTitle && Array.isArray(data.story?.content)) {
         storyTitle.innerHTML = data.menu.storyTitle;
         storyContent.innerHTML = data.story.content.map(p => `<p>${p}</p>`).join("");
       }
 
-      console.log(`🌍 Idioma carregado: ${selectedLang} — Usuário: ${getUserName()}`);
+      console.log(`🌍 Idioma carregado: ${selectedLang} — Usuário: ${name}`);
     } catch (err) {
       console.warn("⚠️ Falha ao carregar idioma:", err);
       showLangError(`Idioma "${selectedLang}" não disponível — usando português padrão 💛`);
