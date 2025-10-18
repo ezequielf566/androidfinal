@@ -1,0 +1,22 @@
+{
+  "menu": {
+    "install": "📲 Install app",
+    "logout": "🚪 Log out",
+    "greeting": "👋 Hello! So glad to have you here 💛",
+    "stories": "📖 Stories",
+    "activities": "🎨 Activities",
+    "pdf": "📚 Complete PDF",
+    "follow": "Follow us on social media",
+    "instagram": "📸 Instagram",
+    "facebook": "📘 Facebook",
+    "storyTitle": "💛✨ THE STORY OF PAINTING THE WORD ✨💛",
+    "storyContent": [
+      "I knew nothing about programming.",
+      "But I had a dream — and a strong desire to make it real.",
+      "🌈 A dream to share God's Word with children in a fun and loving way.",
+      "It all started thinking about my son and my sisters who love coloring.",
+      "It took months of learning, prayer, and faith.",
+      "Today, Painting the Word reaches families across the world 🌍💛."
+    ]
+  }
+}
