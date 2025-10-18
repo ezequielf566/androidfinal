@@ -1,7 +1,7 @@
 // ✅ Pintando a Palavra — Service Worker (v1.0.20)
 // Corrigido: falha 403 no áudio externo + instalação resiliente
 
-const CACHE_NAME = 'pintando-a-palavra-v1.0.24';
+const CACHE_NAME = 'pintando-a-palavra-v1.0.27';
 const OFFLINE_URL = '/offline.html';
 
 // 🗂️ Lista de arquivos essenciais a serem cacheados
