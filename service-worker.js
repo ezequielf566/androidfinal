@@ -1,4 +1,4 @@
-// ✅ Pintando a Palavra — Service Worker (v1.0.17)
+// ✅ Pintando a Palavra — Service Worker (v1.0.18)
 // Corrigido: falha 403 no áudio externo + instalação resiliente
 
 const CACHE_NAME = 'pintando-a-palavra-v1.0.16';
