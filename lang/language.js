@@ -1,4 +1,4 @@
-// 🌍 Sistema multilíngue — versão 1.0.22 (definitiva)
+// 🌍 Sistema multilíngue — versão 1.0.23 (corrigida e definitiva)
 // Compatível com PWA, app nativo (Play Store) e carregamento offline parcial
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
@@ -33,11 +33,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const data = await res.json();
 
-      // 🟢 Saudação personalizada
+      // 🟢 Saudação personalizada (corrigida para suportar HTML)
       const name = (localStorage.getItem("displayName") || "Amigo").split(" ")[0];
       const saudacao = document.querySelector("[data-i18n='menu.greeting']");
       if (saudacao && data.menu?.greeting) {
-        saudacao.innerHTML = data.menu.greeting.replace("{name}", name);
+        let texto = data.menu.greeting;
+        texto = texto.replace("{name}", name);
+        saudacao.innerHTML = texto;
       }
 
       // 🟢 Atualiza todos os elementos com data-i18n
