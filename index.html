@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu Multilíngue com Modal da História (Final com Atualização Automática) -->
+<!-- 🔸 Pintando a Palavra — Menu Multilíngue com Áudio de Fundo (v1.0.22) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -233,6 +233,9 @@
 
   <div id="updateAlert">🌟 Novo conteúdo disponível! Atualizando...</div>
 
+  <!-- 🔊 Fundo musical -->
+  <script src="audio/audioController.js" defer></script>
+
   <script>
     function openStoryModal(){document.getElementById("storyModal").style.display="block";}
     function closeStoryModal(){document.getElementById("storyModal").style.display="none";}
@@ -275,7 +278,7 @@
     }
 
     /* 🔄 Atualização automática */
-    const APP_VERSION = "1.0.20";
+    const APP_VERSION = "1.0.22";
     const savedVersion = localStorage.getItem("appVersion");
     if (savedVersion !== APP_VERSION) {
       document.getElementById("updateAlert").style.display = "block";
@@ -293,6 +296,7 @@
     }
   </script>
 
+  <!-- 🌍 Tradução automática -->
   <script defer src="/lang/language.js"></script>
 </body>
 </html>
