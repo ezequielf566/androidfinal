@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu Multilíngue com Modal da História (Versão Final) -->
+<!-- 🔸 Pintando a Palavra — Menu Multilíngue com Modal da História (Final com Atualização Automática) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -20,6 +20,7 @@
       background-attachment: fixed;
       overflow-x: hidden;
     }
+
     header {
       background: linear-gradient(90deg, #ffd54f, #ffea80);
       padding: 0.8rem 1.2rem;
@@ -29,27 +30,25 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 20;
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
     }
+
     .notif-icon {
-      position: relative;
       cursor: pointer;
-      animation: pulse 2s infinite;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.2s ease;
     }
+    .notif-icon:hover svg { transform: scale(1.1); }
     .notif-icon svg {
       width: 28px;
       height: 28px;
       stroke: #444;
-      filter: drop-shadow(0 0 4px rgba(255, 213, 79, 0.6));
-      transition: transform 0.2s ease;
+      filter: drop-shadow(0 0 4px rgba(255,213,79,0.6));
     }
-    .notif-icon:hover svg { transform: scale(1.1); }
-    @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.05);} }
 
     header .btn {
       background: #fff;
@@ -65,6 +64,7 @@
       gap: 6px;
     }
     header .btn:hover { transform: scale(1.05); background: #fff7d1; }
+
     main {
       flex: 1;
       display: flex;
@@ -73,34 +73,29 @@
       padding: 2.5rem 1rem 3rem;
       text-align: center;
     }
+
     .saudacao {
       font-size: 1.6rem;
-      line-height: 1.5;
       color: #222;
       font-weight: 600;
       margin-bottom: 2rem;
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255,255,255,0.6);
       padding: 1rem 1.5rem;
       border-radius: 16px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       backdrop-filter: blur(5px);
       display: inline-block;
-      opacity: 0;
       animation: fadeIn 0.6s ease forwards;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+
     .menu {
       display: flex;
       flex-direction: column;
       gap: 1.2rem;
       width: 100%;
       max-width: 340px;
-      opacity: 0;
-      transition: opacity 0.8s ease;
     }
+
     .menu button {
       background: #ffd54f;
       border: none;
@@ -112,27 +107,19 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
                   0 4px 10px rgba(0,0,0,0.15);
       transition: all 0.25s ease;
-      color: #222;
     }
     .menu button:hover { transform: scale(1.03); background: #ffe066; }
-    h2 {
-      margin-top: 2.2rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #222;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
+
+    h2 { margin-top: 2.2rem; font-size: 1.25rem; font-weight: 600; }
+
     .socials {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 1rem;
-      flex-wrap: nowrap;
       margin-top: 1.5rem;
-      opacity: 0;
-      transition: opacity 0.8s ease;
     }
+
     .socials button {
       background: #fffbe6;
       border: 2px solid #ffe066;
@@ -144,42 +131,38 @@
       transition: all 0.25s ease;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
+
     .socials button:hover { background: #fff2b3; transform: scale(1.05); }
 
     /* 🌟 Modal */
     .modal {
       display: none;
       position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
       overflow: auto;
       background-color: rgba(0,0,0,0.5);
     }
+
     .modal-content {
       background: linear-gradient(180deg, #FFF6D6 0%, #FFE7A1 100%);
       margin: 60px auto;
       padding: 20px 25px;
       border-radius: 20px;
-      width: 90%;
-      max-width: 600px;
-      max-height: 80vh;
+      width: 90%; max-width: 600px; max-height: 80vh;
       overflow-y: auto;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      animation: fadeIn 0.3s ease;
       position: relative;
+      z-index: 1100;
     }
-    .modal-content h2 {
-      text-align: center;
-      color: #ff9800;
-      margin-top: 0;
-    }
+
+    .modal-content h2 { text-align: center; color: #ff9800; }
     .story-text p { margin-bottom: 1em; }
     .close {
       color: #555;
-      float: right;
+      position: absolute;
+      right: 16px; top: 10px;
       font-size: 28px;
       font-weight: bold;
       cursor: pointer;
@@ -206,11 +189,8 @@
 </head>
 
 <body>
-  <script src="audio/audioController.js" defer></script>
-
   <div id="menuContainer">
     <header>
-      <!-- 💌 Ícone Mensagem com Coração (abre a história) -->
       <div class="notif-icon" id="notifBtn" title="História do Projeto" onclick="openStoryModal()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
           <path d="M3 8l9 6 9-6"></path>
@@ -220,33 +200,33 @@
       </div>
 
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;" data-i18n="menu.install">📲 Instalar app</button>
-        <button onclick="logout()" class="btn" data-i18n="menu.logout">🚪 Sair</button>
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button onclick="logout()" class="btn">🚪 Sair</button>
       </div>
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao" data-i18n="menu.greeting"></div>
+      <div id="saudacao" class="saudacao"></div>
       <div class="menu" id="menuPrincipal">
-        <button onclick="abrirApp()" data-i18n="menu.stories">📖 Histórias</button>
-        <button onclick="abrirAtividades()" data-i18n="menu.activities">🎨 Atividades</button>
-        <button onclick="abrirPdf()" data-i18n="menu.pdf">📚 PDF Completo</button>
+        <button onclick="abrirApp()">📖 Histórias</button>
+        <button onclick="abrirAtividades()">🎨 Atividades</button>
+        <button onclick="abrirPdf()">📚 PDF Completo</button>
       </div>
-      <h2 id="socialTitle" data-i18n="menu.follow">Siga-nos nas redes sociais</h2>
-      <div class="socials" id="socialsBlock">
-        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')" data-i18n="menu.instagram">📸 Instagram</button>
-        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')" data-i18n="menu.facebook">📘 Facebook</button>
+
+      <h2 id="socialTitle">Siga-nos nas redes sociais</h2>
+      <div class="socials">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
       </div>
     </main>
   </div>
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 🌟 Modal da História -->
   <div id="storyModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeStoryModal()">&times;</span>
-      <h2 id="storyTitle" data-i18n="menu.storyTitle">💛✨ A HISTÓRIA DO PINTANDO A PALAVRA ✨💛</h2>
+      <h2 id="storyTitle"></h2>
       <div id="storyContent" class="story-text"></div>
     </div>
   </div>
@@ -261,35 +241,58 @@
     function abrirApp(){abrirTela("app/index.html","app");}
     function abrirAtividades(){abrirTela("atividades/index.html","atividades");}
     function abrirPdf(){abrirTela("pdfcompleto/index.html","pdfcompleto");}
-    function abrirTela(src,t){document.getElementById("menuContainer").style.display="none";const i=document.getElementById("conteudo");i.style.display="block";i.src=src;history.pushState({tela:t},"","#"+t);}
-    window.onpopstate=function(e){const c=document.getElementById("conteudo"),m=document.getElementById("menuContainer");if(!e.state||!["app","atividades","pdfcompleto"].includes(e.state.tela)){c.style.display="none";m.style.display="block";}}
+    function abrirTela(src,t){
+      document.getElementById("menuContainer").style.display="none";
+      const i=document.getElementById("conteudo");
+      i.style.display="block"; i.src=src;
+      history.pushState({tela:t},"","#"+t);
+    }
+
+    window.onpopstate=function(e){
+      const c=document.getElementById("conteudo"), m=document.getElementById("menuContainer");
+      if(!e.state||!["app","atividades","pdfcompleto"].includes(e.state.tela)){
+        c.style.display="none"; m.style.display="block";
+      }
+    };
 
     let deferredPrompt;
-    window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;const b=document.getElementById("installBtn");b.style.display="inline-block";b.addEventListener("click",async()=>{deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;b.remove();});});
+    window.addEventListener('beforeinstallprompt',(e)=>{
+      e.preventDefault(); deferredPrompt=e;
+      const b=document.getElementById("installBtn");
+      b.style.display="inline-block";
+      b.addEventListener("click",async()=>{
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt=null; b.remove();
+      });
+    });
 
-    function logout(){localStorage.clear();window.location.replace("login.html");}
-  </script>
+    function logout(){
+      const lang = localStorage.getItem("lang");
+      localStorage.clear();
+      if(lang) localStorage.setItem("lang", lang);
+      window.location.replace("login.html");
+    }
 
-  <!-- 🔄 Atualização automática + registro de Service Worker -->
-  <script>
-    const APP_VERSION = '1.0.18';
-    const savedVersion = localStorage.getItem('appVersion');
+    /* 🔄 Atualização automática */
+    const APP_VERSION = "1.0.20";
+    const savedVersion = localStorage.getItem("appVersion");
     if (savedVersion !== APP_VERSION) {
       document.getElementById("updateAlert").style.display = "block";
-      if ('caches' in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-      localStorage.setItem('appVersion', APP_VERSION);
-      setTimeout(() => window.location.replace(window.location.pathname + '?v=' + APP_VERSION), 1200);
+      if ("caches" in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
+      localStorage.setItem("appVersion", APP_VERSION);
+      setTimeout(() => window.location.replace(window.location.pathname + "?v=" + APP_VERSION), 1200);
     }
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(() => console.log('✅ Service Worker ativo'))
-          .catch(err => console.error('❌ Falha ao registrar SW:', err));
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js")
+          .then(() => console.log("✅ Service Worker ativo"))
+          .catch(err => console.error("❌ Falha ao registrar SW:", err));
       });
     }
   </script>
 
-  <!-- 🌍 Tradução automática -->
-  <script src="/lang/language.js"></script>
+  <script defer src="/lang/language.js"></script>
 </body>
 </html>
