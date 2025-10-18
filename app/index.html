@@ -7,44 +7,112 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <style>
-    /* Tela de carregamento */
-    #loadingOverlay{position:fixed;inset:0;background:#fff9e6;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s,visibility .5s}
-    #loadingOverlay.hidden{opacity:0;visibility:hidden}
-    .spinner{width:60px;height:60px;border:6px solid #ffd54f;border-top:6px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:15px}
-    @keyframes spin{to{transform:rotate(360deg)}} .loading-text{font-family:"Fredoka",sans-serif;font-size:1.1rem;color:#444;text-align:center}
+    /* 🌀 Tela de carregamento */
+    #loadingOverlay {
+      position: fixed; inset: 0;
+      background: #fff9e6;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+      transition: opacity .5s ease, visibility .5s ease;
+    }
+    #loadingOverlay.hidden { opacity: 0; visibility: hidden; }
+    .spinner {
+      width: 60px; height: 60px;
+      border: 6px solid #ffd54f; border-top: 6px solid transparent;
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: "Fredoka", sans-serif;
+      font-size: 1.1rem; color: #444; text-align: center;
+    }
 
-    /* 🎨 Aperfeiçoamentos visuais do painel */
-    .sw{border-radius:12px !important; /* quadradinho com cantos suaves */
-        transition:transform .1s, box-shadow .2s}
-    .sw:active{transform:scale(.92)}
-    .sw:focus-visible{outline:3px solid rgba(255,213,79,.8);outline-offset:2px}
+    /* 🎨 Popup de tons e extras */
+    .palette-popup {
+      position: fixed;
+      background: #fff;
+      border: 2px solid #ffd54f;
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(6, 28px);
+      gap: 6px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px) scale(.96);
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 1000;
+    }
+    .palette-popup.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+    }
 
-    /* Pop-up de duas variações (clara/escura) */
-    .shades-popup{position:absolute;display:flex;gap:6px;top:-40px;left:50%;transform:translateX(-50%) scale(.9);opacity:0;pointer-events:none;transition:all .18s ease;z-index:20}
-    .shades-popup.active{opacity:1;transform:translateX(-50%) scale(1);pointer-events:auto}
-    .shade{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);cursor:pointer;transition:transform .12s}
-    .shade:active{transform:scale(.9)}
+    .extra-color {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0,0,0,.25);
+      transition: transform .12s, box-shadow .2s;
+    }
+    .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }
+    .extra-color:active {
+      transform: scale(.9);
+      box-shadow: 0 0 0 3px #ffd54f;
+    }
+
+    /* 🎨 Botão de cor personalizada (“+”) */
+    .sw.custom {
+      width: 36px; height: 36px;
+      border-radius: 10px !important;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb);
+      background-size: 300% 300%;
+      animation: hueShift 8s ease infinite;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1.4rem;
+      color: #fff; border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      transition: box-shadow .3s ease;
+    }
+
+    /* ✨ Brilho pulsante quando popup ativo */
+    .sw.custom.active {
+      animation: glowPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes hueShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
+      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
+    }
   </style>
 </head>
 
 <body>
-  <!-- 🎨 Tela de carregamento -->
+  <!-- 🕓 Tela de carregamento -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text">🎨 Carregando artes...</div>
   </div>
 
   <header class="topbar">
-    <div id="progressWidget" class="progress-widget" aria-label="Progresso do livro">
+    <div id="progressWidget" class="progress-widget">
       <div class="counter">
-        <span id="starCount" class="star-count">00</span><span class="sep">/</span>
+        <span id="starCount" class="star-count">00</span>
+        <span class="sep">/</span>
         <span id="totalPages" class="total-pages">00</span>
-        <span class="star-icon" aria-hidden="true">★</span>
+        <span class="star-icon">★</span>
         <span id="progressPercent" class="percent">0%</span>
       </div>
-      <div class="progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div class="track"><div id="progressFill" class="progress-fill"></div></div>
-      </div>
+      <div class="progressbar"><div id="progressFill" class="progress-fill"></div></div>
       <audio id="starSound" src="assets/sounds/estrela.mp3" preload="auto"></audio>
     </div>
   </header>
@@ -56,20 +124,17 @@
 
     <section class="controls">
       <div class="palette">
-        <!-- 🎯 12 cores principais (sem branco) -->
         <div class="swatches" id="swatches">
-          <button class="sw" data-color="#E53935" style="--c:#E53935"></button> <!-- vermelho -->
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button> <!-- laranja -->
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button> <!-- amarelo -->
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button> <!-- verde -->
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button> <!-- azul -->
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button> <!-- roxo -->
-          <button class="sw" data-color="#87CEEB" style="--c:#87CEEB"></button> <!-- azul céu -->
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button> <!-- bege/pele -->
-          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button> <!-- marrom -->
-          <button class="sw" data-color="#FF4081" style="--c:#FF4081"></button> <!-- rosa -->
-          <button class="sw" data-color="#009688" style="--c:#009688"></button> <!-- verde água -->
-          <button class="sw" data-color="#263238" style="--c:#263238"></button> <!-- cinza escuro -->
+          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>
+          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>
+          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>
+          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>
+          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>
+          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>
+          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>
+          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>
+          <button class="sw" data-color="#263238" style="--c:#263238"></button>
+          <button class="sw custom" id="customColorBtn">+</button>
         </div>
 
         <div class="tools">
@@ -88,22 +153,8 @@
     </section>
 
     <div class="zoom-controls">
-      <button id="zoom-in" class="zoom-btn" aria-label="Ampliar">
-        <svg width="28" height="28" viewBox="0 0 20 20">
-          <line x1="10" y1="4" x2="10" y2="16" stroke="black" stroke-width="2"/>
-          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
-        </svg>
-      </button>
-      <button id="zoom-out" class="zoom-btn" aria-label="Reduzir">
-        <svg width="28" height="28" viewBox="0 0 20 20">
-          <line x1="4" y1="10" x2="16" y2="10" stroke="black" stroke-width="2"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="zoom-arrows">
-      <button id="arrow-left" aria-label="Mover para a esquerda">←</button>
-      <button id="arrow-right" aria-label="Mover para a direita">→</button>
+      <button id="zoom-in" class="zoom-btn">+</button>
+      <button id="zoom-out" class="zoom-btn">−</button>
     </div>
   </main>
 
@@ -111,82 +162,109 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-    /* util: clarear/escurecer */
-    function lightenDarkenColor(col, amt){
-      let usePound = false;
-      if(col[0]==="#"){ col = col.slice(1); usePound = true; }
-      let num = parseInt(col,16);
-      let r = (num>>16) + amt, g = ((num>>8)&0xFF) + amt, b = (num & 0xFF) + amt;
-      r = Math.max(0, Math.min(255, r));
-      g = Math.max(0, Math.min(255, g));
-      b = Math.max(0, Math.min(255, b));
-      const out = (r<<16) + (g<<8) + b;
-      return (usePound ? "#" : "") + out.toString(16).padStart(6, "0");
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+      const customBtn = document.getElementById("customColorBtn");
+      let popupRef = null;
 
-    /* 🎨 Delegação no container dos swatches.
-       IMPORTANTE: usamos capture:true para interceptar o 1º clique,
-       mostrar as variações e IMPEDIR o manipulador do seu script.js.
-       Quando a criança escolhe uma variação, re-disparamos um clique
-       no mesmo swatch com data-no-popup para deixar o script.js pintar. */
-    const swatches = document.getElementById("swatches");
-    swatches.addEventListener("click", function(ev){
-      const sw = ev.target.closest(".sw");
-      if(!sw) return;
+      const EXTRA_COLORS = [
+        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
+        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
+        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",
+        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"
+      ];
 
-      // se veio do clique programático, não abrir popup
-      if(sw.dataset.noPopup === "1"){
-        sw.removeAttribute("data-no-popup");
-        return; // deixa o seu script.js processar normalmente
+      function closePopup() {
+        if (!popupRef) return;
+        popupRef.remove();
+        popupRef = null;
+        customBtn.classList.remove("active");
+        document.removeEventListener("click", onOutside);
+        document.removeEventListener("keydown", onEsc);
       }
 
-      // 1º clique: bloquear o handler do seu script.js
-      ev.stopPropagation();
-      ev.stopImmediatePropagation();
-      ev.preventDefault();
+      function onOutside(e) {
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
+      }
+      function onEsc(e) { if (e.key === "Escape") closePopup(); }
 
-      // remove popups abertos
-      document.querySelectorAll(".shades-popup").forEach(p => p.remove());
+      // ✅ função corrigida
+      function applyColorSafely(color) {
+        const sendColor = () => {
+          if (typeof window.setColor === "function") {
+            window.setColor(color);
+          } else {
+            window.currentColor = color;
+          }
+          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
+        };
 
-      const base = sw.getAttribute("data-color");
-      if(!base) return;
+        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
+        if (typeof window.setColor === "function") {
+          sendColor();
+        } else {
+          let tries = 0;
+          const interval = setInterval(() => {
+            if (typeof window.setColor === "function") {
+              sendColor();
+              clearInterval(interval);
+            } else if (tries++ > 20) {
+              clearInterval(interval);
+            }
+          }, 100);
+        }
+      }
 
-      const lighter = lightenDarkenColor(base, 40);
-      const darker  = lightenDarkenColor(base, -40);
+      function openPopupAboveButton(btn) {
+        closePopup();
+        const pop = document.createElement("div");
+        pop.className = "palette-popup";
+        customBtn.classList.add("active");
 
-      const popup = document.createElement("div");
-      popup.className = "shades-popup";
-      popup.innerHTML = `
-        <div class="shade" style="background:${lighter}" data-color="${lighter}"></div>
-        <div class="shade" style="background:${darker}"  data-color="${darker}"></div>
-      `;
-      sw.style.position = "relative";
-      sw.appendChild(popup);
-      requestAnimationFrame(() => popup.classList.add("active"));
+        EXTRA_COLORS.forEach(c => {
+          const el = document.createElement("div");
+          el.className = "extra-color";
+          el.style.background = c;
+          el.addEventListener("click", () => {
+            btn.style.background = c;
+            btn.setAttribute("data-color", c);
+            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
 
-      popup.querySelectorAll(".shade").forEach(sh => {
-        sh.addEventListener("click", e => {
-          e.stopPropagation();
-          const chosen = sh.getAttribute("data-color");
-          // visual no swatch
-          sw.style.boxShadow = `0 0 0 3px ${chosen}`;
-          // atualiza o valor que o seu script.js lê
-          sw.setAttribute("data-color", chosen);
-          sw.style.setProperty("--c", chosen);
-          // fecha popup e dispara clique "real" para o script.js pintar
-          popup.remove();
-          sw.dataset.noPopup = "1";
-          sw.dispatchEvent(new MouseEvent("click", {bubbles:true}));
-        }, {once:true});
+            el.style.boxShadow = "0 0 0 3px #ffd54f";
+            setTimeout(() => el.style.boxShadow = "", 180);
+
+            applyColorSafely(c);
+            setTimeout(() => closePopup(), 80);
+          });
+          pop.appendChild(el);
+        });
+
+        document.body.appendChild(pop);
+        const br = btn.getBoundingClientRect();
+        const pw = pop.offsetWidth;
+        const ph = pop.offsetHeight;
+        let left = br.left + br.width / 2 - pw / 2;
+        let top  = br.top - ph - 8;
+        const margin = 8;
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+        if (top < margin) top = margin;
+        pop.style.left = `${left}px`;
+        pop.style.top  = `${top}px`;
+
+        requestAnimationFrame(() => pop.classList.add("active"));
+        document.addEventListener("click", onOutside);
+        document.addEventListener("keydown", onEsc);
+        popupRef = pop;
+      }
+
+      customBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popupRef) closePopup();
+        else openPopupAboveButton(customBtn);
       });
-    }, {capture:true});
-
-    // fechar popups tocando fora
-    document.addEventListener("click", () => {
-      document.querySelectorAll(".shades-popup").forEach(p => p.remove());
     });
 
-    // ⏳ oculta loading quando o 1º SVG entra
+    // ⏳ Tela de loading
     const overlay = document.getElementById("loadingOverlay");
     const observer = new MutationObserver(() => {
       const svgLoaded = document.querySelector("#svgMount svg");
@@ -195,7 +273,7 @@
         observer.disconnect();
       }
     });
-    observer.observe(document.getElementById("svgMount"), { childList:true, subtree:true });
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
