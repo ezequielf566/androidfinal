@@ -1,9 +1,7 @@
 // 🌍 Sistema multilíngue — versão 1.0.23 (corrigida e definitiva)
-// Compatível com PWA, app nativo (Play Store) e carregamento offline parcial
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
-  // 🟡 Exibe banner visual em caso de erro
   function showLangError(msg) {
     const banner = document.createElement("div");
     banner.textContent = `⚠️ ${msg}`;
@@ -27,13 +25,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadLanguage(selectedLang) {
     try {
-      // ✅ Caminho absoluto (funciona na raiz e no PWA)
       const res = await fetch(`/lang/${selectedLang}.json`);
       if (!res.ok) throw new Error(`Idioma "${selectedLang}" não encontrado (${res.status})`);
 
       const data = await res.json();
 
-      // 🟢 Saudação personalizada (corrigida para suportar HTML)
+      // 🟢 Saudação personalizada
       const name = (localStorage.getItem("displayName") || "Amigo").split(" ")[0];
       const saudacao = document.querySelector("[data-i18n='menu.greeting']");
       if (saudacao && data.menu?.greeting) {
