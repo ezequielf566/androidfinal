@@ -48,17 +48,6 @@
       font-weight: 800;
       text-decoration: underline;
     }
-    .lang-icon {
-      cursor: pointer;
-      font-size: 1.05rem;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2px 4px;
-      border-radius: 8px;
-    }
-    .lang-icon:active { transform: scale(.96); }
 
     .login-container {
       text-align: center;
@@ -75,6 +64,7 @@
     h1 { font-size: 1.8rem; color: #222; margin-bottom: 8px; }
     .subtitle { color: #555; font-size: 1rem; margin-bottom: 10px; }
     .quote { font-size: 14px; color: #666; font-style: italic; margin-bottom: 25px; }
+
     .google-btn {
       display: flex;
       align-items: center;
@@ -93,8 +83,43 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
     .google-btn:hover { transform: scale(1.03); background: #f8f9fa; }
+
     .google-icon { width: 22px; height: 22px; }
     .footer { margin-top: 25px; font-size: 13px; color: #777; }
+
+    /* 🌀 Overlay de carregamento */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 249, 230, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    #loadingOverlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #ffd54f;
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: 1.1rem;
+      color: #444;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -104,7 +129,6 @@
     <span class="lang-option" data-lang="pt">PT</span>
     <span class="lang-option" data-lang="es">ES</span>
     <span class="lang-option" data-lang="en">EN</span>
-    <span class="lang-icon" id="langIcon" title="Trocar idioma">🌐</span>
   </div>
 
   <div class="login-container">
@@ -125,6 +149,12 @@
 
     <p id="errorMsg" class="error"></p>
     <p id="footer" class="footer">✨ Feito com fé por <strong>Pintando a Palavra</strong></p>
+  </div>
+
+  <!-- 🌀 Overlay de carregamento -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Carregando...</div>
   </div>
 
   <!-- 🔥 Firebase Login -->
@@ -149,8 +179,10 @@
 
     const loginBtn = document.getElementById("loginGoogle");
     const errorMsg = document.getElementById("errorMsg");
+    const loadingOverlay = document.getElementById("loadingOverlay");
 
     async function handleLogin(user){
+      loadingOverlay.classList.add("active"); // 🌀 mostra o carregando
       const email = user.email.toLowerCase();
       const ref = doc(db, "usuariosGoogle", email);
       const snap = await getDoc(ref);
@@ -163,17 +195,21 @@
       localStorage.setItem("premium", userData.premium ? "true" : "false");
       localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
 
-      errorMsg.textContent = "✅ Login realizado com sucesso!";
-      errorMsg.style.color = "green";
+      // ✅ mantém idioma escolhido
+      const savedLang = localStorage.getItem("lang") || "pt";
+      localStorage.setItem("lang", savedLang);
+
       setTimeout(() => window.location.replace("./index.html"), 800);
     }
 
     loginBtn.addEventListener("click", async () => {
       errorMsg.textContent = "";
       try {
+        loadingOverlay.classList.add("active");
         const result = await signInWithPopup(auth, provider);
         await handleLogin(result.user);
       } catch (err) {
+        loadingOverlay.classList.remove("active");
         if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
           await signInWithRedirect(auth, provider);
         } else {
@@ -189,7 +225,7 @@
     });
   </script>
 
-  <!-- 🌍 Seletor de idioma -->
+  <!-- 🌍 Idiomas -->
   <script>
     const translations = {
       pt:{title:"Pintando a Palavra",subtitle:"Colorindo histórias da Bíblia",quote:"🌈 “Deixem vir a mim as crianças...” — Mateus 19:14",loginText:"Entrar com Google",footer:"✨ Feito com fé por Pintando a Palavra"},
@@ -205,9 +241,7 @@
       footer: document.getElementById("footer")
     };
 
-    const langOptions = Array.from(document.querySelectorAll(".lang-option"));
-    const langIcon = document.getElementById("langIcon");
-    const LANGS = ["pt", "es", "en"];
+    const langOptions = document.querySelectorAll(".lang-option");
 
     function applyTexts(lang){
       const t = translations[lang] || translations.pt;
@@ -227,20 +261,12 @@
       localStorage.setItem("lang", lang);
       applyTexts(lang);
       markActive(lang);
-      window.dispatchEvent(new CustomEvent("langchange", { detail: { lang } }));
     }
 
     langOptions.forEach(opt => opt.addEventListener("click", () => setLanguage(opt.dataset.lang)));
 
-    langIcon.addEventListener("click", () => {
-      const current = localStorage.getItem("lang") || (navigator.language || "pt").slice(0,2);
-      const idx = Math.max(0, LANGS.indexOf(current));
-      const next = LANGS[(idx + 1) % LANGS.length];
-      setLanguage(next);
-    });
-
     const savedLang = localStorage.getItem("lang") || (navigator.language || "pt").slice(0,2);
-    setLanguage(LANGS.includes(savedLang) ? savedLang : "pt");
+    setLanguage(["pt","es","en"].includes(savedLang) ? savedLang : "pt");
   </script>
 </body>
 </html>
