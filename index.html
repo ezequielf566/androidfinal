@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu em Português (v1.0.36 - modal aprimorado) -->
+<!-- 🔸 Pintando a Palavra — Menu em Português (v1.0.37 - modal responsivo e dourado) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -134,28 +134,26 @@
 
     .socials button:hover { background: #fff2b3; transform: scale(1.05); }
 
-    /* 🪞 Modal */
+    /* 🪞 Modal refinado e responsivo */
     .modal {
       display: none;
       position: fixed;
-      z-index: 1000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0,0,0,0.45);
+      inset: 0;
+      background: rgba(255,230,150,0.3); /* leve dourado translúcido */
       backdrop-filter: blur(3px);
-      padding: 1rem;
+      z-index: 1000;
+      padding: 12px;
+      overflow-y: auto;
     }
 
     .modal-content {
       background: linear-gradient(180deg, #FFF8DC 0%, #FFEBA3 100%);
-      margin: 6vh auto;
-      padding: 26px 24px 30px;
-      border-radius: 22px;
+      margin: 8vh auto;
+      padding: 22px 18px 26px;
+      border-radius: 20px;
       width: 92%;
-      max-width: 620px;
-      max-height: 82vh;
-      overflow-y: auto;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      max-width: 480px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
       position: relative;
       animation: fadeInModal 0.3s ease;
     }
@@ -168,35 +166,43 @@
     .modal-content h2 {
       text-align: center;
       color: #d78d00;
-      margin: 0 0 16px;
-      font-size: 1.35rem;
+      margin: 0 0 14px;
+      font-size: 1.15rem;
       font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      line-height: 1.3;
     }
 
     .story-text {
       color: #333;
-      font-size: 1.05rem;
-      line-height: 1.6;
+      font-size: 1rem;
+      line-height: 1.55;
       text-align: justify;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
-    .story-text p {
-      margin: 0 0 1em;
-    }
+    .story-text p { margin-bottom: 0.9em; }
 
     .close {
       color: #555;
       position: absolute;
-      right: 18px;
-      top: 12px;
-      font-size: 30px;
+      right: 14px;
+      top: 10px;
+      font-size: 26px;
       font-weight: bold;
       cursor: pointer;
       transition: color 0.2s ease;
     }
     .close:hover { color: #d78d00; }
+
+    @media (min-width: 700px) {
+      .modal-content { 
+        max-width: 520px;
+        padding: 28px 26px 32px;
+      }
+      .modal-content h2 { font-size: 1.25rem; }
+    }
 
     #updateAlert {
       display: none;
@@ -258,7 +264,7 @@
   <div id="storyModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeStoryModal()">&times;</span>
-      <h2>💛 História do Pintando a Palavra 💛</h2>
+      <h2>💛 HISTÓRIA DO PINTANDO A PALAVRA 💛</h2>
       <div class="story-text" id="storyContent">
         <p>Eu não sabia nada de programação.</p>
         <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
@@ -314,7 +320,7 @@
       window.location.replace("login.html");
     }
 
-    const APP_VERSION = "1.0.36";
+    const APP_VERSION = "1.0.37";
     const savedVersion = localStorage.getItem("appVersion");
     if (savedVersion !== APP_VERSION) {
       document.getElementById("updateAlert").style.display = "block";
