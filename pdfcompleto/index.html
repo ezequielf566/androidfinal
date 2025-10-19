@@ -1,185 +1,177 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title data-i18n="pdf.title">PDFs Completos</title>
-  <style>
-    :root {
-      --gold:#FFD54F;
-      --gold-2:#FFE37A;
-      --bg1:#FFF8DC;
-      --bg2:#FFEAA7;
-      --ink:#222;
-      --card:#fff;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:'Fredoka',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      color:var(--ink);
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));
-      background-attachment:fixed;
-      display:flex;
-      flex-direction:column;
-      min-height:100vh;
-    }
-    header{
-      position:sticky;top:0;z-index:10;
-      background:linear-gradient(90deg,var(--gold),var(--gold-2));
-      padding:14px 16px;
-      display:flex;align-items:center;justify-content:center;
-      box-shadow:0 2px 10px rgba(0,0,0,.12);
-      border-bottom-left-radius:12px;border-bottom-right-radius:12px;
-    }
-    header h1{margin:0;font-size:1.4rem;font-weight:800;letter-spacing:.2px;}
-    main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:20px 16px 32px;}
-    .intro{
-      margin:8px auto 18px;text-align:center;font-weight:600;
-      background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
-    }
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
-    @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}
-    .card{
-      background:var(--card);border-radius:20px;padding:12px;
-      box-shadow:0 6px 16px rgba(0,0,0,.12);
-      transition:transform .18s ease,box-shadow .18s ease;
-      display:flex;flex-direction:column;align-items:center;
-    }
-    .card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.16);}
-    .cover{
-      width:100%;
-      aspect-ratio:1/1.2;
-      border-radius:16px;
-      object-fit:cover;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
-      background:#fff6d1;
-      margin-bottom:12px;
-    }
-    .btn{
-      border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
-      box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
-      transition:transform .12s ease,background .12s ease;width:100%;
-      background:var(--gold);color:#2a2a2a;
-    }
-    .btn:hover{transform:translateY(-1px);background:#ffe066;}
-    .btn:active{transform:translateY(0);}
-    .btn.soon{background:#f0f0f0;color:#666;cursor:default;}
-    .btn.soon:hover{transform:none;background:#f0f0f0;}
-    .loading{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;
-      flex-direction:column;gap:12px;
-    }
-    .loading.active{opacity:1;visibility:visible;}
-    .spinner{
-      width:52px;height:52px;border:5px solid var(--gold);border-top-color:transparent;border-radius:50%;
-      animation:spin 1s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .upgrade{
-      position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;
-    }
-    .upgrade.open{display:flex;}
-    .upgrade .box{
-      width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;
-      box-shadow:0 14px 46px rgba(0,0,0,.32);
-      text-align:center;
-    }
-    .upgrade h3{margin:0 0 8px;}
-    .benefits{margin:8px 0 14px;line-height:1.6;}
-    .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-    .btn-secondary{background:#f2f2f2;color:#333;}
-    .btn-primary{background:var(--gold);color:#222;}
-  </style>
-</head>
-
-<body>
-  <audio id="entradaAudio">
-    <source src="audio/entrada.mp3" type="audio/mpeg"/>
-  </audio>
-
-  <div id="loading" class="loading active">
-    <div class="spinner"></div>
-  </div>
-
-  <header><h1 data-i18n="pdf.title">PDFs Completos</h1></header>
-
-  <main>
-    <p class="intro" data-i18n="pdf.desc">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>
-    <section class="grid" id="grid"></section>
-  </main>
-
-  <div class="upgrade" id="upgrade">
-    <div class="box">
-      <h3 data-i18n="pdf.premiumTitle">💾 Conteúdo Premium</h3>
-      <p class="benefits">
-        ✅ <span data-i18n="pdf.premium1">Baixe todos os PDFs completos</span><br/>
-        ✅ <span data-i18n="pdf.premium2">Receba atualizações futuras</span><br/>
-        ✅ <span data-i18n="pdf.premium3">Experiência sem anúncios</span>
-      </p>
-      <div class="actions">
-        <button class="btn btn-secondary" id="btnFecharUpgrade" data-i18n="pdf.later">Agora não</button>
-        <button class="btn btn-primary" id="btnUpgradePlay" data-i18n="pdf.upgrade">💳 Fazer upgrade</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const CONTENT = [
-      {
-        id:'historias',
-        title:'Capa Histórias Bíblicas 📥 Baixar PDF completo',
-        cover:'img/historias-capa.png',
-        pdf:'https://drive.google.com/uc?export=download&id=1Nh3iMFqpzP5jZzecTUQqRDD4XHfmlXiu',
-        available:true
-      },
-      {
-        id:'parabolas',
-        title:'Capa Parábolas de Jesus 🕓 Em breve no Premium',
-        cover:'img/parabolas-capa.png',
-        available:false
-      }
-    ];
-
-    const grid=document.getElementById('grid');
-    const loading=document.getElementById('loading');
-    const upgrade=document.getElementById('upgrade');
-
-    function render(){
-      grid.innerHTML = CONTENT.map(item => `
-        <article class="card">
-          <img class="cover" src="${item.cover}" alt="Capa ${item.title}" />
-          <button class="btn ${item.available ? '' : 'soon'}" data-id="${item.id}">
-            ${item.title}
-          </button>
-        </article>
-      `).join('');
-    }
-
-    document.addEventListener('click', e => {
-      const btn = e.target.closest('button.btn');
-      if (!btn) return;
-      const item = CONTENT.find(x => x.id === btn.dataset.id);
-      if (!item) return;
-      upgrade.classList.add('open');
-    });
-
-    document.getElementById('btnFecharUpgrade').addEventListener('click', () => upgrade.classList.remove('open'));
-    document.getElementById('btnUpgradePlay').addEventListener('click', () => {
-      upgrade.classList.remove('open');
-      alert('🛒 Redirecionando para compra interna do Google Play...');
-    });
-
-    window.addEventListener('load', () => {
-      setTimeout(()=>loading.classList.remove('active'),400);
-      render();
-    });
-  </script>
-
-  <!-- 🌍 Tradução automática -->
-  <script defer src="/lang/runtime-translator.js"></script>
-</body>
+<!DOCTYPE html>  <html lang="pt-BR">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+  <title>PDFs Completos</title>  
+  <style>  
+    :root {  
+      --gold:#FFD54F;  
+      --gold-2:#FFE37A;  
+      --bg1:#FFF8DC;  
+      --bg2:#FFEAA7;  
+      --ink:#222;  
+      --card:#fff;  
+    }  
+    *{box-sizing:border-box}  
+    html,body{height:100%}  
+    body{  
+      margin:0;  
+      font-family:'Fredoka',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;  
+      color:var(--ink);  
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));  
+      background-attachment:fixed;  
+      display:flex;  
+      flex-direction:column;  
+      min-height:100vh;  
+    }  
+    header{  
+      position:sticky;top:0;z-index:10;  
+      background:linear-gradient(90deg,var(--gold),var(--gold-2));  
+      padding:14px 16px;  
+      display:flex;align-items:center;justify-content:center;  
+      box-shadow:0 2px 10px rgba(0,0,0,.12);  
+      border-bottom-left-radius:12px;border-bottom-right-radius:12px;  
+    }  
+    header h1{margin:0;font-size:1.4rem;font-weight:800;letter-spacing:.2px;}  
+    main{flex:1;width:100%;max-width:980px;margin:0 auto;padding:20px 16px 32px;}  
+    .intro{  
+      margin:8px auto 18px;text-align:center;font-weight:600;  
+      background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;  
+      box-shadow:0 2px 8px rgba(0,0,0,.08);  
+    }  
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}  
+    @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}  
+    .card{  
+      background:var(--card);border-radius:20px;padding:12px;  
+      box-shadow:0 6px 16px rgba(0,0,0,.12);  
+      transition:transform .18s ease,box-shadow .18s ease;  
+      display:flex;flex-direction:column;align-items:center;  
+    }  
+    .card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.16);}  
+    .cover{  
+      width:100%;  
+      aspect-ratio:1/1.2;  
+      border-radius:16px;  
+      object-fit:cover;  
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);  
+      background:#fff6d1;  
+      margin-bottom:12px;  
+    }  
+    .btn{  
+      border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;  
+      box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);  
+      transition:transform .12s ease,background .12s ease;width:100%;  
+      background:var(--gold);color:#2a2a2a;  
+    }  
+    .btn:hover{transform:translateY(-1px);background:#ffe066;}  
+    .btn:active{transform:translateY(0);}  
+    .btn.soon{background:#f0f0f0;color:#666;cursor:default;}  
+    .btn.soon:hover{transform:none;background:#f0f0f0;}  
+    .loading{  
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;  
+      background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;  
+      flex-direction:column;gap:12px;  
+    }  
+    .loading.active{opacity:1;visibility:visible;}  
+    .spinner{  
+      width:52px;height:52px;border:5px solid var(--gold);border-top-color:transparent;border-radius:50%;  
+      animation:spin 1s linear infinite;  
+    }  
+    @keyframes spin{to{transform:rotate(360deg)}}  
+    .upgrade{  
+      position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;  
+    }  
+    .upgrade.open{display:flex;}  
+    .upgrade .box{  
+      width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;  
+      box-shadow:0 14px 46px rgba(0,0,0,.32);  
+      text-align:center;  
+    }  
+    .upgrade h3{margin:0 0 8px;}  
+    .benefits{margin:8px 0 14px;line-height:1.6;}  
+    .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}  
+    .btn-secondary{background:#f2f2f2;color:#333;}  
+    .btn-primary{background:var(--gold);color:#222;}  
+  </style>  
+</head>  <body>  
+  <audio id="entradaAudio">  
+    <source src="audio/entrada.mp3" type="audio/mpeg"/>  
+  </audio>    <div id="loading" class="loading active">  
+    <div class="spinner"></div>  
+    <div style="font-weight:700;color:#444">Carregando PDFs...</div>  
+  </div>    <header><h1>PDFs Completos</h1></header>    <main>  
+    <p class="intro">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>  
+    <section class="grid" id="grid"></section>  
+  </main>    <div class="upgrade" id="upgrade">  
+    <div class="box">  
+      <h3>💾 Conteúdo Premium</h3>  
+      <p class="benefits">  
+        ✅ Baixe todos os PDFs completos<br/>  
+        ✅ Receba atualizações futuras<br/>  
+        ✅ Experiência sem anúncios  
+      </p>  
+      <div class="actions">  
+        <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>  
+        <button class="btn btn-primary" id="btnUpgradePlay">💳 Fazer upgrade</button>  
+      </div>  
+    </div>  
+  </div>    <script>  
+    const CONTENT = [  
+      {  
+        id:'historias',  
+        title:'Histórias Bíblicas',  
+        cover:'img/historias-capa.png',  
+        pdf:'https://drive.google.com/uc?export=download&id=1Nh3iMFqpzP5jZzecTUQqRDD4XHfmlXiu',  
+        available:true  
+      },  
+      {  
+        id:'parabolas',  
+        title:'Parábolas de Jesus',  
+        cover:'img/parabolas-capa.png',  
+        available:false  
+      }  
+    ];  
+  
+    const grid=document.getElementById('grid');  
+    const loading=document.getElementById('loading');  
+    const upgrade=document.getElementById('upgrade');  
+  
+    function render(){  
+      grid.innerHTML = CONTENT.map(item => `  
+        <article class="card">  
+          <img class="cover" src="${item.cover}" alt="Capa ${item.title}" />  
+          <button class="btn ${item.available ? '' : 'soon'}" data-id="${item.id}">  
+            ${item.available ? "📥 Baixar PDF completo" : "🕓 Em breve no Premium"}  
+          </button>  
+        </article>  
+      `).join('');  
+    }  
+  
+    document.addEventListener('click', e => {  
+      const btn = e.target.closest('button.btn');  
+      if (!btn) return;  
+      const item = CONTENT.find(x => x.id === btn.dataset.id);  
+      if (!item) return;  
+  
+      if (item.available) {  
+        // Premium: abre modal de upgrade (não baixa direto)  
+        upgrade.classList.add('open');  
+      } else {  
+        // “Em breve”  
+        upgrade.classList.add('open');  
+      }  
+    });  
+  
+    document.getElementById('btnFecharUpgrade').addEventListener('click', () => upgrade.classList.remove('open'));  
+    document.getElementById('btnUpgradePlay').addEventListener('click', () => {  
+      upgrade.classList.remove('open');  
+      alert('🛒 Redirecionando para compra interna do Google Play...');  
+      // Aqui entrará a chamada da Billing Library futuramente  
+    });  
+  
+    window.addEventListener('load', () => {  
+      loading.classList.remove('active');  
+      render();  
+    });  
+  </script>  </body>  
 </html>
