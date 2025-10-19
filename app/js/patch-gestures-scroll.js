@@ -1,4 +1,3 @@
-
 /**
  * Patch: Mobile edge-swipe "Back" + resilient mouse-wheel scrolling
  * - Keeps the original layout and sounds intact (runs after script.js).
@@ -90,4 +89,41 @@
     `;
     document.head.appendChild(style);
   } catch(_){}
+
+  // ------- 🧩 FIX: scroll total ao dar zoom -------
+  window.addEventListener("DOMContentLoaded", () => {
+    const svgMount = document.getElementById("svgMount");
+    if (!svgMount) return;
+
+    // 🔧 Ajustes de estilo para permitir scroll total
+    Object.assign(svgMount.style, {
+      padding: "0 80px",
+      scrollBehavior: "smooth",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      overflow: "auto",
+      touchAction: "pan-x pan-y",
+    });
+
+    // 🔍 Centraliza o SVG após zoom via botões
+    const zoomBtns = [document.getElementById("zoom-in"), document.getElementById("zoom-out")];
+    zoomBtns.forEach(btn => {
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        requestAnimationFrame(() => {
+          svgMount.scrollLeft = (svgMount.scrollWidth - svgMount.clientWidth) / 2;
+        });
+      });
+    });
+
+    // 🔍 Centraliza também se o zoom for feito com gesto (pinch ou Ctrl+Scroll)
+    svgMount.addEventListener("wheel", (e) => {
+      if (e.ctrlKey) {
+        setTimeout(() => {
+          svgMount.scrollLeft = (svgMount.scrollWidth - svgMount.clientWidth) / 2;
+        }, 100);
+      }
+    });
+  });
 })();
