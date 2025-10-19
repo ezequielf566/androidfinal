@@ -16,16 +16,21 @@
       z-index: 9999;
       transition: opacity .5s ease, visibility .5s ease;
     }
-    #loadingOverlay.hidden { opacity: 0; visibility: hidden; }
+    #loadingOverlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
     .spinner {
       width: 60px; height: 60px;
-      border: 6px solid #ffd54f; border-top: 6px solid transparent;
-      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
+      border: 6px solid #ffd54f;
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text {
       font-family: "Fredoka", sans-serif;
-      font-size: 1.1rem; color: #444; text-align: center;
+      font-size: 1.1rem;
+      color: #444;
+      text-align: center;
     }
 
     /* 🎨 Popup de tons e extras */
@@ -60,12 +65,8 @@
       transition: transform .12s, box-shadow .2s;
     }
     .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }
-    .extra-color:active {
-      transform: scale(.9);
-      box-shadow: 0 0 0 3px #ffd54f;
-    }
+    .extra-color:active { transform: scale(.9); box-shadow: 0 0 0 3px #ffd54f; }
 
-    /* 🎨 Botão de cor personalizada (“+”) */
     .sw.custom {
       width: 36px; height: 36px;
       border-radius: 10px !important;
@@ -78,20 +79,12 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.2);
       transition: box-shadow .3s ease;
     }
+    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }
 
-    /* ✨ Brilho pulsante quando popup ativo */
-    .sw.custom.active {
-      animation: glowPulse 1.4s ease-in-out infinite;
-    }
-
-    @keyframes hueShift {
-      0%,100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
+    @keyframes hueShift { 0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
     @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
-      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
+      0%,100%{box-shadow:0 0 8px 4px rgba(255,213,79,0.6);}
+      50%{box-shadow:0 0 12px 6px rgba(255,213,79,0.9);}
     }
   </style>
 </head>
@@ -100,7 +93,7 @@
   <!-- 🕓 Tela de carregamento -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div class="loading-text">🎨 Carregando artes...</div>
+    <div class="loading-text" data-i18n="app.loading">🎨 Carregando artes...</div>
   </div>
 
   <header class="topbar">
@@ -118,30 +111,28 @@
   </header>
 
   <main class="wrap">
-    <section class="stage">
-      <div id="svgMount" class="svgMount"></div>
-    </section>
+    <section class="stage"><div id="svgMount" class="svgMount"></div></section>
 
     <section class="controls">
       <div class="palette">
         <div class="swatches" id="swatches">
-          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>
-          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>
-          <button class="sw" data-color="#263238" style="--c:#263238"></button>
+          <button class="sw" data-color="#E53935"></button>
+          <button class="sw" data-color="#FB8C00"></button>
+          <button class="sw" data-color="#FDD835"></button>
+          <button class="sw" data-color="#7CB342"></button>
+          <button class="sw" data-color="#42A5F5"></button>
+          <button class="sw" data-color="#8E24AA"></button>
+          <button class="sw" data-color="#E0C2A2"></button>
+          <button class="sw" data-color="#8D6E63"></button>
+          <button class="sw" data-color="#263238"></button>
           <button class="sw custom" id="customColorBtn">+</button>
         </div>
 
         <div class="tools">
-          <button id="eraserBtn" class="btn">Borracha</button>
-          <button id="undoBtn" class="btn">Desfazer</button>
-          <button id="redoBtn" class="btn">Refazer</button>
-          <button id="savePng" class="btn primary">Salvar PNG</button>
+          <button id="eraserBtn" class="btn" data-i18n="app.eraser">Borracha</button>
+          <button id="undoBtn" class="btn" data-i18n="app.undo">Desfazer</button>
+          <button id="redoBtn" class="btn" data-i18n="app.redo">Refazer</button>
+          <button id="savePng" class="btn primary" data-i18n="app.savePng">Salvar PNG</button>
         </div>
 
         <div class="pager">
@@ -158,14 +149,36 @@
     </div>
   </main>
 
+  <!-- 🔧 Scripts -->
   <script src="js/script.js"></script>
   <script src="js/patch-gestures-scroll.js"></script>
+  <script defer src="/lang/language.js"></script>
 
   <script>
+    // 🧠 Failsafe multilíngue
+    window.addEventListener("error", (e) => {
+      if (e.filename?.includes("language.js")) {
+        console.warn("⚠️ Falha ao carregar idioma. Usando português padrão.");
+      }
+    });
+
+    // ⏳ Oculta o overlay apenas quando o SVG carregar
+    const overlay = document.getElementById("loadingOverlay");
+    const mount = document.getElementById("svgMount");
+
+    const observer = new MutationObserver(() => {
+      const svgLoaded = mount.querySelector("svg");
+      if (svgLoaded) {
+        setTimeout(() => overlay.classList.add("hidden"), 400);
+        observer.disconnect();
+      }
+    });
+    observer.observe(mount, { childList: true, subtree: true });
+
+    // 🎨 Paleta personalizada
     document.addEventListener("DOMContentLoaded", () => {
       const customBtn = document.getElementById("customColorBtn");
       let popupRef = null;
-
       const EXTRA_COLORS = [
         "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
         "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
@@ -175,41 +188,28 @@
 
       function closePopup() {
         if (!popupRef) return;
-        popupRef.remove();
-        popupRef = null;
+        popupRef.remove(); popupRef = null;
         customBtn.classList.remove("active");
         document.removeEventListener("click", onOutside);
         document.removeEventListener("keydown", onEsc);
       }
-
       function onOutside(e) {
         if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
       }
       function onEsc(e) { if (e.key === "Escape") closePopup(); }
 
-      // ✅ função corrigida
       function applyColorSafely(color) {
         const sendColor = () => {
-          if (typeof window.setColor === "function") {
-            window.setColor(color);
-          } else {
-            window.currentColor = color;
-          }
+          if (typeof window.setColor === "function") window.setColor(color);
+          else window.currentColor = color;
           window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
         };
-
-        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
-        if (typeof window.setColor === "function") {
-          sendColor();
-        } else {
+        if (typeof window.setColor === "function") sendColor();
+        else {
           let tries = 0;
           const interval = setInterval(() => {
-            if (typeof window.setColor === "function") {
-              sendColor();
-              clearInterval(interval);
-            } else if (tries++ > 20) {
-              clearInterval(interval);
-            }
+            if (typeof window.setColor === "function") { sendColor(); clearInterval(interval); }
+            else if (tries++ > 20) clearInterval(interval);
           }, 100);
         }
       }
@@ -229,10 +229,8 @@
             btn.setAttribute("data-color", c);
             document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
-
             el.style.boxShadow = "0 0 0 3px #ffd54f";
             setTimeout(() => el.style.boxShadow = "", 180);
-
             applyColorSafely(c);
             setTimeout(() => closePopup(), 80);
           });
@@ -250,7 +248,6 @@
         if (top < margin) top = margin;
         pop.style.left = `${left}px`;
         pop.style.top  = `${top}px`;
-
         requestAnimationFrame(() => pop.classList.add("active"));
         document.addEventListener("click", onOutside);
         document.addEventListener("keydown", onEsc);
@@ -259,21 +256,9 @@
 
       customBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (popupRef) closePopup();
-        else openPopupAboveButton(customBtn);
+        if (popupRef) closePopup(); else openPopupAboveButton(customBtn);
       });
     });
-
-    // ⏳ Tela de loading
-    const overlay = document.getElementById("loadingOverlay");
-    const observer = new MutationObserver(() => {
-      const svgLoaded = document.querySelector("#svgMount svg");
-      if (svgLoaded) {
-        setTimeout(() => overlay.classList.add("hidden"), 400);
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
