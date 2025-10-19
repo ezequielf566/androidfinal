@@ -17,38 +17,6 @@
       overflow: hidden;
     }
 
-    /* 🌐 Seletor de idiomas */
-    .lang-selector {
-      position: fixed;
-      top: 12px;
-      right: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.78);
-      border-radius: 22px;
-      padding: 6px 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      font-size: .95rem;
-      z-index: 9999;
-      user-select: none;
-    }
-    .lang-option {
-      cursor: pointer;
-      font-weight: 600;
-      opacity: .6;
-      transition: transform .15s, opacity .15s, color .15s;
-      text-transform: uppercase;
-      letter-spacing: .2px;
-    }
-    .lang-option:hover { transform: scale(1.05); opacity: .9; }
-    .lang-active {
-      opacity: 1;
-      color: #d48806;
-      font-weight: 800;
-      text-decoration: underline;
-    }
-
     .login-container {
       text-align: center;
       background: #fff;
@@ -60,6 +28,7 @@
       position: relative;
       animation: fadeIn 0.8s ease;
     }
+
     .logo { width: 110px; margin-bottom: 10px; }
     h1 { font-size: 1.8rem; color: #222; margin-bottom: 8px; }
     .subtitle { color: #555; font-size: 1rem; margin-bottom: 10px; }
@@ -83,52 +52,53 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
     .google-btn:hover { transform: scale(1.03); background: #f8f9fa; }
-
     .google-icon { width: 22px; height: 22px; }
     .footer { margin-top: 25px; font-size: 13px; color: #777; }
 
-    /* 🌀 Overlay de carregamento (só bolinha) */
-    #loadingOverlay {
+    /* 🔄 Bolinha de carregamento */
+    .spinner {
       position: fixed;
       inset: 0;
-      background: rgba(255, 249, 230, 0.95);
-      display: flex;
+      background: rgba(255, 255, 255, 0.8);
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s ease;
     }
-    #loadingOverlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .spinner {
-      width: 60px;
-      height: 60px;
+    .spinner.active { display: flex; }
+    .spinner::after {
+      content: "";
+      width: 55px;
+      height: 55px;
       border: 6px solid #ffd54f;
       border-top: 6px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      color: red;
+      font-weight: 600;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+    .error.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 
 <body>
-  <!-- 🌐 Seletor de idioma -->
-  <div class="lang-selector" id="langBar">
-    <span class="lang-option" data-lang="pt">PT</span>
-    <span class="lang-option" data-lang="es">ES</span>
-    <span class="lang-option" data-lang="en">EN</span>
-  </div>
-
   <div class="login-container">
     <img src="./icon-512.png" alt="Logo" class="logo" />
-    <h1 id="title">Pintando a Palavra</h1>
-    <p id="subtitle" class="subtitle">Colorindo histórias da Bíblia</p>
-    <p id="quote" class="quote">🌈 “Deixem vir a mim as crianças...” — Mateus 19:14</p>
+    <h1>Pintando a Palavra</h1>
+    <p class="subtitle">Colorindo histórias da Bíblia</p>
+    <p class="quote">🌈 “Deixem vir a mim as crianças...” — Mateus 19:14</p>
 
     <button id="loginGoogle" class="google-btn">
       <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
@@ -137,15 +107,15 @@
         <path fill="#4A90E2" d="M9.39 28.8C8.72 26.95 8.33 24.83 8.33 22.5c0-2.33.39-4.45 1.06-6.3L2.04 10.49C.75 13.64 0 17.03 0 20.5c0 7.26 2.99 13.52 7.77 17.87l7.48-5.83c-2.35-1.6-4.05-4.06-4.71-6.74l-.15-.43z"/>
         <path fill="#FBBC05" d="M24 47.5c6.3 0 11.6-2.07 15.46-5.61l-7.48-5.83c-2.13 1.4-4.87 2.2-7.98 2.2c-6.39 0-11.82-3.53-14.61-8.7l-7.35 5.71C6.56 40.76 14.64 47.5 24 47.5z"/>
       </svg>
-      <span id="loginText">Entrar com Google</span>
+      <span>Entrar com Google</span>
     </button>
 
     <p id="errorMsg" class="error"></p>
-    <p id="footer" class="footer">✨ Feito com fé por <strong>Pintando a Palavra</strong></p>
+    <p class="footer">✨ Feito com fé por <strong>Pintando a Palavra</strong></p>
   </div>
 
-  <!-- 🌀 Overlay de carregamento -->
-  <div id="loadingOverlay"><div class="spinner"></div></div>
+  <!-- 🔄 Bolinha de carregamento -->
+  <div class="spinner" id="spinner"></div>
 
   <!-- 🔥 Firebase Login -->
   <script type="module">
@@ -168,11 +138,10 @@
     const provider = new GoogleAuthProvider();
 
     const loginBtn = document.getElementById("loginGoogle");
+    const spinner = document.getElementById("spinner");
     const errorMsg = document.getElementById("errorMsg");
-    const loadingOverlay = document.getElementById("loadingOverlay");
 
     async function handleLogin(user){
-      loadingOverlay.classList.add("active");
       const email = user.email.toLowerCase();
       const ref = doc(db, "usuariosGoogle", email);
       const snap = await getDoc(ref);
@@ -185,27 +154,33 @@
       localStorage.setItem("premium", userData.premium ? "true" : "false");
       localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
 
-      // ✅ mantém idioma escolhido
-      const savedLang = localStorage.getItem("lang") || "pt";
-      localStorage.setItem("lang", savedLang);
-
-      setTimeout(() => window.location.replace("./index.html"), 800);
+      spinner.classList.add("active");
+      setTimeout(() => window.location.replace("./index.html"), 900);
     }
 
     loginBtn.addEventListener("click", async () => {
       errorMsg.textContent = "";
+      errorMsg.classList.remove("visible");
+      spinner.classList.add("active");
       try {
-        loadingOverlay.classList.add("active");
         const result = await signInWithPopup(auth, provider);
         await handleLogin(result.user);
       } catch (err) {
-        loadingOverlay.classList.remove("active");
+        spinner.classList.remove("active");
+
+        // ⚠️ Usuário cancelou ou popup bloqueado
+        if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") {
+          errorMsg.textContent = "Login cancelado. Tente novamente.";
+          errorMsg.classList.add("visible");
+          return;
+        }
+
         if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
           await signInWithRedirect(auth, provider);
         } else {
           console.error(err);
-          errorMsg.textContent = "⚠️ Erro ao autenticar com o Google.";
-          errorMsg.style.color = "red";
+          errorMsg.textContent = "⚠️ Erro ao autenticar com o Google. Tente novamente.";
+          errorMsg.classList.add("visible");
         }
       }
     });
@@ -213,50 +188,6 @@
     getRedirectResult(auth).then(async (result) => {
       if (result && result.user) await handleLogin(result.user);
     });
-  </script>
-
-  <!-- 🌍 Idiomas -->
-  <script>
-    const translations = {
-      pt:{title:"Pintando a Palavra",subtitle:"Colorindo histórias da Bíblia",quote:"🌈 “Deixem vir a mim as crianças...” — Mateus 19:14",loginText:"Entrar com Google",footer:"✨ Feito com fé por Pintando a Palavra"},
-      es:{title:"Pintando la Palabra",subtitle:"Coloreando historias de la Biblia",quote:"🌈 “Dejen que los niños vengan a mí...” — Mateo 19:14",loginText:"Iniciar sesión con Google",footer:"✨ Hecho con fe por Pintando la Palabra"},
-      en:{title:"Painting the Word",subtitle:"Coloring Bible stories",quote:"🌈 “Let the children come to me...” — Matthew 19:14",loginText:"Sign in with Google",footer:"✨ Made with faith by Painting the Word"}
-    };
-
-    const elements = {
-      title: document.getElementById("title"),
-      subtitle: document.getElementById("subtitle"),
-      quote: document.getElementById("quote"),
-      loginText: document.getElementById("loginText"),
-      footer: document.getElementById("footer")
-    };
-
-    const langOptions = document.querySelectorAll(".lang-option");
-
-    function applyTexts(lang){
-      const t = translations[lang] || translations.pt;
-      elements.title.innerHTML = t.title;
-      elements.subtitle.innerHTML = t.subtitle;
-      elements.quote.innerHTML = t.quote;
-      elements.loginText.innerHTML = t.loginText;
-      elements.footer.innerHTML = t.footer;
-    }
-
-    function markActive(lang){
-      langOptions.forEach(opt => opt.classList.toggle("lang-active", opt.dataset.lang === lang));
-      document.documentElement.setAttribute("lang", lang);
-    }
-
-    function setLanguage(lang){
-      localStorage.setItem("lang", lang);
-      applyTexts(lang);
-      markActive(lang);
-    }
-
-    langOptions.forEach(opt => opt.addEventListener("click", () => setLanguage(opt.dataset.lang)));
-
-    const savedLang = localStorage.getItem("lang") || (navigator.language || "pt").slice(0,2);
-    setLanguage(["pt","es","en"].includes(savedLang) ? savedLang : "pt");
   </script>
 </body>
 </html>
