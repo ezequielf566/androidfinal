@@ -28,28 +28,52 @@
       font-size: 1.1rem; color: #444; text-align: center;
     }
 
-    /* ⬅️➡️ Setas laterais de zoom */
-    .zoom-arrow {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: clamp(36px, 5vw, 48px);
-      height: clamp(36px, 5vw, 48px);
-      border-radius: 50%;
-      background: rgba(255, 213, 79, 0.85);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      z-index: 9999;
-      display: none;
+    /* 🎨 Popup de tons e extras */
+    .palette-popup {
+      position: absolute;
+      bottom: 55px;
+      left: 50%;
+      transform: translateX(-50%) scale(.95);
+      background: #fffbe6;
+      border: 2px solid #ffd54f;
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: repeat(6, 28px);
+      gap: 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.15);
       opacity: 0;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(4px);
+      pointer-events: none;
+      transition: all .25s ease;
+      z-index: 50;
     }
-    .zoom-arrow.show {
-      display: flex;
-      opacity: 1;
+    .palette-popup.active { opacity: 1; transform: translateX(-50%) scale(1); pointer-events: auto; }
+
+    .extra-color {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,.2);
+      transition: transform .15s;
+    }
+    .extra-color:active { transform: scale(.9); }
+
+    /* 🎨 Botão de cor personalizada ("+") */
+    .sw.custom {
+      width: 36px; height: 36px;
+      border-radius: 10px !important;
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb);
+      background-size: 300% 300%;
+      animation: hueShift 8s ease infinite;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1.4rem;
+      color: #fff; border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+    }
+    @keyframes hueShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
   </style>
 </head>
@@ -120,42 +144,113 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-    // ⏳ Tela de loading
-    const overlay=document.getElementById("loadingOverlay");
-    const observer=new MutationObserver(()=>{
-      const svgLoaded=document.querySelector("#svgMount svg");
-      if(svgLoaded){ setTimeout(()=>overlay.classList.add("hidden"),400); observer.disconnect(); }
-    });
-    observer.observe(document.getElementById("svgMount"),{childList:true,subtree:true});
+    /* 🎨 Clarear/escurecer cor */
+    function lightenDarkenColor(col, amt) {
+      let usePound = false;
+      if (col[0] === "#") { col = col.slice(1); usePound = true; }
+      let num = parseInt(col,16);
+      let r = (num >> 16) + amt;
+      let g = ((num >> 8) & 0x00FF) + amt;
+      let b = (num & 0x0000FF) + amt;
+      return (usePound ? "#" : "") +
+        (0x1000000 +
+         (r<255?r<0?0:r:255)*0x10000 +
+         (g<255?g<0?0:g:255)*0x100 +
+         (b<255?b<0?0:b:255))
+        .toString(16)
+        .slice(1);
+    }
 
-    // ⬅️➡️ Setas flutuantes ao dar zoom
-    document.addEventListener("DOMContentLoaded",()=>{
-      const svgMount=document.getElementById("svgMount");
-      const arrowLeft=document.createElement("div");
-      const arrowRight=document.createElement("div");
-      arrowLeft.className="zoom-arrow"; arrowRight.className="zoom-arrow";
-      arrowLeft.style.left="clamp(6px, 2vw, 14px)";
-      arrowRight.style.right="clamp(6px, 2vw, 14px)";
-      arrowLeft.innerHTML="<strong style='font-size:1.6rem;color:#333;'>‹</strong>";
-      arrowRight.innerHTML="<strong style='font-size:1.6rem;color:#333;'>›</strong>";
-      document.body.appendChild(arrowLeft); document.body.appendChild(arrowRight);
+    /* 🌈 Sistema completo de cor + extras */
+    document.addEventListener("DOMContentLoaded", () => {
+      const swatches = document.getElementById("swatches");
+      const customBtn = document.getElementById("customColorBtn");
+      let palettePopup;
 
-      let zoomLevel=1;
-      const zoomObs=new MutationObserver(()=>{
-        const svg=svgMount.querySelector("svg");
-        if(svg && svg.style.transform){
-          // ✅ Correção: regex correto para detectar zoom
-          const match=svg.style.transform.match(/scale\(([^)]+)\)/);
-          zoomLevel=match?parseFloat(match[1]):1;
-          const show=zoomLevel>1.05;
-          [arrowLeft,arrowRight].forEach(el=>el.classList.toggle("show",show));
+      // ✨ Cria popup de extras
+      function openExtraPalette(btn) {
+        if (palettePopup) palettePopup.remove();
+        palettePopup = document.createElement("div");
+        palettePopup.className = "palette-popup";
+
+        const extraColors = [
+          "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
+          "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD"
+        ];
+
+        extraColors.forEach(c => {
+          const el = document.createElement("div");
+          el.className = "extra-color";
+          el.style.background = c;
+          el.addEventListener("click", () => {
+            customBtn.style.background = c;
+            customBtn.setAttribute("data-color", c);
+            palettePopup.remove();
+          });
+          palettePopup.appendChild(el);
+        });
+
+        btn.appendChild(palettePopup);
+        setTimeout(()=>palettePopup.classList.add("active"),10);
+      }
+
+      // ➕ Abre extras no botão "+"
+      customBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (palettePopup && palettePopup.classList.contains("active")) {
+          palettePopup.remove();
+        } else {
+          openExtraPalette(customBtn);
         }
       });
-      zoomObs.observe(svgMount,{attributes:true,subtree:true,attributeFilter:["style"]});
 
-      arrowLeft.addEventListener("click",()=>svgMount.scrollBy({left:-200,behavior:"smooth"}));
-      arrowRight.addEventListener("click",()=>svgMount.scrollBy({left:200,behavior:"smooth"}));
+      document.body.addEventListener("click", () => {
+        if (palettePopup) palettePopup.remove();
+      });
+
+      // ⚡ Sistema de variações (duas tonalidades por cor)
+      document.querySelectorAll(".sw:not(.custom)").forEach(sw => {
+        sw.addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.querySelectorAll(".shades-popup").forEach(p => p.remove());
+
+          const color = sw.getAttribute("data-color");
+          if (!color) return;
+
+          const lighter = lightenDarkenColor(color, 35);
+          const darker = lightenDarkenColor(color, -35);
+
+          const popup = document.createElement("div");
+          popup.className = "shades-popup active";
+          popup.innerHTML = `
+            <div class="shade" style="background:${lighter}" data-color="${lighter}"></div>
+            <div class="shade" style="background:${darker}" data-color="${darker}"></div>
+          `;
+          sw.appendChild(popup);
+
+          popup.querySelectorAll(".shade").forEach(sh => {
+            sh.addEventListener("click", ev => {
+              const selected = ev.target.getAttribute("data-color");
+              sw.setAttribute("data-color", selected);
+              sw.style.boxShadow = `0 0 0 3px ${selected}`;
+              console.log("🎨 Cor escolhida:", selected);
+              popup.remove();
+            });
+          });
+        });
+      });
     });
+
+    // ⏳ Remove tela de loading ao carregar primeiro SVG
+    const overlay = document.getElementById("loadingOverlay");
+    const observer = new MutationObserver(() => {
+      const svgLoaded = document.querySelector("#svgMount svg");
+      if (svgLoaded) {
+        setTimeout(() => overlay.classList.add("hidden"), 400);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
