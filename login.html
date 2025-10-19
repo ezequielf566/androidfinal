@@ -87,13 +87,12 @@
     .google-icon { width: 22px; height: 22px; }
     .footer { margin-top: 25px; font-size: 13px; color: #777; }
 
-    /* 🌀 Overlay de carregamento */
+    /* 🌀 Overlay de carregamento (só bolinha) */
     #loadingOverlay {
       position: fixed;
       inset: 0;
       background: rgba(255, 249, 230, 0.95);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 9999;
@@ -112,14 +111,8 @@
       border-top: 6px solid transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: 15px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text {
-      font-size: 1.1rem;
-      color: #444;
-      text-align: center;
-    }
   </style>
 </head>
 
@@ -152,10 +145,7 @@
   </div>
 
   <!-- 🌀 Overlay de carregamento -->
-  <div id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">Carregando...</div>
-  </div>
+  <div id="loadingOverlay"><div class="spinner"></div></div>
 
   <!-- 🔥 Firebase Login -->
   <script type="module">
@@ -182,7 +172,7 @@
     const loadingOverlay = document.getElementById("loadingOverlay");
 
     async function handleLogin(user){
-      loadingOverlay.classList.add("active"); // 🌀 mostra o carregando
+      loadingOverlay.classList.add("active");
       const email = user.email.toLowerCase();
       const ref = doc(db, "usuariosGoogle", email);
       const snap = await getDoc(ref);
