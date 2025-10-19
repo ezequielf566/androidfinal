@@ -93,6 +93,30 @@
       0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
       50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
     }
+
+    /* ⬅️➡️ Setas laterais de zoom */
+    .zoom-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(36px, 5vw, 48px);
+      height: clamp(36px, 5vw, 48px);
+      border-radius: 50%;
+      background: rgba(255, 213, 79, 0.85);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+    }
+    .zoom-arrow.show {
+      display: flex;
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -162,10 +186,10 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
+    // 🎨 Cores extras
     document.addEventListener("DOMContentLoaded", () => {
       const customBtn = document.getElementById("customColorBtn");
       let popupRef = null;
-
       const EXTRA_COLORS = [
         "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
         "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
@@ -182,98 +206,96 @@
         document.removeEventListener("keydown", onEsc);
       }
 
-      function onOutside(e) {
-        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
-      }
-      function onEsc(e) { if (e.key === "Escape") closePopup(); }
+      function onOutside(e){ if(popupRef && !popupRef.contains(e.target) && e.target!==customBtn) closePopup(); }
+      function onEsc(e){ if(e.key==="Escape") closePopup(); }
 
-      // ✅ função corrigida
-      function applyColorSafely(color) {
-        const sendColor = () => {
-          if (typeof window.setColor === "function") {
-            window.setColor(color);
-          } else {
-            window.currentColor = color;
-          }
-          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
-        };
-
-        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
-        if (typeof window.setColor === "function") {
-          sendColor();
-        } else {
-          let tries = 0;
-          const interval = setInterval(() => {
-            if (typeof window.setColor === "function") {
-              sendColor();
-              clearInterval(interval);
-            } else if (tries++ > 20) {
-              clearInterval(interval);
-            }
-          }, 100);
+      function applyColorSafely(color){
+        const sendColor=()=>{ if(typeof window.setColor==="function"){window.setColor(color);} else {window.currentColor=color;} window.dispatchEvent(new CustomEvent("colorchange",{detail:{color}})); };
+        if(typeof window.setColor==="function"){ sendColor(); }
+        else{
+          let tries=0;
+          const interval=setInterval(()=>{
+            if(typeof window.setColor==="function"){ sendColor(); clearInterval(interval); }
+            else if(tries++>20){ clearInterval(interval); }
+          },100);
         }
       }
 
-      function openPopupAboveButton(btn) {
+      function openPopupAboveButton(btn){
         closePopup();
-        const pop = document.createElement("div");
-        pop.className = "palette-popup";
+        const pop=document.createElement("div");
+        pop.className="palette-popup";
         customBtn.classList.add("active");
-
-        EXTRA_COLORS.forEach(c => {
-          const el = document.createElement("div");
-          el.className = "extra-color";
-          el.style.background = c;
-          el.addEventListener("click", () => {
-            btn.style.background = c;
-            btn.setAttribute("data-color", c);
-            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
+        EXTRA_COLORS.forEach(c=>{
+          const el=document.createElement("div");
+          el.className="extra-color";
+          el.style.background=c;
+          el.addEventListener("click",()=>{
+            btn.style.background=c;
+            btn.setAttribute("data-color",c);
+            document.querySelectorAll(".sw").forEach(b=>b.classList.remove("active"));
             btn.classList.add("active");
-
-            el.style.boxShadow = "0 0 0 3px #ffd54f";
-            setTimeout(() => el.style.boxShadow = "", 180);
-
+            el.style.boxShadow="0 0 0 3px #ffd54f";
+            setTimeout(()=>el.style.boxShadow="",180);
             applyColorSafely(c);
-            setTimeout(() => closePopup(), 80);
+            setTimeout(()=>closePopup(),80);
           });
           pop.appendChild(el);
         });
-
         document.body.appendChild(pop);
-        const br = btn.getBoundingClientRect();
-        const pw = pop.offsetWidth;
-        const ph = pop.offsetHeight;
-        let left = br.left + br.width / 2 - pw / 2;
-        let top  = br.top - ph - 8;
-        const margin = 8;
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
-        if (top < margin) top = margin;
-        pop.style.left = `${left}px`;
-        pop.style.top  = `${top}px`;
-
-        requestAnimationFrame(() => pop.classList.add("active"));
-        document.addEventListener("click", onOutside);
-        document.addEventListener("keydown", onEsc);
-        popupRef = pop;
+        const br=btn.getBoundingClientRect();
+        const pw=pop.offsetWidth;
+        const ph=pop.offsetHeight;
+        let left=br.left+br.width/2-pw/2;
+        let top=br.top-ph-8;
+        const margin=8;
+        left=Math.max(margin,Math.min(left,window.innerWidth-pw-margin));
+        if(top<margin) top=margin;
+        pop.style.left=`${left}px`;
+        pop.style.top=`${top}px`;
+        requestAnimationFrame(()=>pop.classList.add("active"));
+        document.addEventListener("click",onOutside);
+        document.addEventListener("keydown",onEsc);
+        popupRef=pop;
       }
-
-      customBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (popupRef) closePopup();
-        else openPopupAboveButton(customBtn);
-      });
+      customBtn.addEventListener("click",(e)=>{ e.stopPropagation(); if(popupRef) closePopup(); else openPopupAboveButton(customBtn); });
     });
 
     // ⏳ Tela de loading
-    const overlay = document.getElementById("loadingOverlay");
-    const observer = new MutationObserver(() => {
-      const svgLoaded = document.querySelector("#svgMount svg");
-      if (svgLoaded) {
-        setTimeout(() => overlay.classList.add("hidden"), 400);
-        observer.disconnect();
-      }
+    const overlay=document.getElementById("loadingOverlay");
+    const observer=new MutationObserver(()=>{
+      const svgLoaded=document.querySelector("#svgMount svg");
+      if(svgLoaded){ setTimeout(()=>overlay.classList.add("hidden"),400); observer.disconnect(); }
     });
-    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
+    observer.observe(document.getElementById("svgMount"),{childList:true,subtree:true});
+
+    // ⬅️➡️ Setas flutuantes ao dar zoom
+    document.addEventListener("DOMContentLoaded",()=>{
+      const svgMount=document.getElementById("svgMount");
+      const arrowLeft=document.createElement("div");
+      const arrowRight=document.createElement("div");
+      arrowLeft.className="zoom-arrow"; arrowRight.className="zoom-arrow";
+      arrowLeft.style.left="clamp(6px, 2vw, 14px)";
+      arrowRight.style.right="clamp(6px, 2vw, 14px)";
+      arrowLeft.innerHTML="<strong style='font-size:1.6rem;color:#333;'>‹</strong>";
+      arrowRight.innerHTML="<strong style='font-size:1.6rem;color:#333;'>›</strong>";
+      document.body.appendChild(arrowLeft); document.body.appendChild(arrowRight);
+
+      let zoomLevel=1;
+      const zoomObs=new MutationObserver(()=>{
+        const svg=svgMount.querySelector("svg");
+        if(svg && svg.style.transform){
+          const match=svg.style.transform.match(/scale\\(([^)]+)\\)/);
+          zoomLevel=match?parseFloat(match[1]):1;
+          const show=zoomLevel>1.05;
+          [arrowLeft,arrowRight].forEach(el=>el.classList.toggle("show",show));
+        }
+      });
+      zoomObs.observe(svgMount,{attributes:true,subtree:true,attributeFilter:["style"]});
+
+      arrowLeft.addEventListener("click",()=>svgMount.scrollBy({left:-200,behavior:"smooth"}));
+      arrowRight.addEventListener("click",()=>svgMount.scrollBy({left:200,behavior:"smooth"}));
+    });
   </script>
 </body>
 </html>
