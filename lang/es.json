@@ -1,25 +1,76 @@
 {
-"menu": {
-"greeting": "👋 ¡Hola, <strong>{name}</strong>!<br>Qué alegría tenerte aquí 💛",
-"stories": "📖 Historias",
-"activities": "🎨 Actividades",
-"pdf": "📚 PDF Completo",
-"follow": "Síguenos en las redes sociales",
-"instagram": "📸 Instagram",
-"facebook": "📘 Facebook",
-"logout": "🚪 Salir",
-"install": "📲 Instalar la aplicación",
-"storyTitle": "💛✨ LA HISTORIA DE PINTANDO LA PALABRA ✨💛"
-},
-"story": {
-"content": [
-"No sabía nada de programación.",
-"Pero tenía un sueño: llevar la Palabra de Dios a los niños de una manera alegre y divertida.",
-"Todo comenzó pensando en mi hijo y mis hermanas, que siempre amaron colorear.",
-"Con fe y dedicación, el sueño se hizo realidad: una app cristiana infantil creada desde cero.",
-"Hoy Pintando la Palabra llega a familias de varios países 🌍💛",
-"✨ Tu apoyo mantiene vivo este sueño y esparce el amor de Dios por el mundo."
-]
-}
-}
+  "menu": {
+    "greeting": "👋 ¡Hola, <strong>{name}</strong>!<br>Qué bueno tenerte aquí 💛",
+    "stories": "📖 Historias",
+    "activities": "🎨 Actividades",
+    "pdf": "📚 PDF Completo",
+    "follow": "Síguenos en las redes sociales",
+    "instagram": "📸 Instagram",
+    "facebook": "📘 Facebook",
+    "logout": "🚪 Salir",
+    "install": "📲 Instalar app",
+    "storyTitle": "💛✨ LA HISTORIA DE PINTANDO LA PALABRA ✨💛"
+  },
 
+  "story": {
+    "content": [
+      "No sabía nada de programación.",
+      "Pero tenía un sueño: llevar la Palabra de Dios a los niños de forma alegre y creativa.",
+      "Todo comenzó pensando en mi hijo y mis hermanas, que siempre amaron colorear.",
+      "Con fe y dedicación, el sueño se hizo realidad: una app cristiana infantil creada desde cero.",
+      "Hoy Pintando la Palabra llega a familias en varios países 🌍💛",
+      "✨ Tu apoyo mantiene vivo este sueño y difunde el amor de Dios por el mundo."
+    ]
+  },
+
+  "login": {
+    "title": "Pintando la Palabra",
+    "subtitle": "Coloreando historias de la Biblia",
+    "verse": "🌈 “Dejen que los niños vengan a mí...” — Mateo 19:14",
+    "google": "Entrar con Google",
+    "footer": "✨ Hecho con fe por Pintando la Palabra",
+    "loaded": "Cargando", 
+    "success": "¡Inicio de sesión exitoso!"
+  },
+
+  "app": {
+    "eraser": "Borrador",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "savePng": "Guardar PNG",
+    "loading": "🎨 Cargando dibujos..."
+  },
+
+  "atividades": {
+    "title": "Actividades Bíblicas",
+    "desc": "Mira las vistas previas y descarga los PDF gratuitos o completos.",
+    "bible": "Actividad La Biblia",
+    "connectDots": "Actividad Unir los Puntos",
+    "activitiesEs": "Actividad Actividades (ES)",
+    "wordSearch": "Actividad Sopa de Letras 📗 Descargar PDF gratuito",
+    "crossword": "Actividad Crucigrama 📗 Descargar PDF gratuito",
+    "wordSearchEs": "Actividad Sopa de Letras (ES)📗 Descargar PDF gratuito",
+    "back": "Volver",
+    "downloadFull": "Descargar PDF completo",
+    "premiumTitle": "Contenido Premium",
+    "premium1": "✅ Acceso ilimitado a todos los PDF y actividades",
+    "premium2": "✅ Sin anuncios y con mejoras exclusivas",
+    "premium3": "✅ Actualizaciones continuas de contenido",
+    "note": "💡 ¡También hay actividades gratuitas disponibles!",
+    "later": "Ahora no",
+    "upgrade": "💳 Actualizar"
+  },
+
+  "pdf": {
+    "title": "PDF Completos",
+    "desc": "Accede a los PDF completos de las historias y parábolas de la Biblia.",
+    "coverStories": "Portada Historias Bíblicas 📥 Descargar PDF completo",
+    "coverParables": "Portada Parábolas de Jesús 🕓 Próximamente en Premium",
+    "premiumTitle": "Contenido Premium",
+    "premium1": "✅ Descarga todos los PDF completos",
+    "premium2": "✅ Recibe futuras actualizaciones",
+    "premium3": "✅ Experiencia sin anuncios",
+    "later": "Ahora no",
+    "upgrade": "💳 Actualizar"
+  }
+}
