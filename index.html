@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu Multilíngue com Áudio de Fundo (v1.0.30) -->
+<!-- 🔸 Pintando a Palavra — Menu em Português (v1.0.35) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -188,12 +188,11 @@
 </head>
 
 <body>
-  <!-- 🔊 Áudio de fundo -->
   <script src="audio/audioController.js" defer></script>
 
   <div id="menuContainer">
     <header>
-      <div class="notif-icon" id="notifBtn" title="História do Projeto" onclick="openStoryModal()">
+      <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
           <path d="M3 8l9 6 9-6"></path>
           <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
@@ -202,23 +201,24 @@
       </div>
 
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" data-i18n="menu.install" style="display:none;">📲 Instalar app</button>
-        <button onclick="logout()" class="btn" data-i18n="menu.logout">🚪 Sair</button>
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button onclick="logout()" class="btn">🚪 Sair</button>
       </div>
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao" data-i18n="menu.greeting"></div>
-      <div class="menu" id="menuPrincipal">
-        <button onclick="abrirApp()" data-i18n="menu.stories">📖 Histórias</button>
-        <button onclick="abrirAtividades()" data-i18n="menu.activities">🎨 Atividades</button>
-        <button onclick="abrirPdf()" data-i18n="menu.pdf">📚 PDF Completo</button>
+      <div id="saudacao" class="saudacao"></div>
+
+      <div class="menu">
+        <button onclick="abrirApp()">📖 Histórias</button>
+        <button onclick="abrirAtividades()">🎨 Atividades</button>
+        <button onclick="abrirPdf()">📚 PDF Completo</button>
       </div>
 
-      <h2 id="socialTitle" data-i18n="menu.follow">Siga-nos nas redes sociais</h2>
+      <h2>Siga-nos nas redes sociais</h2>
       <div class="socials">
-        <button data-i18n="menu.instagram" onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
-        <button data-i18n="menu.facebook" onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
       </div>
     </main>
   </div>
@@ -228,18 +228,31 @@
   <div id="storyModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeStoryModal()">&times;</span>
-      <h2 id="storyTitle" data-i18n="menu.storyTitle"></h2>
-      <div id="storyContent" class="story-text"></div>
+      <h2>💛✨ A HISTÓRIA DO PINTANDO A PALAVRA ✨💛</h2>
+      <div class="story-text" id="storyContent">
+        <p>Eu não sabia nada de programação.</p>
+        <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
+        <p>Tudo começou pensando no meu filho e nas minhas irmãs, que sempre amaram colorir.</p>
+        <p>Com fé e dedicação, o sonho se tornou real: um app cristão infantil feito do zero.</p>
+        <p>Hoje o Pintando a Palavra alcança famílias em vários países 🌍💛</p>
+        <p>✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo.</p>
+      </div>
     </div>
   </div>
 
   <div id="updateAlert">🌟 Novo conteúdo disponível! Atualizando...</div>
 
   <script>
+    // 🎬 Saudação dinâmica
+    const nome = localStorage.getItem("displayName") || "Amigo";
+    document.getElementById("saudacao").innerHTML = `👋 Olá, <strong>${nome.split(" ")[0]}</strong>!<br>Que bom ter você aqui 💛`;
+
+    // 📨 Modal da história
     function openStoryModal(){document.getElementById("storyModal").style.display="block";}
     function closeStoryModal(){document.getElementById("storyModal").style.display="none";}
     window.onclick=function(e){const m=document.getElementById("storyModal");if(e.target===m)m.style.display="none";}
 
+    // 📂 Abertura das seções
     function abrirApp(){abrirTela("app/index.html","app");}
     function abrirAtividades(){abrirTela("atividades/index.html","atividades");}
     function abrirPdf(){abrirTela("pdfcompleto/index.html","pdfcompleto");}
@@ -257,6 +270,7 @@
       }
     };
 
+    // 📲 Instalação PWA
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt',(e)=>{
       e.preventDefault(); deferredPrompt=e;
@@ -269,14 +283,14 @@
       });
     });
 
+    // 🚪 Logout
     function logout(){
-      const lang = localStorage.getItem("lang");
       localStorage.clear();
-      if(lang) localStorage.setItem("lang", lang);
       window.location.replace("login.html");
     }
 
-    const APP_VERSION = "1.0.34";
+    // 🔄 Atualizador de versão
+    const APP_VERSION = "1.0.35";
     const savedVersion = localStorage.getItem("appVersion");
     if (savedVersion !== APP_VERSION) {
       document.getElementById("updateAlert").style.display = "block";
@@ -285,6 +299,7 @@
       setTimeout(() => window.location.replace(window.location.pathname + "?v=" + APP_VERSION), 1200);
     }
 
+    // ⚙️ Service Worker
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/service-worker.js")
@@ -293,7 +308,5 @@
       });
     }
   </script>
-
-  <script defer src="/lang/language.js"></script>
 </body>
 </html>
