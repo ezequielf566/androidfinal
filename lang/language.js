@@ -1,30 +1,22 @@
-// 🌍 Sistema multilíngue — versão 1.0.28 (corrigida: saudação com nome)
+// 🌍 Sistema multilíngue universal — versão 1.0.29 (menu + app + login)
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "pt";
 
-  // 🟡 Banner visual em caso de erro
   function showLangError(msg) {
     const banner = document.createElement("div");
     banner.textContent = `⚠️ ${msg}`;
     banner.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #ffeb99;
-      color: #222;
+      position: fixed; top: 0; left: 0; right: 0;
+      background: #ffeb99; color: #222;
       font-family: 'Fredoka', sans-serif;
-      font-weight: 600;
-      text-align: center;
-      padding: 10px;
-      z-index: 99999;
+      font-weight: 600; text-align: center;
+      padding: 10px; z-index: 99999;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     `;
     document.body.prepend(banner);
     setTimeout(() => banner.remove(), 5000);
   }
 
-  // 🔹 Garante nome do usuário
   function getUserName() {
     let name = localStorage.getItem("displayName");
     if (!name || name === "undefined" || name === "null" || name.trim() === "") {
@@ -41,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await res.json();
       const name = getUserName();
 
-      // 🟢 Atualiza todos os elementos com data-i18n
+      // 🟢 Atualiza todos os elementos com data-i18n (em qualquer página)
       document.querySelectorAll("[data-i18n]").forEach(el => {
         const path = el.getAttribute("data-i18n").split(".");
         let value = data;
@@ -51,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       });
 
-      // 🟡 Modal da história
+      // 🟡 Modal da história (só se existir)
       const storyTitle = document.getElementById("storyTitle");
       const storyContent = document.getElementById("storyContent");
       if (storyTitle && storyContent && data.menu?.storyTitle && Array.isArray(data.story?.content)) {
@@ -67,5 +59,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // 🔁 Função para reaplicar idioma após mudanças dinâmicas (ex: SVG carregado)
+  function observeDynamicChanges() {
+    const mount = document.getElementById("svgMount");
+    if (!mount) return;
+    const obs = new MutationObserver(() => loadLanguage(lang));
+    obs.observe(mount, { childList: true, subtree: true });
+  }
+
   await loadLanguage(lang);
+  observeDynamicChanges();
 });
