@@ -11,6 +11,7 @@
     "install": "📲 Instalar app",
     "storyTitle": "💛✨ A HISTÓRIA DO PINTANDO A PALAVRA ✨💛"
   },
+
   "story": {
     "content": [
       "Eu não sabia nada de programação.",
@@ -20,5 +21,56 @@
       "Hoje o Pintando a Palavra alcança famílias em vários países 🌍💛",
       "✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo."
     ]
+  },
+
+  "login": {
+    "title": "Pintando a Palavra",
+    "subtitle": "Colorindo histórias da Bíblia",
+    "verse": "🌈 “Deixem vir a mim as crianças...” — Mateus 19:14",
+    "google": "Entrar com Google",
+    "footer": "✨ Feito com fé por Pintando a Palavra",
+    "loaded": "Carregando",
+    "success": "Login realizado com sucesso!"
+  },
+
+  "app": {
+    "eraser": "Borracha",
+    "undo": "Desfazer",
+    "redo": "Refazer",
+    "savePng": "Salvar PNG",
+    "loading": "🎨 Carregando artes..."
+  },
+
+  "atividades": {
+    "title": "Atividades Bíblicas",
+    "desc": "Veja as prévias das atividades e baixe os PDFs gratuitos ou completos.",
+    "bible": "Atividade A Bíblia",
+    "connectDots": "Atividade Ligar os Pontos",
+    "activitiesEs": "Atividade Actividades (ES)",
+    "wordSearch": "Atividade Caça Palavras 📗 Baixar PDF gratuito",
+    "crossword": "Atividade Cruzadinha 📗 Baixar PDF gratuito",
+    "wordSearchEs": "Atividade Caça Palabras (ES)📗 Baixar PDF gratuito",
+    "back": "Voltar",
+    "downloadFull": "Baixar PDF completo",
+    "premiumTitle": "Conteúdo Premium",
+    "premium1": "✅ Acesso ilimitado a todos os PDFs e atividades",
+    "premium2": "✅ Sem anúncios e com melhorias exclusivas",
+    "premium3": "✅ Atualizações contínuas de conteúdo",
+    "note": "💡 Também há atividades gratuitas disponíveis!",
+    "later": "Agora não",
+    "upgrade": "💳 Fazer upgrade"
+  },
+
+  "pdf": {
+    "title": "PDFs Completos",
+    "desc": "Acesse os PDFs completos das histórias e parábolas da Bíblia.",
+    "coverStories": "Capa Histórias Bíblicas 📥 Baixar PDF completo",
+    "coverParables": "Capa Parábolas de Jesus 🕓 Em breve no Premium",
+    "premiumTitle": "Conteúdo Premium",
+    "premium1": "✅ Baixe todos os PDFs completos",
+    "premium2": "✅ Receba atualizações futuras",
+    "premium3": "✅ Experiência sem anúncios",
+    "later": "Agora não",
+    "upgrade": "💳 Fazer upgrade"
   }
 }
