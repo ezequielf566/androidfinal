@@ -93,33 +93,6 @@
       0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
       50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
     }
-
-    /* 💚 Indicador profissional de salvamento */
-    #saveIndicator {
-      position: fixed;
-      bottom: 14px;
-      right: 14px;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #4CAF50 40%, rgba(76,175,80,0) 70%);
-      box-shadow: 0 0 8px 2px rgba(76,175,80,0.5);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transform: scale(0.7);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    #saveIndicator.active {
-      opacity: 1;
-      transform: scale(1);
-      animation: pulseGlow 0.8s ease-out;
-    }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(76,175,80,0.6); opacity: 0.8; }
-      50% { box-shadow: 0 0 10px 6px rgba(76,175,80,0.3); opacity: 1; }
-      100% { box-shadow: 0 0 0 0 rgba(76,175,80,0); opacity: 0; }
-    }
   </style>
 </head>
 
@@ -185,120 +158,122 @@
     </div>
   </main>
 
-  <!-- 💚 Indicador de salvamento -->
-  <div id="saveIndicator"></div>
-
   <script src="js/script.js"></script>
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-    // ... (todo o bloco do seletor de cor + tela de loading permanece igual) ...
+    document.addEventListener("DOMContentLoaded", () => {
+      const customBtn = document.getElementById("customColorBtn");
+      let popupRef = null;
 
-    /* ===================================================================================
-       💾 Salvamento local + Indicador (corrigido e otimizado)
-       =================================================================================== */
-    (function(){
-      const PAINT_STORAGE_KEY = 'pp_paints_v1';
-      const saveIndicator = document.getElementById("saveIndicator");
+      const EXTRA_COLORS = [
+        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
+        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
+        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",
+        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"
+      ];
 
-      function showSaveIndicator() {
-        if (!saveIndicator) return;
-        saveIndicator.classList.add("active");
-        setTimeout(() => saveIndicator.classList.remove("active"), 800);
+      function closePopup() {
+        if (!popupRef) return;
+        popupRef.remove();
+        popupRef = null;
+        customBtn.classList.remove("active");
+        document.removeEventListener("click", onOutside);
+        document.removeEventListener("keydown", onEsc);
       }
 
-      function loadSavedPaints() {
-        try { return JSON.parse(localStorage.getItem(PAINT_STORAGE_KEY) || '{}'); }
-        catch(e){ return {}; }
+      function onOutside(e) {
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
       }
-      function setSavedPaints(obj){
-        try { localStorage.setItem(PAINT_STORAGE_KEY, JSON.stringify(obj||{})); } catch(e){}
-      }
+      function onEsc(e) { if (e.key === "Escape") closePopup(); }
 
-      function savePaintState(pageId, svgEl) {
-        if (!svgEl || !pageId) return;
-        const paints = loadSavedPaints();
-        const colored = [];
-        svgEl.querySelectorAll('[fill]').forEach(el=>{
-          const fill = el.getAttribute('fill');
-          const orig = el.dataset && el.dataset.origFill;
-          if (fill && fill !== orig && fill.toLowerCase() !== '#ffffff' && fill.toLowerCase() !== 'white') {
-            const sig = el.id ? ('#'+el.id) : (el.tagName + '|' + (el.getAttribute('d')||el.getAttribute('points')||el.getAttribute('x')||'') + '|' + (el.getAttribute('y')||''));
-            colored.push({ sig, fill });
+      // ✅ função corrigida
+      function applyColorSafely(color) {
+        const sendColor = () => {
+          if (typeof window.setColor === "function") {
+            window.setColor(color);
+          } else {
+            window.currentColor = color;
           }
-        });
-        if (colored.length) paints[pageId] = colored; else delete paints[pageId];
-        setSavedPaints(paints);
-        showSaveIndicator();
+          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
+        };
+
+        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
+        if (typeof window.setColor === "function") {
+          sendColor();
+        } else {
+          let tries = 0;
+          const interval = setInterval(() => {
+            if (typeof window.setColor === "function") {
+              sendColor();
+              clearInterval(interval);
+            } else if (tries++ > 20) {
+              clearInterval(interval);
+            }
+          }, 100);
+        }
       }
 
-      function restorePaintState(pageId, svgEl){
-        const paints = loadSavedPaints();
-        const data = paints[pageId];
-        if (!data || !svgEl) return;
-        const nodes = Array.from(svgEl.querySelectorAll('*'));
-        data.forEach(item=>{
-          if (item.sig && item.sig[0]==='#') {
-            const byId = svgEl.querySelector(item.sig);
-            if (byId) { byId.setAttribute('fill', item.fill); return; }
-          }
-          const [tag, a, b] = (item.sig||'').split('|');
-          const el = nodes.find(n=>{
-            if ((n.tagName||'').toLowerCase() !== (tag||'').toLowerCase()) return false;
-            const valA = n.getAttribute('d')||n.getAttribute('points')||n.getAttribute('x')||'';
-            const valB = n.getAttribute('y')||'';
-            return (valA===a && valB===b);
+      function openPopupAboveButton(btn) {
+        closePopup();
+        const pop = document.createElement("div");
+        pop.className = "palette-popup";
+        customBtn.classList.add("active");
+
+        EXTRA_COLORS.forEach(c => {
+          const el = document.createElement("div");
+          el.className = "extra-color";
+          el.style.background = c;
+          el.addEventListener("click", () => {
+            btn.style.background = c;
+            btn.setAttribute("data-color", c);
+            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            el.style.boxShadow = "0 0 0 3px #ffd54f";
+            setTimeout(() => el.style.boxShadow = "", 180);
+
+            applyColorSafely(c);
+            setTimeout(() => closePopup(), 80);
           });
-          if (el) el.setAttribute('fill', item.fill);
+          pop.appendChild(el);
         });
+
+        document.body.appendChild(pop);
+        const br = btn.getBoundingClientRect();
+        const pw = pop.offsetWidth;
+        const ph = pop.offsetHeight;
+        let left = br.left + br.width / 2 - pw / 2;
+        let top  = br.top - ph - 8;
+        const margin = 8;
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+        if (top < margin) top = margin;
+        pop.style.left = `${left}px`;
+        pop.style.top  = `${top}px`;
+
+        requestAnimationFrame(() => pop.classList.add("active"));
+        document.addEventListener("click", onOutside);
+        document.addEventListener("keydown", onEsc);
+        popupRef = pop;
       }
 
-      window.savePaintState = savePaintState;
-      window.restorePaintState = restorePaintState;
-
-      const mount = document.getElementById('svgMount');
-      const svgObserver = new MutationObserver(()=>{
-        const svg = mount.querySelector('svg');
-        if (!svg) return;
-        setTimeout(()=>{
-          try {
-            const pid = typeof window.pageId === 'function' ? window.pageId() : null;
-            restorePaintState(pid, svg);
-            enableAttrObserver(); // ✅ reativa o observer após troca de página
-          } catch(_) {}
-        }, 0);
+      customBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popupRef) closePopup();
+        else openPopupAboveButton(customBtn);
       });
-      svgObserver.observe(mount, { childList:true, subtree:true });
+    });
 
-      let saveTimer = null;
-      const attrObserver = new MutationObserver((muts)=>{
-        const touched = muts.some(m=> m.type==='attributes' && m.attributeName==='fill');
-        if (!touched) return;
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(()=>{
-          try{
-            const pid = typeof window.pageId === 'function' ? window.pageId() : null;
-            const svg = mount.querySelector('svg');
-            savePaintState(pid, svg);
-          }catch(_){}
-        }, 120);
-      });
-
-      function enableAttrObserver(){
-        const svg = mount.querySelector('svg');
-        if (svg) attrObserver.observe(svg, { attributes:true, subtree:true, attributeFilter:['fill'] });
+    // ⏳ Tela de loading
+    const overlay = document.getElementById("loadingOverlay");
+    const observer = new MutationObserver(() => {
+      const svgLoaded = document.querySelector("#svgMount svg");
+      if (svgLoaded) {
+        setTimeout(() => overlay.classList.add("hidden"), 400);
+        observer.disconnect();
       }
-
-      // inicial com pequeno delay para garantir SVG carregado
-      setTimeout(enableAttrObserver, 600);
-
-      // fallback: salva também ao trocar cor no seletor
-      window.addEventListener('colorchange', ()=>{
-        const svg = mount.querySelector('svg');
-        const pid = typeof window.pageId === 'function' ? window.pageId() : null;
-        if (svg && pid) savePaintState(pid, svg);
-      });
-    })();
+    });
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
