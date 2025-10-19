@@ -79,7 +79,6 @@
       transition: box-shadow .3s ease;
     }
 
-    /* ✨ Brilho pulsante quando popup ativo */
     .sw.custom.active {
       animation: glowPulse 1.4s ease-in-out infinite;
     }
@@ -100,7 +99,7 @@
   <!-- 🕓 Tela de carregamento -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div class="loading-text">🎨 Carregando artes...</div>
+    <div class="loading-text" data-i18n="app.loading">🎨 Carregando artes...</div>
   </div>
 
   <header class="topbar">
@@ -138,10 +137,10 @@
         </div>
 
         <div class="tools">
-          <button id="eraserBtn" class="btn">Borracha</button>
-          <button id="undoBtn" class="btn">Desfazer</button>
-          <button id="redoBtn" class="btn">Refazer</button>
-          <button id="savePng" class="btn primary">Salvar PNG</button>
+          <button id="eraserBtn" class="btn" data-i18n="app.eraser">Borracha</button>
+          <button id="undoBtn" class="btn" data-i18n="app.undo">Desfazer</button>
+          <button id="redoBtn" class="btn" data-i18n="app.redo">Refazer</button>
+          <button id="savePng" class="btn primary" data-i18n="app.savePng">Salvar PNG</button>
         </div>
 
         <div class="pager">
@@ -160,120 +159,6 @@
 
   <script src="js/script.js"></script>
   <script src="js/patch-gestures-scroll.js"></script>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const customBtn = document.getElementById("customColorBtn");
-      let popupRef = null;
-
-      const EXTRA_COLORS = [
-        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
-        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
-        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",
-        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"
-      ];
-
-      function closePopup() {
-        if (!popupRef) return;
-        popupRef.remove();
-        popupRef = null;
-        customBtn.classList.remove("active");
-        document.removeEventListener("click", onOutside);
-        document.removeEventListener("keydown", onEsc);
-      }
-
-      function onOutside(e) {
-        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
-      }
-      function onEsc(e) { if (e.key === "Escape") closePopup(); }
-
-      // ✅ função corrigida
-      function applyColorSafely(color) {
-        const sendColor = () => {
-          if (typeof window.setColor === "function") {
-            window.setColor(color);
-          } else {
-            window.currentColor = color;
-          }
-          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
-        };
-
-        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
-        if (typeof window.setColor === "function") {
-          sendColor();
-        } else {
-          let tries = 0;
-          const interval = setInterval(() => {
-            if (typeof window.setColor === "function") {
-              sendColor();
-              clearInterval(interval);
-            } else if (tries++ > 20) {
-              clearInterval(interval);
-            }
-          }, 100);
-        }
-      }
-
-      function openPopupAboveButton(btn) {
-        closePopup();
-        const pop = document.createElement("div");
-        pop.className = "palette-popup";
-        customBtn.classList.add("active");
-
-        EXTRA_COLORS.forEach(c => {
-          const el = document.createElement("div");
-          el.className = "extra-color";
-          el.style.background = c;
-          el.addEventListener("click", () => {
-            btn.style.background = c;
-            btn.setAttribute("data-color", c);
-            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            el.style.boxShadow = "0 0 0 3px #ffd54f";
-            setTimeout(() => el.style.boxShadow = "", 180);
-
-            applyColorSafely(c);
-            setTimeout(() => closePopup(), 80);
-          });
-          pop.appendChild(el);
-        });
-
-        document.body.appendChild(pop);
-        const br = btn.getBoundingClientRect();
-        const pw = pop.offsetWidth;
-        const ph = pop.offsetHeight;
-        let left = br.left + br.width / 2 - pw / 2;
-        let top  = br.top - ph - 8;
-        const margin = 8;
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
-        if (top < margin) top = margin;
-        pop.style.left = `${left}px`;
-        pop.style.top  = `${top}px`;
-
-        requestAnimationFrame(() => pop.classList.add("active"));
-        document.addEventListener("click", onOutside);
-        document.addEventListener("keydown", onEsc);
-        popupRef = pop;
-      }
-
-      customBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (popupRef) closePopup();
-        else openPopupAboveButton(customBtn);
-      });
-    });
-
-    // ⏳ Tela de loading
-    const overlay = document.getElementById("loadingOverlay");
-    const observer = new MutationObserver(() => {
-      const svgLoaded = document.querySelector("#svgMount svg");
-      if (svgLoaded) {
-        setTimeout(() => overlay.classList.add("hidden"), 400);
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
-  </script>
+  <script defer src="/lang/language.js"></script>
 </body>
 </html>
