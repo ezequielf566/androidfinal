@@ -20,16 +20,12 @@
     .spinner {
       width: 60px; height: 60px;
       border: 6px solid #ffd54f; border-top: 6px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 15px;
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text {
       font-family: "Fredoka", sans-serif;
-      font-size: 1.1rem;
-      color: #444;
-      text-align: center;
+      font-size: 1.1rem; color: #444; text-align: center;
     }
 
     /* 🎨 Popup de tons e extras */
@@ -64,8 +60,12 @@
       transition: transform .12s, box-shadow .2s;
     }
     .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }
-    .extra-color:active { transform: scale(.9); box-shadow: 0 0 0 3px #ffd54f; }
+    .extra-color:active {
+      transform: scale(.9);
+      box-shadow: 0 0 0 3px #ffd54f;
+    }
 
+    /* 🎨 Botão de cor personalizada (“+”) */
     .sw.custom {
       width: 36px; height: 36px;
       border-radius: 10px !important;
@@ -78,11 +78,19 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.2);
       transition: box-shadow .3s ease;
     }
-    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }
 
-    @keyframes hueShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    /* ✨ Brilho pulsante quando popup ativo */
+    .sw.custom.active {
+      animation: glowPulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes hueShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
     @keyframes glowPulse {
-      0%,100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
+      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
       50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
     }
   </style>
@@ -92,7 +100,7 @@
   <!-- 🕓 Tela de carregamento -->
   <div id="loadingOverlay">
     <div class="spinner"></div>
-    <div class="loading-text" data-i18n="app.loading">🎨 Carregando artes...</div>
+    <div class="loading-text">🎨 Carregando artes...</div>
   </div>
 
   <header class="topbar">
@@ -130,10 +138,10 @@
         </div>
 
         <div class="tools">
-          <button id="eraserBtn" class="btn" data-i18n="app.eraser">Borracha</button>
-          <button id="undoBtn" class="btn" data-i18n="app.undo">Desfazer</button>
-          <button id="redoBtn" class="btn" data-i18n="app.redo">Refazer</button>
-          <button id="savePng" class="btn primary" data-i18n="app.savePng">Salvar PNG</button>
+          <button id="eraserBtn" class="btn">Borracha</button>
+          <button id="undoBtn" class="btn">Desfazer</button>
+          <button id="redoBtn" class="btn">Refazer</button>
+          <button id="savePng" class="btn primary">Salvar PNG</button>
         </div>
 
         <div class="pager">
@@ -152,26 +160,12 @@
 
   <script src="js/script.js"></script>
   <script src="js/patch-gestures-scroll.js"></script>
-  <script defer src="/lang/language.js"></script>
 
   <script>
-    // 🔄 Aguarda o SVG carregar para ocultar o overlay (igual ao menu)
-    const overlay = document.getElementById("loadingOverlay");
-    const mount = document.getElementById("svgMount");
-
-    const observer = new MutationObserver(() => {
-      const svgLoaded = mount.querySelector("svg");
-      if (svgLoaded) {
-        setTimeout(() => overlay.classList.add("hidden"), 500);
-        observer.disconnect();
-      }
-    });
-    observer.observe(mount, { childList: true, subtree: true });
-
-    // 🎨 Configuração da paleta extra (mantida)
     document.addEventListener("DOMContentLoaded", () => {
       const customBtn = document.getElementById("customColorBtn");
       let popupRef = null;
+
       const EXTRA_COLORS = [
         "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
         "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
@@ -188,21 +182,34 @@
         document.removeEventListener("keydown", onEsc);
       }
 
-      function onOutside(e) { if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup(); }
+      function onOutside(e) {
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
+      }
       function onEsc(e) { if (e.key === "Escape") closePopup(); }
 
+      // ✅ função corrigida
       function applyColorSafely(color) {
         const sendColor = () => {
-          if (typeof window.setColor === "function") window.setColor(color);
-          else window.currentColor = color;
+          if (typeof window.setColor === "function") {
+            window.setColor(color);
+          } else {
+            window.currentColor = color;
+          }
           window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
         };
-        if (typeof window.setColor === "function") sendColor();
-        else {
+
+        // tenta aplicar imediatamente e repete se o app ainda não estiver pronto
+        if (typeof window.setColor === "function") {
+          sendColor();
+        } else {
           let tries = 0;
           const interval = setInterval(() => {
-            if (typeof window.setColor === "function") { sendColor(); clearInterval(interval); }
-            else if (tries++ > 20) clearInterval(interval);
+            if (typeof window.setColor === "function") {
+              sendColor();
+              clearInterval(interval);
+            } else if (tries++ > 20) {
+              clearInterval(interval);
+            }
           }, 100);
         }
       }
@@ -222,8 +229,10 @@
             btn.setAttribute("data-color", c);
             document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
+
             el.style.boxShadow = "0 0 0 3px #ffd54f";
             setTimeout(() => el.style.boxShadow = "", 180);
+
             applyColorSafely(c);
             setTimeout(() => closePopup(), 80);
           });
@@ -235,12 +244,12 @@
         const pw = pop.offsetWidth;
         const ph = pop.offsetHeight;
         let left = br.left + br.width / 2 - pw / 2;
-        let top = br.top - ph - 8;
+        let top  = br.top - ph - 8;
         const margin = 8;
         left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
         if (top < margin) top = margin;
         pop.style.left = `${left}px`;
-        pop.style.top = `${top}px`;
+        pop.style.top  = `${top}px`;
 
         requestAnimationFrame(() => pop.classList.add("active"));
         document.addEventListener("click", onOutside);
@@ -248,12 +257,23 @@
         popupRef = pop;
       }
 
-      customBtn.addEventListener("click", e => {
+      customBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         if (popupRef) closePopup();
         else openPopupAboveButton(customBtn);
       });
     });
+
+    // ⏳ Tela de loading
+    const overlay = document.getElementById("loadingOverlay");
+    const observer = new MutationObserver(() => {
+      const svgLoaded = document.querySelector("#svgMount svg");
+      if (svgLoaded) {
+        setTimeout(() => overlay.classList.add("hidden"), 400);
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 </body>
 </html>
