@@ -19,7 +19,6 @@
       --ink:#222;
       --card:#fff;
       --green:#9CCC65;
-      --gray:#e0e0e0;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -48,13 +47,6 @@
       background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;
       box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
-    .section-title{
-      text-align:center;
-      font-weight:700;
-      font-size:1.2rem;
-      color:#444;
-      margin:26px 0 14px;
-    }
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
     @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}
     .card{
@@ -77,46 +69,48 @@
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
       box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
       transition:transform .12s ease,background .12s ease;width:100%;
-      color:#2a2a2a;text-align:center;text-decoration:none;
+      color:#fff;text-align:center;text-decoration:none;
+      background:var(--green);
     }
-    .btn:hover{transform:translateY(-1px);}
-    .btn.gold{background:var(--gold);}
-    .btn.gold:hover{background:#ffe066;}
-    .btn.green{background:var(--green);color:#fff;}
-    .btn.green:hover{background:#AED581;}
-    .btn.gray{background:var(--gray);color:#666;cursor:default;}
-    .btn.gray:hover{transform:none;background:var(--gray);}
+    .btn:hover{transform:translateY(-1px);background:#AED581;}
+
+    /* Bloco de anúncio dentro do grid */
+    .ad-card{
+      background:transparent;
+      box-shadow:none;
+      padding:0;
+      display:flex;align-items:center;justify-content:center;
+      min-height:90px;
+    }
+    .ad-card .adsbygoogle{display:block; width:100%;}
   </style>
 </head>
 <body>
   <header><h1>PDFs Completos</h1></header>
 
   <main>
-    <p class="intro">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>
-
-    <!-- 🟢 Gratuitos -->
-    <h2 class="section-title">📗 Histórias Gratuitas</h2>
-    <section class="grid" id="gridFree"></section>
-
-    <!-- 🟡 Premium -->
-    <h2 class="section-title">💎 Conteúdo Premium</h2>
-    <section class="grid" id="gridPaid"></section>
+    <p class="intro">Baixe gratuitamente todos os PDFs das histórias e parábolas da Bíblia.</p>
+    <section class="grid" id="gridAll"></section>
   </main>
 
+  <!-- ✅ Script de anúncios (modo de teste seguro) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-3940256099942544~3347511712" crossorigin="anonymous"></script>
+
   <script>
-    const FREE = [
+    // Controle: esconder anúncios para quem removeu (premium)
+    const userHasPremium = localStorage.getItem('removeAds') === 'true';
+
+    // Lista completa — todos gratuitos
+    const ALL = [
       { title:'Céu — A bela casa de Deus', cover:'img/ceu.png', file:'ceu.pdf' },
       { title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf' },
       { title:'Jesus alimenta 5.000 pessoas', cover:'img/jesus-alimenta.png', file:'jesus-alimenta.pdf' },
       { title:'Jesus, o grande mestre', cover:'img/jesus-mestre.png', file:'jesus-mestre.pdf' },
       { title:'Sansão — Um forte homem de Deus', cover:'img/samson.png', file:'samson.pdf' },
       { title:'O Bom Samaritano', cover:'img/bom-samaritano.png', file:'bom-samaritano.pdf' },
-      { title:'A Ovelha Perdida', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf' }
-    ];
-
-    const PAID = [
+      { title:'A Ovelha Perdida', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf' },
       { title:'Histórias Bíblicas', cover:'img/historias-capa.png', file:'historias.pdf' },
-      { title:'Parábolas de Jesus', cover:'img/parabolas-capa.png', type:'soon' },
+      { title:'Parábolas de Jesus', cover:'img/parabolas-capa.png', file:'parabolas.pdf' },
       { title:'Jesus cura um cego', cover:'img/jesus-cego.png', file:'jesus-cego.pdf' },
       { title:'Início da tristeza do homem', cover:'img/tristeza.png', file:'tristeza.pdf' },
       { title:'Jesus acalma a tempestade', cover:'img/tempestade.png', file:'tempestade.pdf' },
@@ -127,37 +121,45 @@
       { title:'O Semeador', cover:'img/semeador.png', file:'semeador.pdf' }
     ];
 
-    const gridFree = document.getElementById('gridFree');
-    const gridPaid = document.getElementById('gridPaid');
+    // Cria card de PDF
+    const pdfCard = (item) => `
+      <article class="card">
+        <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
+      </article>
+    `;
 
-    function renderSection(arr, container, type) {
-      container.innerHTML = arr.map(item => {
-        if(type === 'free'){
-          return `
-            <article class="card">
-              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-              <a href="pdfs/${item.file}" target="_blank" class="btn green">📗 Download gratuito</a>
-            </article>`;
-        }
-        else if(item.type === 'soon'){
-          return `
-            <article class="card">
-              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-              <div class="btn gray">🕓 Em breve</div>
-            </article>`;
-        }
-        else{
-          return `
-            <article class="card">
-              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-              <button class="btn gold" onclick="alert('💛 Disponível apenas no Premium')">📘 Baixar PDF completo</button>
-            </article>`;
-        }
-      }).join('');
+    // Cria bloco de anúncio — a cada 2 capas
+    const adBlock = () => `
+      <article class="ad-card">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-app-pub-3940256099942544"
+             data-ad-slot="6300978111"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </article>
+    `;
+
+    const gridAll = document.getElementById('gridAll');
+    const parts = [];
+
+    ALL.forEach((item, idx) => {
+      parts.push(pdfCard(item));
+      if (!userHasPremium && (idx % 2 === 1)) {
+        parts.push(adBlock());
+      }
+    });
+
+    gridAll.innerHTML = parts.join('');
+
+    // Inicializa os anúncios
+    if (!userHasPremium) {
+      const ads = document.querySelectorAll('.adsbygoogle');
+      ads.forEach(() => {
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
+      });
     }
-
-    renderSection(FREE, gridFree, 'free');
-    renderSection(PAID, gridPaid, 'paid');
   </script>
 </body>
 </html>
