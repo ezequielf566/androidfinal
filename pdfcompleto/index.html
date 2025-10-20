@@ -5,23 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PDFs Completos</title>
 
-  <!-- 🔄 Preload das capas para carregamento suave -->
   <link rel="preload" as="image" href="img/historias-capa.png">
   <link rel="preload" as="image" href="img/parabolas-capa.png">
-  <link rel="preload" as="image" href="img/ceu.png">
-  <link rel="preload" as="image" href="img/nascimento-igreja.png">
-  <link rel="preload" as="image" href="img/jesus-alimenta.png">
-  <link rel="preload" as="image" href="img/jesus-cego.png">
-  <link rel="preload" as="image" href="img/jesus-mestre.png">
-  <link rel="preload" as="image" href="img/samson.png">
-  <link rel="preload" as="image" href="img/tristeza.png">
-  <link rel="preload" as="image" href="img/tempestade.png">
-  <link rel="preload" as="image" href="img/criacao.png">
-  <link rel="preload" as="image" href="img/jonas.png">
-  <link rel="preload" as="image" href="img/daniel.png">
-  <link rel="preload" as="image" href="img/lazaro.png">
-  <link rel="preload" as="image" href="img/semeador.png">
-
   <style>
     :root {
       --gold:#FFD54F;
@@ -31,6 +16,7 @@
       --ink:#222;
       --card:#fff;
       --green:#9CCC65;
+      --gray:#e0e0e0;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -81,52 +67,18 @@
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
       box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
       transition:transform .12s ease,background .12s ease;width:100%;
-      color:#2a2a2a;
+      color:#2a2a2a;text-align:center;text-decoration:none;
     }
     .btn:hover{transform:translateY(-1px);}
     .btn.gold{background:var(--gold);}
     .btn.gold:hover{background:#ffe066;}
     .btn.green{background:var(--green);color:#fff;}
     .btn.green:hover{background:#AED581;}
-    .btn.soon{background:#f0f0f0;color:#666;cursor:default;}
-    .btn.soon:hover{transform:none;background:#f0f0f0;}
-    .loading{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;
-      flex-direction:column;gap:12px;
-    }
-    .loading.active{opacity:1;visibility:visible;}
-    .spinner{
-      width:52px;height:52px;border:5px solid var(--gold);border-top-color:transparent;border-radius:50%;
-      animation:spin 1s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .upgrade{
-      position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;
-    }
-    .upgrade.open{display:flex;}
-    .upgrade .box{
-      width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;
-      box-shadow:0 14px 46px rgba(0,0,0,.32);
-      text-align:center;
-    }
-    .upgrade h3{margin:0 0 8px;}
-    .benefits{margin:8px 0 14px;line-height:1.6;}
-    .upgrade .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-    .btn-secondary{background:#f2f2f2;color:#333;}
-    .btn-primary{background:var(--gold);color:#222;}
+    .btn.gray{background:var(--gray);color:#666;cursor:default;}
+    .btn.gray:hover{transform:none;background:var(--gray);}
   </style>
 </head>
 <body>
-  <audio id="entradaAudio">
-    <source src="audio/entrada.mp3" type="audio/mpeg"/>
-  </audio>
-
-  <div id="loading" class="loading active">
-    <div class="spinner"></div>
-    <div style="font-weight:700;color:#444">Carregando PDFs...</div>
-  </div>
-
   <header><h1>PDFs Completos</h1></header>
 
   <main>
@@ -134,7 +86,7 @@
     <section class="grid" id="grid"></section>
   </main>
 
-  <div class="upgrade" id="upgrade">
+  <div class="upgrade" id="upgrade" style="display:none;">
     <div class="box">
       <h3>💾 Conteúdo Premium</h3>
       <p class="benefits">
@@ -151,64 +103,57 @@
 
   <script>
     const CONTENT = [
-      { id:'historias', title:'Histórias Bíblicas', cover:'img/historias-capa.png', pdf:'https://drive.google.com/uc?export=download&id=1Nh3iMFqpzP5jZzecTUQqRDD4XHfmlXiu', type:'paid' },
-      { id:'parabolas', title:'Parábolas de Jesus', cover:'img/parabolas-capa.png', type:'paid' },
+      // 🟡 Pagos
+      { title:'Histórias Bíblicas', cover:'img/historias-capa.png', file:'historias.pdf', type:'paid' },
+      { title:'Parábolas de Jesus', cover:'img/parabolas-capa.png', type:'soon' },
+      { title:'Jesus cura um cego', cover:'img/jesus-cego.png', file:'jesus-cego.pdf', type:'paid' },
+      { title:'Início da tristeza do homem', cover:'img/tristeza.png', file:'tristeza.pdf', type:'paid' },
+      { title:'Jesus acalma a tempestade', cover:'img/tempestade.png', file:'tempestade.pdf', type:'paid' },
+      { title:'Quando Deus criou todas as coisas', cover:'img/criacao.png', file:'criacao.pdf', type:'paid' },
+      { title:'Jonas e o grande peixe', cover:'img/jonas.png', file:'jonas.pdf', type:'paid' },
+      { title:'Daniel', cover:'img/daniel.png', file:'daniel.pdf', type:'paid' },
+      { title:'Jesus e Lázaro', cover:'img/lazaro.png', file:'lazaro.pdf', type:'paid' },
+      { title:'O Semeador', cover:'img/semeador.png', file:'semeador.pdf', type:'paid' },
 
-      { id:'ceu', title:'Céu — A bela casa de Deus', cover:'img/ceu.png', pdf:'pdfs/ceu.pdf', type:'free' },
-      { id:'igreja', title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', pdf:'pdfs/nascimento-igreja.pdf', type:'free' },
-      { id:'alimentacao', title:'Jesus alimenta 5.000 pessoas', cover:'img/jesus-alimenta.png', pdf:'pdfs/jesus-alimenta.pdf', type:'free' },
-      { id:'cego', title:'Jesus cura um cego', cover:'img/jesus-cego.png', type:'paid' },
-      { id:'mestre', title:'Jesus, o grande mestre', cover:'img/jesus-mestre.png', pdf:'pdfs/jesus-mestre.pdf', type:'free' },
-      { id:'samson', title:'Sansão — Um forte homem de Deus', cover:'img/samson.png', pdf:'pdfs/samson.pdf', type:'free' },
-      { id:'tristeza', title:'Início da tristeza do homem', cover:'img/tristeza.png', type:'paid' },
-      { id:'tempestade', title:'Jesus acalma a tempestade', cover:'img/tempestade.png', type:'paid' },
-      { id:'criacao', title:'Quando Deus criou todas as coisas', cover:'img/criacao.png', type:'paid' },
-      { id:'jonas', title:'Jonas e o grande peixe', cover:'img/jonas.png', type:'paid' },
-      { id:'daniel', title:'Daniel', cover:'img/daniel.png', type:'paid' },
-      { id:'lazaro', title:'Jesus e Lázaro', cover:'img/lazaro.png', type:'paid' },
-      { id:'semeador', title:'O Semeador', cover:'img/semeador.png', type:'paid' },
+      // 🟢 Gratuitos
+      { title:'Céu — A bela casa de Deus', cover:'img/ceu.png', file:'ceu.pdf', type:'free' },
+      { title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf', type:'free' },
+      { title:'Jesus alimenta 5.000 pessoas', cover:'img/jesus-alimenta.png', file:'jesus-alimenta.pdf', type:'free' },
+      { title:'Jesus, o grande mestre', cover:'img/jesus-mestre.png', file:'jesus-mestre.pdf', type:'free' },
+      { title:'Sansão — Um forte homem de Deus', cover:'img/samson.png', file:'samson.pdf', type:'free' },
+
+      // 🟢 Novos gratuitos extras
+      { title:'O Bom Samaritano', cover:'img/bom-samaritano.png', file:'bom-samaritano.pdf', type:'free' },
+      { title:'A Ovelha Perdida', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf', type:'free' },
     ];
 
-    const grid=document.getElementById('grid');
-    const loading=document.getElementById('loading');
-    const upgrade=document.getElementById('upgrade');
+    const grid = document.getElementById('grid');
 
     function render(){
       grid.innerHTML = CONTENT.map(item => {
         if(item.type === 'free'){
           return `
             <article class="card">
-              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy" />
-              <a href="${item.pdf || '#'}" target="_blank" class="btn green">📗 Download gratuito</a>
-            </article>
-          `;
+              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+              <a href="pdfcompleto/pdfs/${item.file}" target="_blank" class="btn green">📗 Download gratuito</a>
+            </article>`;
+        } else if(item.type === 'paid'){
+          return `
+            <article class="card">
+              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+              <button class="btn gold" onclick="alert('💛 Disponível apenas no Premium')">📘 Baixar PDF completo</button>
+            </article>`;
         } else {
           return `
             <article class="card">
-              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy" />
-              <button class="btn gold" data-id="${item.id}">📘 Baixar PDF completo</button>
-            </article>
-          `;
+              <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+              <div class="btn gray">🕓 Em breve</div>
+            </article>`;
         }
       }).join('');
     }
 
-    document.addEventListener('click', e => {
-      const btn = e.target.closest('button.btn.gold');
-      if (!btn) return;
-      upgrade.classList.add('open');
-    });
-
-    document.getElementById('btnFecharUpgrade').addEventListener('click', () => upgrade.classList.remove('open'));
-    document.getElementById('btnUpgradePlay').addEventListener('click', () => {
-      upgrade.classList.remove('open');
-      alert('🛒 Redirecionando para compra interna do Google Play...');
-    });
-
-    window.addEventListener('load', () => {
-      loading.classList.remove('active');
-      render();
-    });
+    render();
   </script>
 </body>
 </html>
