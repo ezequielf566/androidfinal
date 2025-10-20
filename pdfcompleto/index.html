@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PDFs Completos</title>
 
-  <!-- Preload de imagens principais -->
-  <link rel="preload" as="image" href="img/ceu.png">
-  <link rel="preload" as="image" href="img/nascimento-igreja.png">
-  <link rel="preload" as="image" href="img/jesus-alimenta.png">
-
   <style>
     :root {
       --gold:#FFD54F;
@@ -73,18 +68,9 @@
       background:var(--green);
     }
     .btn:hover{transform:translateY(-1px);background:#AED581;}
-
-    /* Bloco de anúncio dentro do grid */
-    .ad-card{
-      background:transparent;
-      box-shadow:none;
-      padding:0;
-      display:flex;align-items:center;justify-content:center;
-      min-height:90px;
-    }
-    .ad-card .adsbygoogle{display:block; width:100%;}
   </style>
 </head>
+
 <body>
   <header><h1>PDFs Completos</h1></header>
 
@@ -93,14 +79,13 @@
     <section class="grid" id="gridAll"></section>
   </main>
 
-  <!-- ✅ Script de anúncios (modo de teste seguro) -->
+  <!-- ✅ AdMob (intersticial de teste seguro) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-3940256099942544~3347511712" crossorigin="anonymous"></script>
-
   <script>
-    // Controle: esconder anúncios para quem removeu (premium)
+    // ⚙️ Configuração de exibição de anúncios intersticiais
+    let clickCount = 0; // Contador de cliques
     const userHasPremium = localStorage.getItem('removeAds') === 'true';
 
-    // Lista completa — todos gratuitos
     const ALL = [
       { title:'Céu — A bela casa de Deus', cover:'img/ceu.png', file:'ceu.pdf' },
       { title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf' },
@@ -121,45 +106,45 @@
       { title:'O Semeador', cover:'img/semeador.png', file:'semeador.pdf' }
     ];
 
-    // Cria card de PDF
-    const pdfCard = (item) => `
-      <article class="card">
-        <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
-      </article>
-    `;
-
-    // Cria bloco de anúncio — a cada 2 capas
-    const adBlock = () => `
-      <article class="ad-card">
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-app-pub-3940256099942544"
-             data-ad-slot="6300978111"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-      </article>
-    `;
-
     const gridAll = document.getElementById('gridAll');
-    const parts = [];
 
-    ALL.forEach((item, idx) => {
-      parts.push(pdfCard(item));
-      if (!userHasPremium && (idx % 2 === 1)) {
-        parts.push(adBlock());
-      }
-    });
-
-    gridAll.innerHTML = parts.join('');
-
-    // Inicializa os anúncios
-    if (!userHasPremium) {
-      const ads = document.querySelectorAll('.adsbygoogle');
-      ads.forEach(() => {
-        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e) {}
-      });
+    function renderPDFs() {
+      gridAll.innerHTML = ALL.map((item, index) => `
+        <article class="card">
+          <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+          <button class="btn" onclick="handleDownload('${item.file}')">📗 Download gratuito</button>
+        </article>
+      `).join('');
     }
+
+    function handleDownload(file) {
+      clickCount++;
+
+      if (userHasPremium) {
+        window.open('pdfs/' + file, '_blank');
+        return;
+      }
+
+      // Exibe anúncio a cada 2 downloads
+      if (clickCount % 2 === 0) {
+        showInterstitialAd(() => {
+          window.open('pdfs/' + file, '_blank');
+        });
+      } else {
+        window.open('pdfs/' + file, '_blank');
+      }
+    }
+
+    // 🟨 Função simulada de anúncio (modo de teste)
+    function showInterstitialAd(callback) {
+      alert("🎬 Anúncio em exibição (modo de teste)");
+      setTimeout(() => {
+        alert("✅ Anúncio finalizado");
+        callback();
+      }, 2000);
+    }
+
+    renderPDFs();
   </script>
 </body>
 </html>
