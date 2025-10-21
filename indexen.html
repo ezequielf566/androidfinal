@@ -1,13 +1,12 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com saudação suave + Firebase + 💎 + História do Projeto -->
+<!-- 🔸 Coloring the Word — Main Menu with greeting + Firebase + 💎 + Project Story -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pintando a Palavra — Menu</title>
+  <title>Coloring the Word — Menu</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
-
   <style>
     body {
       margin: 0;
@@ -30,7 +29,7 @@
       position: sticky;top: 0;z-index: 20;
       border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
     }
-    .notif-icon {cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
+    .notif-icon{cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
     .notif-icon:hover svg{transform:scale(1.1);}
     .notif-icon svg{width:28px;height:28px;stroke:#444;filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));}
     .diamond{margin-left:10px;font-size:1.5rem;cursor:pointer;animation:spinDiamond 3.5s linear infinite;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
@@ -62,28 +61,29 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
+        <div class="notif-icon" title="Project Story" onclick="openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
           </svg>
         </div>
-        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
+        <div class="diamond" id="diamondBtn" title="Support Project">💎</div>
       </div>
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
-        <button id="logoutBtn" class="btn">🚪 Sair</button>
+        <button id="installBtn" class="btn" style="display:none;">📲 Install app</button>
+        <button id="logoutBtn" class="btn">🚪 Logout</button>
       </div>
     </header>
 
     <main>
       <div id="saudacao" class="saudacao"></div>
       <div class="menu">
-        <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
-        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
-        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+        <button onclick="abrirTela('app/index.html','app')">📖 Stories</button>
+        <!-- ✅ Adjusted for English version -->
+        <button onclick="abrirTela('atividades/indexen.html','atividades')">🎨 Activities</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Full PDF</button>
       </div>
-      <h2>Siga-nos nas redes sociais</h2>
+      <h2>Follow us on social media</h2>
       <div class="socials">
         <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
         <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
@@ -95,25 +95,25 @@
 
   <div id="supportModal" class="support-modal">
     <div class="support-box">
-      <h2>Seja Premium</h2>
-      <p>Remova os anúncios e apoie nosso projeto!<br>Sua contribuição mantém todos os conteúdos gratuitos<br>e ajuda a alcançar novas famílias. 🙏</p>
+      <h2>Be Premium</h2>
+      <p>Remove ads and support our project!<br>Your help keeps all content free<br>and helps reach more families. 🙏</p>
       <div class="support-actions">
-        <button class="btn" onclick="closeSupportModal()">Agora não</button>
-        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
+        <button class="btn" onclick="closeSupportModal()">Not now</button>
+        <button class="btn" id="btnApoiar">💳 Support now</button>
       </div>
     </div>
   </div>
 
   <div id="storyModal" class="story-modal">
     <div class="story-box">
-      <h2>Como tudo começou...</h2>
-      <p>Eu não sabia muito de programação.</p>
-      <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
-      <p>Tudo começou pensando no meu filho e nas minhas irmãs que sempre amaram colorir.</p>
-      <p>Isso me trouxe ideias e junto um desejo de tornar real, com fé e dedicação, o sonho se tornou realidade!</p>
-      <p>Hoje o Pintando a Palavra alcança famílias em vários países. 🌍💛</p>
-      <p>✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo.</p>
-      <button class="btn" onclick="closeStoryModal()">Fechar</button>
+      <h2>How it all began...</h2>
+      <p>I didn’t know much about programming.</p>
+      <p>But I had a dream — to bring God’s Word to children in a light and joyful way.</p>
+      <p>It all started thinking about my son and my sisters, who always loved coloring.</p>
+      <p>That gave me the inspiration, and with faith and dedication, the dream became reality!</p>
+      <p>Today, Coloring the Word reaches families around the world. 🌍💛</p>
+      <p>✨ Your support keeps this dream alive and spreads God’s love across the world.</p>
+      <button class="btn" onclick="closeStoryModal()">Close</button>
     </div>
   </div>
 
@@ -142,9 +142,9 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        const firstName = user.displayName?.split(" ")[0] || "Friend";
         setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>Glad to have you here 💛`;
           saudacao.style.opacity = "1";
         }, 300);
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
@@ -170,14 +170,14 @@
 
     document.getElementById("btnApoiar").addEventListener("click", async () => {
       closeSupportModal();
-      alert("💛 Obrigado por apoiar! Atualizando...");
+      alert("💛 Thank you for your support! Updating...");
       const user = auth.currentUser;
       if(user){
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         await updateDoc(ref, { removeAds: true });
         diamondBtn.style.display = "none";
       }
-      alert("✅ Apoio registrado com sucesso!");
+      alert("✅ Support registered successfully!");
     });
 
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
