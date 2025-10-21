@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com Firebase + 💎 + História do Projeto -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL com saudação suave + Firebase + 💎 + História do Projeto -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -39,7 +39,12 @@
     header .btn{background:#fff;border:none;padding:.6rem 1.1rem;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);transition:all .25s ease;display:flex;align-items:center;gap:6px;}
     header .btn:hover{transform:scale(1.05);background:#fff7d1;}
     main{flex:1;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 3rem;text-align:center;}
-    .saudacao{font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);display:inline-block;}
+    .saudacao{
+      font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;
+      background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);
+      display:inline-block;opacity:0;transition:opacity .6s ease;
+    }
     .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
     .menu button{background:#ffd54f;border:none;padding:1rem;border-radius:16px;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);transition:all .25s ease;}
     .menu button:hover{transform:scale(1.03);background:#ffe066;}
@@ -57,17 +62,14 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
-        <!-- 📜 Ícone da história -->
         <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
           </svg>
         </div>
-        <!-- 💎 Ícone girando -->
         <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
       </div>
-
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
         <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
         <button id="logoutBtn" class="btn">🚪 Sair</button>
@@ -75,7 +77,7 @@
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao">👋 Olá!</div>
+      <div id="saudacao" class="saudacao"></div>
       <div class="menu">
         <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
         <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
@@ -91,13 +93,10 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="support-modal">
     <div class="support-box">
       <h2>Seja Premium</h2>
-      <p>Remova os anúncios e apoie nosso projeto!<br>
-      Sua contribuição mantém todos os conteúdos gratuitos<br>
-      e ajuda a alcançar novas famílias. 🙏</p>
+      <p>Remova os anúncios e apoie nosso projeto!<br>Sua contribuição mantém todos os conteúdos gratuitos<br>e ajuda a alcançar novas famílias. 🙏</p>
       <div class="support-actions">
         <button class="btn" onclick="closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
@@ -105,7 +104,6 @@
     </div>
   </div>
 
-  <!-- 📜 Modal História do Projeto -->
   <div id="storyModal" class="story-modal">
     <div class="story-box">
       <h2>Como tudo começou...</h2>
@@ -145,7 +143,10 @@
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Amigo";
-        saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.style.opacity = "1";
+        }, 300);
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().removeAds) {
@@ -163,7 +164,6 @@
       });
     });
 
-    // 💎 Apoio
     function openSupportModal(){ supportModal.classList.add("open"); }
     function closeSupportModal(){ supportModal.classList.remove("open"); }
     diamondBtn.addEventListener("click", openSupportModal);
@@ -180,15 +180,12 @@
       alert("✅ Apoio registrado com sucesso!");
     });
 
-    // 📜 História do Projeto
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
     function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
 
-    // 🔹 Expor globalmente
     window.openStoryModal = openStoryModal;
     window.closeStoryModal = closeStoryModal;
 
-    // Navegação interna
     function abrirTela(src,t){
       document.getElementById("menuContainer").style.display="none";
       const i=document.getElementById("conteudo");
