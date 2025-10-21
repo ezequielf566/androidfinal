@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PDFs Completos</title>
 
-  <!-- Preload de imagens principais -->
-  <link rel="preload" as="image" href="img/ceu.png">
-  <link rel="preload" as="image" href="img/nascimento-igreja.png">
-  <link rel="preload" as="image" href="img/jesus-alimenta.png">
-
   <style>
     :root {
       --gold:#FFD54F;
@@ -47,12 +42,17 @@
       background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;
       box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:22px;
-      justify-items:center;
+
+    /* ✅ Grade fixa 2x2 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
     }
+    @media (min-width:700px){
+      .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}
+    }
+
     .card{
       background:var(--card);
       border-radius:20px;
@@ -62,18 +62,16 @@
       display:flex;
       flex-direction:column;
       align-items:center;
-      width:100%;
-      max-width:240px;
     }
     .card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.16);}
     .cover{
       width:100%;
-      aspect-ratio:1/1.25;
+      aspect-ratio:1/1.2;
       border-radius:16px;
       object-fit:cover;
       background:#fff6d1;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
       margin-bottom:12px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
     }
     .btn{
       border:none;
@@ -127,11 +125,12 @@
       </article>
     `).join('');
 
-    // ⚙️ AdMob Configuração
-    const TESTE = true; // Deixe true enquanto testa
+    // 🟡 AdMob IDs
+    const TESTE = true; // altere pra false após aprovação
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
+    // 🟢 Exibição de anúncio a cada 2 downloads
     function exibirAnuncio() {
       if (TESTE) {
         alert("🎬 Anúncio em exibição (modo de teste)");
@@ -140,7 +139,6 @@
       }
     }
 
-    // Mostra anúncio a cada 2 cliques
     document.addEventListener("DOMContentLoaded", () => {
       const botoes = document.querySelectorAll(".btn");
       botoes.forEach((btn, i) => {
