@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PDFs Completos</title>
 
+  <!-- Preload de imagens principais -->
+  <link rel="preload" as="image" href="img/ceu.png">
+  <link rel="preload" as="image" href="img/nascimento-igreja.png">
+  <link rel="preload" as="image" href="img/jesus-alimenta.png">
+
   <style>
     :root {
       --gold:#FFD54F;
@@ -42,51 +47,61 @@
       background:rgba(255,255,255,.7);border-radius:14px;padding:10px 14px;
       box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;}
-    @media (min-width:700px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:22px;
+      justify-items:center;
+    }
     .card{
-      background:var(--card);border-radius:20px;padding:12px;
+      background:var(--card);
+      border-radius:20px;
+      padding:12px;
       box-shadow:0 6px 16px rgba(0,0,0,.12);
       transition:transform .18s ease,box-shadow .18s ease;
-      display:flex;flex-direction:column;align-items:center;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:100%;
+      max-width:240px;
     }
     .card:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.16);}
     .cover{
       width:100%;
-      aspect-ratio:1/1.2;
+      aspect-ratio:1/1.25;
       border-radius:16px;
       object-fit:cover;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
       background:#fff6d1;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
       margin-bottom:12px;
     }
     .btn{
-      border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
-      box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
-      transition:transform .12s ease,background .12s ease;width:100%;
-      color:#fff;text-align:center;text-decoration:none;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      padding:10px 14px;
+      border-radius:12px;
+      width:100%;
       background:var(--green);
+      color:#fff;
+      box-shadow:0 3px 6px rgba(0,0,0,.2);
+      transition:transform .12s ease, background .12s ease;
+      text-align:center;
+      text-decoration:none;
     }
     .btn:hover{transform:translateY(-1px);background:#AED581;}
   </style>
 </head>
-
 <body>
   <header><h1>PDFs Completos</h1></header>
 
   <main>
-    <p class="intro">Baixe gratuitamente todos os PDFs das histórias e parábolas da Bíblia.</p>
-    <section class="grid" id="gridAll"></section>
+    <p class="intro">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>
+    <section class="grid" id="gridFree"></section>
   </main>
 
-  <!-- ✅ AdMob (intersticial de teste seguro) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-app-pub-3940256099942544~3347511712" crossorigin="anonymous"></script>
   <script>
-    // ⚙️ Configuração de exibição de anúncios intersticiais
-    let clickCount = 0; // Contador de cliques
-    const userHasPremium = localStorage.getItem('removeAds') === 'true';
-
-    const ALL = [
+    const FREE = [
       { title:'Céu — A bela casa de Deus', cover:'img/ceu.png', file:'ceu.pdf' },
       { title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf' },
       { title:'Jesus alimenta 5.000 pessoas', cover:'img/jesus-alimenta.png', file:'jesus-alimenta.pdf' },
@@ -94,8 +109,6 @@
       { title:'Sansão — Um forte homem de Deus', cover:'img/samson.png', file:'samson.pdf' },
       { title:'O Bom Samaritano', cover:'img/bom-samaritano.png', file:'bom-samaritano.pdf' },
       { title:'A Ovelha Perdida', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf' },
-      { title:'Histórias Bíblicas', cover:'img/historias-capa.png', file:'historias.pdf' },
-      { title:'Parábolas de Jesus', cover:'img/parabolas-capa.png', file:'parabolas.pdf' },
       { title:'Jesus cura um cego', cover:'img/jesus-cego.png', file:'jesus-cego.pdf' },
       { title:'Início da tristeza do homem', cover:'img/tristeza.png', file:'tristeza.pdf' },
       { title:'Jesus acalma a tempestade', cover:'img/tempestade.png', file:'tempestade.pdf' },
@@ -106,45 +119,36 @@
       { title:'O Semeador', cover:'img/semeador.png', file:'semeador.pdf' }
     ];
 
-    const gridAll = document.getElementById('gridAll');
+    const gridFree = document.getElementById('gridFree');
+    gridFree.innerHTML = FREE.map(item => `
+      <article class="card">
+        <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
+      </article>
+    `).join('');
 
-    function renderPDFs() {
-      gridAll.innerHTML = ALL.map((item, index) => `
-        <article class="card">
-          <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-          <button class="btn" onclick="handleDownload('${item.file}')">📗 Download gratuito</button>
-        </article>
-      `).join('');
-    }
+    // ⚙️ AdMob Configuração
+    const TESTE = true; // Deixe true enquanto testa
+    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
+    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    function handleDownload(file) {
-      clickCount++;
-
-      if (userHasPremium) {
-        window.open('pdfs/' + file, '_blank');
-        return;
-      }
-
-      // Exibe anúncio a cada 2 downloads
-      if (clickCount % 2 === 0) {
-        showInterstitialAd(() => {
-          window.open('pdfs/' + file, '_blank');
-        });
+    function exibirAnuncio() {
+      if (TESTE) {
+        alert("🎬 Anúncio em exibição (modo de teste)");
       } else {
-        window.open('pdfs/' + file, '_blank');
+        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
       }
     }
 
-    // 🟨 Função simulada de anúncio (modo de teste)
-    function showInterstitialAd(callback) {
-      alert("🎬 Anúncio em exibição (modo de teste)");
-      setTimeout(() => {
-        alert("✅ Anúncio finalizado");
-        callback();
-      }, 2000);
-    }
-
-    renderPDFs();
+    // Mostra anúncio a cada 2 cliques
+    document.addEventListener("DOMContentLoaded", () => {
+      const botoes = document.querySelectorAll(".btn");
+      botoes.forEach((btn, i) => {
+        btn.addEventListener("click", () => {
+          if (i % 2 === 1) exibirAnuncio();
+        });
+      });
+    });
   </script>
 </body>
 </html>
