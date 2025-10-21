@@ -65,7 +65,6 @@
       box-shadow: 0 0 0 3px #ffd54f;  
     }  
 
-    /* 🎨 Botão de cor personalizada (“+”) */  
     .sw.custom {  
       width: 36px; height: 36px;  
       border-radius: 10px !important;  
@@ -78,17 +77,11 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.2);  
       transition: box-shadow .3s ease;  
     }  
-
-    /* ✨ Brilho pulsante quando popup ativo */  
-    .sw.custom.active {  
-      animation: glowPulse 1.4s ease-in-out infinite;  
-    }  
-
+    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }  
     @keyframes hueShift {  
       0%,100% { background-position: 0% 50%; }  
       50% { background-position: 100% 50%; }  
     }  
-
     @keyframes glowPulse {  
       0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }  
       50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }  
@@ -97,7 +90,6 @@
 </head>  
 
 <body>  
-  <!-- 🕓 Tela de carregamento -->  
   <div id="loadingOverlay">  
     <div class="spinner"></div>  
     <div class="loading-text">🎨 Carregando artes...</div>  
@@ -268,5 +260,26 @@
     });  
     observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
   </script>  
+
+  <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
+  <script>
+    const TESTE = true; // mudar pra false após aprovação
+    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
+    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
+
+    function exibirAnuncio() {
+      if (TESTE) {
+        alert("🎬 Anúncio em exibição (modo de teste)");
+      } else {
+        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
+        // Aqui entra o SDK real do AdMob após publicação
+      }
+    }
+
+    window.addEventListener("load", () => {
+      console.log("⏱️ Contador de 2 minutos iniciado");
+      setInterval(exibirAnuncio, 120000); // 2 minutos
+    });
+  </script>
 </body>  
 </html>
