@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com Firebase ativo -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (Firebase + 💎 + História do Projeto) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,6 +7,7 @@
   <title>Pintando a Palavra — Menu</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
+
   <style>
     body {
       margin: 0;
@@ -45,9 +46,10 @@
     .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
     .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
     .socials button:hover{background:#fff2b3;transform:scale(1.05);}
-    .support-modal{position:fixed;inset:0;background:rgba(255,240,180,0.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px;}
-    .support-modal.open{display:flex;}
-    .support-box{background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;}
+    .support-modal,.story-modal{position:fixed;inset:0;background:rgba(255,240,180,0.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px;}
+    .support-modal.open,.story-modal.open{display:flex;}
+    .support-box,.story-box{background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;}
+    .story-box p{line-height:1.6;color:#333;font-size:1rem;}
   </style>
 </head>
 
@@ -55,14 +57,17 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
+        <!-- 📜 Ícone da história -->
         <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
           </svg>
         </div>
+        <!-- 💎 Ícone girando -->
         <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
       </div>
+
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
         <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
         <button id="logoutBtn" class="btn">🚪 Sair</button>
@@ -86,6 +91,7 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
+  <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="support-modal">
     <div class="support-box">
       <h2>Seja Premium</h2>
@@ -96,6 +102,20 @@
         <button class="btn" onclick="closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 📜 Modal História do Projeto -->
+  <div id="storyModal" class="story-modal">
+    <div class="story-box">
+      <h2>💛 PINTANDO A PALAVRA 💛</h2>
+      <p>Eu não sabia muito de programação.</p>
+      <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
+      <p>Tudo começou pensando no meu filho e nas minhas irmãs que sempre amaram colorir.</p>
+      <p>Isso me trouxe ideias e junto um desejo de tornar real. Com fé e dedicação, o sonho se tornou realidade!</p>
+      <p>Hoje o Pintando a Palavra alcança famílias em vários países. 🌍💛</p>
+      <p>✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo.</p>
+      <button class="btn" onclick="closeStoryModal()">Fechar</button>
     </div>
   </div>
 
@@ -143,6 +163,7 @@
       });
     });
 
+    // 💎 Apoio
     function openSupportModal(){ supportModal.classList.add("open"); }
     function closeSupportModal(){ supportModal.classList.remove("open"); }
     diamondBtn.addEventListener("click", openSupportModal);
@@ -159,6 +180,11 @@
       alert("✅ Apoio registrado com sucesso!");
     });
 
+    // 📜 História do Projeto
+    function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
+    function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
+
+    // Navegação interna
     function abrirTela(src,t){
       document.getElementById("menuContainer").style.display="none";
       const i=document.getElementById("conteudo");
