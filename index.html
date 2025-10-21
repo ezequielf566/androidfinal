@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu em Português (v1.0.38 - back universal fix) -->
+<!-- 🔸 Pintando a Palavra — Menu com botão 💎 Apoiar Projeto -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,14 +16,14 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
+      background: linear-gradient(180deg,#fff7d1 0%,#fff3bf 40%,#fff9e6 100%);
       background-attachment: fixed;
       overflow-x: hidden;
     }
 
     header {
-      background: linear-gradient(90deg, #ffd54f, #ffea80);
-      padding: 0.8rem 1.2rem;
+      background: linear-gradient(90deg,#ffd54f,#ffea80);
+      padding: .8rem 1.2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -40,7 +40,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s ease;
+      transition: transform .2s ease;
     }
     .notif-icon:hover svg { transform: scale(1.1); }
     .notif-icon svg {
@@ -50,15 +50,32 @@
       filter: drop-shadow(0 0 4px rgba(255,213,79,0.6));
     }
 
+    /* 💎 Ícone girando */
+    .diamond {
+      margin-left: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      animation: spinDiamond 4s linear infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .3s ease;
+    }
+    .diamond:hover { transform: scale(1.15); }
+    @keyframes spinDiamond {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     header .btn {
       background: #fff;
       border: none;
-      padding: 0.6rem 1.1rem;
+      padding: .6rem 1.1rem;
       border-radius: 12px;
       cursor: pointer;
       font-weight: 600;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: all 0.25s ease;
+      transition: all .25s ease;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -85,7 +102,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       backdrop-filter: blur(5px);
       display: inline-block;
-      animation: fadeIn 0.6s ease forwards;
+      animation: fadeIn .6s ease forwards;
     }
 
     .menu {
@@ -106,16 +123,13 @@
       cursor: pointer;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.4),
                   0 4px 10px rgba(0,0,0,0.15);
-      transition: all 0.25s ease;
+      transition: all .25s ease;
     }
     .menu button:hover { transform: scale(1.03); background: #ffe066; }
-
-    h2 { margin-top: 2.2rem; font-size: 1.25rem; font-weight: 600; }
 
     .socials {
       display: flex;
       justify-content: center;
-      align-items: center;
       gap: 1rem;
       margin-top: 1.5rem;
     }
@@ -124,107 +138,81 @@
       background: #fffbe6;
       border: 2px solid #ffe066;
       border-radius: 14px;
-      padding: 0.7rem 1.3rem;
+      padding: .7rem 1.3rem;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all .25s ease;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
-
     .socials button:hover { background: #fff2b3; transform: scale(1.05); }
 
-    .modal {
-      display: none;
+    /* Modal Apoio */
+    .support-modal {
       position: fixed;
       inset: 0;
-      background: rgba(255,230,150,0.3);
-      backdrop-filter: blur(3px);
-      z-index: 1000;
-      padding: 12px;
-      overflow-y: auto;
-    }
-
-    .modal-content {
-      background: linear-gradient(180deg, #FFF8DC 0%, #FFEBA3 100%);
-      margin: 8vh auto;
-      padding: 22px 18px 26px;
-      border-radius: 20px;
-      width: 92%;
-      max-width: 480px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      position: relative;
-      animation: fadeInModal 0.3s ease;
-    }
-
-    @keyframes fadeInModal {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-content h2 {
-      text-align: center;
-      color: #d78d00;
-      margin: 0 0 14px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      line-height: 1.3;
-    }
-
-    .story-text {
-      color: #333;
-      font-size: 1rem;
-      line-height: 1.55;
-      text-align: center;
-      max-height: 65vh;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .story-text p { margin-bottom: 0.9em; }
-
-    .close {
-      color: #555;
-      position: absolute;
-      right: 14px;
-      top: 10px;
-      font-size: 26px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.2s ease;
-    }
-    .close:hover { color: #d78d00; }
-
-    #updateAlert {
+      background: rgba(255,240,180,0.4);
+      backdrop-filter: blur(4px);
       display: none;
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #ffecb3;
-      border: 2px solid #ffd54f;
-      border-radius: 12px;
-      padding: 12px 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      font-weight: 600;
-      font-family: "Fredoka", sans-serif;
-      color: #444;
-      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      z-index: 1200;
+      padding: 16px;
     }
+    .support-modal.open { display: flex; }
+    .support-box {
+      background: linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
+      border-radius: 20px;
+      padding: 24px 20px 28px;
+      width: min(90%, 460px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      text-align: center;
+      animation: fadeInModal .3s ease;
+    }
+    .support-box h2 {
+      margin-top: 0;
+      color: #c49000;
+      font-weight: 800;
+    }
+    .support-box p {
+      color: #333;
+      line-height: 1.6;
+      margin: 12px 0 18px;
+      font-size: 1rem;
+    }
+    .support-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .support-actions .btn {
+      background: #ffd54f;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
+    .support-actions .btn:hover { transform: scale(1.05); }
   </style>
 </head>
 
 <body>
-  <script src="audio/audioController.js" defer></script>
-
   <div id="menuContainer">
     <header>
-      <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M3 8l9 6 9-6"></path>
-          <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
-          <path d="M12 12l2.5-2.5a1.5 1.5 0 0 0-2.1-2.1L12 8.8l-0.4-0.4a1.5 1.5 0 0 0-2.1 2.1L12 12z"></path>
-        </svg>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l9 6 9-6"></path>
+            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+            <path d="M12 12l2.5-2.5a1.5 1.5 0 0 0-2.1-2.1L12 8.8l-0.4-0.4a1.5 1.5 0 0 0-2.1 2.1L12 12z"></path>
+          </svg>
+        </div>
+
+        <!-- 💎 Ícone de apoio -->
+        <div class="diamond" title="Apoiar Projeto" onclick="openSupportModal()">💎</div>
       </div>
 
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
@@ -235,7 +223,6 @@
 
     <main>
       <div id="saudacao" class="saudacao"></div>
-
       <div class="menu">
         <button onclick="abrirApp()">📖 Histórias</button>
         <button onclick="abrirAtividades()">🎨 Atividades</button>
@@ -252,31 +239,29 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <div id="storyModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeStoryModal()">&times;</span>
-      <h2>💛 PINTANDO A PALAVRA 💛</h2>
-      <div class="story-text" id="storyContent">
-        <p>Eu não sabia muito de programação.</p>
-        <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
-        <p>Tudo começou pensando no meu filho e nas minhas irmãs que sempre amaram colorir.</p>
-        <p>Isso me trouxe ideias e junto um desejo de tornar real. Com fé e dedicação, o sonho se tornou realidade!</p>
-        <p>Hoje o Pintando a Palavra alcança famílias em vários países. 🌍💛</p>
-        <p>✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo.</p>
+  <!-- 💎 Modal de apoio -->
+  <div id="supportModal" class="support-modal">
+    <div class="support-box">
+      <h2>💎 Apoie o Pintando a Palavra</h2>
+      <p>Remova os anúncios e apoie nosso projeto!<br>
+      Sua contribuição mantém todos os conteúdos gratuitos<br>
+      e ajuda a alcançar novas famílias. 🙏</p>
+      <div class="support-actions">
+        <button class="btn" onclick="closeSupportModal()">Agora não</button>
+        <button class="btn" onclick="comprarApoio()">💳 Apoiar agora</button>
       </div>
     </div>
   </div>
 
-  <div id="updateAlert">🌟 Novo conteúdo disponível! Atualizando...</div>
-
   <script>
+    // Saudação
     const nome = localStorage.getItem("displayName") || "Amigo";
-    document.getElementById("saudacao").innerHTML = `👋 Olá, <strong>${nome.split(" ")[0]}</strong>!<br>Que bom ter você aqui 💛`;
+    document.addEventListener("DOMContentLoaded",()=>{
+      document.getElementById("saudacao").innerHTML = 
+        `👋 Olá, <strong>${nome.split(" ")[0]}</strong>!<br>Que bom ter você aqui 💛`;
+    });
 
-    function openStoryModal(){document.getElementById("storyModal").style.display="flex";}
-    function closeStoryModal(){document.getElementById("storyModal").style.display="none";}
-    window.onclick=function(e){const m=document.getElementById("storyModal");if(e.target===m)m.style.display="none";}
-
+    // Funções do app
     function abrirApp(){abrirTela("app/index.html","app");}
     function abrirAtividades(){abrirTela("atividades/index.html","atividades");}
     function abrirPdf(){abrirTela("pdfcompleto/index.html","pdfcompleto");}
@@ -287,48 +272,24 @@
       history.pushState({tela:t},"","#"+t);
     }
 
-    // 🔙 Universal back fix: sempre retorna ao menu principal
-    window.onpopstate = function() {
-      const conteudo = document.getElementById("conteudo");
-      const menu = document.getElementById("menuContainer");
-      conteudo.style.display = "none";
-      menu.style.display = "block";
+    window.onpopstate=function(){
+      const c=document.getElementById("conteudo"),m=document.getElementById("menuContainer");
+      c.style.display="none"; m.style.display="block";
       history.replaceState({}, "", location.pathname);
     };
 
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt',(e)=>{
-      e.preventDefault(); deferredPrompt=e;
-      const b=document.getElementById("installBtn");
-      b.style.display="inline-block";
-      b.addEventListener("click",async()=>{
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt=null; b.remove();
-      });
-    });
+    // 💎 Modal Apoio
+    function openSupportModal(){ document.getElementById("supportModal").classList.add("open"); }
+    function closeSupportModal(){ document.getElementById("supportModal").classList.remove("open"); }
 
-    function logout(){
-      localStorage.clear();
-      window.location.replace("login.html");
+    // Pré-configuração para Play Store Billing
+    function comprarApoio(){
+      closeSupportModal();
+      alert("🛒 Redirecionando para compra interna da Play Store...");
+      // Aqui futuramente entrará: billing.purchase('remove_ads');
     }
 
-    const APP_VERSION = "1.0.40";
-    const savedVersion = localStorage.getItem("appVersion");
-    if (savedVersion !== APP_VERSION) {
-      document.getElementById("updateAlert").style.display = "block";
-      if ("caches" in window) caches.keys().then(keys => keys.forEach(key => caches.delete(key)));
-      localStorage.setItem("appVersion", APP_VERSION);
-      setTimeout(() => window.location.replace(window.location.pathname + "?v=" + APP_VERSION), 1200);
-    }
-
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js")
-          .then(() => console.log("✅ Service Worker ativo"))
-          .catch(err => console.error("❌ Falha ao registrar SW:", err));
-      });
-    }
+    function logout(){ localStorage.clear(); window.location.replace("login.html"); }
   </script>
 </body>
 </html>
