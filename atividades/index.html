@@ -56,20 +56,19 @@
       aspect-ratio:1/1.2;
       border-radius:16px;
       object-fit:cover;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
       background:#fff6d1;
       margin-bottom:12px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 3px 10px rgba(0,0,0,.1);
     }
     .btn{
       border:none;cursor:pointer;font-weight:700;padding:10px 14px;border-radius:12px;
-      box-shadow:0 2px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.6);
-      transition:transform .12s ease,background .12s ease;width:100%;
+      width:100%;
+      background:var(--green);
+      color:#1b5e20;
+      box-shadow:0 3px 6px rgba(0,0,0,.2);
+      transition:transform .12s ease, background .12s ease;
     }
-    .btn:hover{transform:translateY(-1px);}
-    .btn.premium{background:var(--gold);color:#2a2a2a;}
-    .btn.premium:hover{background:#ffe066;}
-    .btn.free{background:var(--green);color:#1b5e20;}
-    .btn.free:hover{background:var(--green-hover);}
+    .btn:hover{transform:translateY(-1px);background:var(--green-hover);}
     .loading{
       position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
       background:rgba(255,255,255,.75);z-index:999;opacity:0;visibility:hidden;transition:.25s ease;
@@ -81,56 +80,10 @@
       animation:spin 1s linear infinite;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
-    .modal{
-      position:fixed;inset:0;background:rgba(0,0,0,.35);
-      display:none;align-items:center;justify-content:center;z-index:1000;padding:16px;
-    }
-    .modal.open{display:flex;}
-    .sheet{
-      width:min(960px,96vw);max-height:90vh;background:#fff;border-radius:18px;overflow:hidden;
-      box-shadow:0 12px 40px rgba(0,0,0,.28);display:flex;flex-direction:column;
-      animation:pop .18s ease;
-    }
-    @keyframes pop{from{transform:scale(.96);opacity:.8}to{transform:scale(1);opacity:1}}
-    .sheet header{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:12px 14px;background:linear-gradient(90deg,var(--gold),var(--gold-2));
-    }
-    .sheet header h3{margin:0;font-size:1.1rem;}
-    .close{border:none;background:transparent;font-size:22px;cursor:pointer;}
-    .gallery{
-      padding:14px;overflow:auto hidden;display:flex;gap:12px;scroll-snap-type:x mandatory;background:#fffef6;
-    }
-    .gallery img{
-      height:62vh;max-height:620px;border-radius:12px;object-fit:cover;scroll-snap-align:center;
-      box-shadow:0 4px 14px rgba(0,0,0,.18);background:#fff6d1;
-    }
-    .sheet footer{
-      display:flex;gap:10px;padding:12px;border-top:1px solid #f0e6be;background:#fffef6;
-      flex-wrap:wrap;justify-content:flex-end;
-    }
-    .btn-secondary{background:#f2f2f2;color:#333;}
-    .btn-primary{background:var(--gold);color:#222;}
-    .upgrade{
-      position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1100;padding:16px;
-    }
-    .upgrade.open{display:flex;}
-    .upgrade .box{
-      width:min(760px,96vw);background:#fff;border-radius:18px;padding:18px 16px;
-      box-shadow:0 14px 46px rgba(0,0,0,.32);
-    }
-    .upgrade h3{margin:0 0 8px;}
-    .benefits{margin:8px 0 14px;line-height:1.6;}
-    .upgrade .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;}
-    .link{color:#1565c0;text-decoration:none;font-weight:700;}
   </style>
 </head>
 
 <body>
-  <audio id="entradaAudio">
-    <source src="audio/entrada.mp3" type="audio/mpeg"/>
-  </audio>
-
   <div id="loading" class="loading active">
     <div class="spinner"></div>
     <div style="font-weight:700;color:#444">Carregando atividades...</div>
@@ -139,111 +92,56 @@
   <header><h1>Atividades Bíblicas</h1></header>
 
   <main>
-    <p class="intro">Veja as prévias das atividades e baixe os PDFs gratuitos ou completos.</p>
-    <section class="grid" id="grid"></section>
+    <p class="intro">Baixe atividades bíblicas para imprimir e aprender brincando!</p>
+    <section class="grid" id="gridAtividades"></section>
   </main>
 
-  <div class="modal" id="modal">
-    <div class="sheet">
-      <header>
-        <h3 id="modalTitle">Prévia</h3>
-        <button class="close" id="closeModal">✕</button>
-      </header>
-      <div class="gallery" id="gallery"></div>
-      <footer>
-        <button class="btn btn-secondary" id="btnVoltar">Voltar</button>
-        <button class="btn btn-primary" id="btnBaixar">📥 Baixar PDF completo</button>
-      </footer>
-    </div>
-  </div>
-
-  <div class="upgrade" id="upgrade">
-    <div class="box">
-      <h3>🔒 Conteúdo Premium</h3>
-      <p class="benefits">
-        ✅ Acesso ilimitado a todos os PDFs e atividades<br/>
-        ✅ Sem anúncios e com melhorias exclusivas<br/>
-        ✅ Atualizações contínuas de conteúdo<br/>
-        💡 Também há atividades <strong>gratuitas</strong> disponíveis!
-      </p>
-      <div class="actions">
-        <button class="btn btn-secondary" id="btnFecharUpgrade">Agora não</button>
-        <button class="btn btn-primary" id="btnUpgradePlay">💳 Fazer upgrade</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    const CONTENT = [
-      // 🔒 PREMIUM
-      { id:'biblia', title:'A Bíblia', cover:'img/biblia-capa.png', previews:['img/biblia-1.png','img/biblia-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1RqqKXDMUaOH4WAAz1RxbHnueXbnl3mmF&confirm=no_antivirus', free:false },
-      { id:'ligar', title:'Ligar os Pontos', cover:'img/ligar-capa.png', previews:['img/ligar-1.png','img/ligar-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1-Y7BHqx6ITiXqLM6R_YUFeNiVswre8O_&confirm=no_antivirus', free:false },
-      { id:'atividades-es', title:'Actividades (ES)', cover:'img/atividades-es-capa.png', previews:['img/atividades-es-1.png','img/atividades-es-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1h33AqkbNEe1Z00-_16QcRV0fTxondQLt&confirm=no_antivirus', free:false },
-
-      // 🟢 GRATUITOS
-      { id:'caca', title:'Caça Palavras', cover:'img/caca-capa.png', previews:['img/caca-1.png','img/caca-2.png'], pdf:'https://drive.google.com/uc?export=download&id=19h9WA8LYGwEiL6687bLseYp5FAv1ZizR&confirm=no_antivirus', free:true },
-      { id:'cruzadinha', title:'Cruzadinha', cover:'img/cruzadinha-capa.png', previews:['img/cruzadinha-1.png','img/cruzadinha-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1Mt1zJNV1qmp3tHGawXKHDJe3KuYlfSMi&confirm=no_antivirus', free:true },
-      { id:'caca-es', title:'Caça Palabras (ES)', cover:'img/caca-es-capa.png', previews:['img/caca-es-1.png','img/caca-es-2.png'], pdf:'https://drive.google.com/uc?export=download&id=1zJjkWBT1aXrLSDOnRCDpT7ykW0Hl_sdS&confirm=no_antivirus', free:true }
+    // 🟢 Lista de atividades (todas gratuitas)
+    const ATIVIDADES = [
+      { title:'Caça Palavras — Histórias da Bíblia', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
+      { title:'Ligar os Pontos — Criação', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
+      { title:'Cruzadinha Bíblica — Jesus e os Discípulos', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
+      { title:'Pinte o Desenho — Arca de Noé', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' },
+      { title:'Monte a Palavra — Frutos do Espírito', cover:'img/frutos-espirito.png', file:'frutos-espirito.pdf' },
+      { title:'Ligue o Versículo — Parábolas', cover:'img/ligue-parabolas.png', file:'ligue-parabolas.pdf' }
     ];
 
-    const grid = document.getElementById('grid');
-    const modal = document.getElementById('modal');
-    const gallery = document.getElementById('gallery');
-    const modalTitle = document.getElementById('modalTitle');
-    const loading = document.getElementById('loading');
-    const upgrade = document.getElementById('upgrade');
+    const grid = document.getElementById('gridAtividades');
+    grid.innerHTML = ATIVIDADES.map(item => `
+      <article class="card">
+        <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
+        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
+      </article>
+    `).join('');
 
-    function render(){
-      grid.innerHTML = CONTENT.map(item => `
-        <article class="card">
-          <img class="cover" src="${item.cover}" alt="Atividade ${item.title}" />
-          <button class="btn ${item.free ? 'free' : 'premium'}" data-id="${item.id}">
-            ${item.free ? "📗 Baixar PDF gratuito" : "Ver prévias"}
-          </button>
-        </article>`).join('');
-    }
+    // 🟡 AdMob Configurações
+    const TESTE = true; // altere pra false após publicação
+    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
+    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    function openPreview(id){
-      const item = CONTENT.find(x => x.id === id);
-      if(!item)return;
-
-      if(item.free){
-        window.open(item.pdf, '_blank');
-        return;
+    // Exibe anúncio a cada 2 downloads
+    function exibirAnuncio() {
+      if (TESTE) {
+        alert("🎬 Anúncio em exibição (modo de teste)");
+      } else {
+        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
       }
-
-      modalTitle.textContent = item.title;
-      const basePath = window.location.pathname.includes('/atividades') ? './' : 'atividades/';
-      gallery.innerHTML = item.previews.map(src => `<img src="${basePath}${src}" alt="Prévia de ${item.title}">`).join('');
-      modal.classList.add('open');
     }
 
-    function closePreview(){
-      modal.classList.remove('open');
-      gallery.innerHTML = '';
-    }
-
-    function handleDownload(){ upgrade.classList.add('open'); }
-    function closeUpgrade(){ upgrade.classList.remove('open'); }
-
-    // Compra interna (Google Play)
-    document.getElementById('btnUpgradePlay').addEventListener('click',()=>{
-      closeUpgrade();
-      alert('🛒 Redirecionando para compra interna do Google Play...');
-      // Aqui entrará a chamada real da Billing Library:
-      // billing.purchase('premium_access');
+    document.addEventListener("DOMContentLoaded", () => {
+      const botoes = document.querySelectorAll(".btn");
+      botoes.forEach((btn, i) => {
+        btn.addEventListener("click", () => {
+          if (i % 2 === 1) exibirAnuncio();
+        });
+      });
     });
 
-    document.addEventListener('click',e=>{
-      const btn=e.target.closest('button.btn');
-      if(btn&&btn.dataset.id){openPreview(btn.dataset.id);}
+    // ⏳ Tela de loading
+    window.addEventListener('load',()=> {
+      document.getElementById('loading').classList.remove('active');
     });
-    document.getElementById('closeModal').addEventListener('click',closePreview);
-    document.getElementById('btnVoltar').addEventListener('click',closePreview);
-    document.getElementById('btnBaixar').addEventListener('click',handleDownload);
-    document.getElementById('btnFecharUpgrade').addEventListener('click',closeUpgrade);
-
-    window.addEventListener('load',()=>{loading.classList.remove('active');render();});
   </script>
 </body>
 </html>
