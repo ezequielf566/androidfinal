@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu com 💎 girando horizontalmente -->
+<!-- 🔸 Pintando a Palavra — Menu com 💎 integrado ao Firebase do login -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -50,20 +50,18 @@
       filter: drop-shadow(0 0 4px rgba(255,213,79,0.6));
     }
 
-    /* 💎 Ícone girando na horizontal */
+    /* 💎 Ícone girando horizontalmente */
     .diamond {
       margin-left: 10px;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       cursor: pointer;
       animation: spinDiamond 3.5s linear infinite;
       display: flex;
       align-items: center;
       justify-content: center;
       transform-style: preserve-3d;
-      perspective: 300px;
     }
     .diamond:hover { transform: scale(1.15); }
-
     @keyframes spinDiamond {
       0% { transform: rotateY(0deg); }
       50% { transform: rotateY(180deg); }
@@ -172,23 +170,9 @@
       text-align: center;
       animation: fadeInModal .3s ease;
     }
-    .support-box h2 {
-      margin-top: 0;
-      color: #c49000;
-      font-weight: 800;
-    }
-    .support-box p {
-      color: #333;
-      line-height: 1.6;
-      margin: 12px 0 18px;
-      font-size: 1rem;
-    }
-    .support-actions {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .support-box h2 { margin-top: 0; color: #c49000; font-weight: 800; }
+    .support-box p { color: #333; line-height: 1.6; margin: 12px 0 18px; font-size: 1rem; }
+    .support-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
     .support-actions .btn {
       background: #ffd54f;
       border: none;
@@ -213,9 +197,7 @@
             <path d="M12 12l2.5-2.5a1.5 1.5 0 0 0-2.1-2.1L12 8.8l-0.4-0.4a1.5 1.5 0 0 0-2.1 2.1L12 12z"></path>
           </svg>
         </div>
-
-        <!-- 💎 Ícone de apoio -->
-        <div class="diamond" title="Apoiar Projeto" onclick="openSupportModal()">💎</div>
+        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
       </div>
 
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
@@ -242,7 +224,6 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="support-modal">
     <div class="support-box">
       <h2>Seja Premium</h2>
@@ -251,20 +232,54 @@
       e ajuda a alcançar novas famílias. 🙏</p>
       <div class="support-actions">
         <button class="btn" onclick="closeSupportModal()">Agora não</button>
-        <button class="btn" onclick="comprarApoio()">💳 Apoiar agora</button>
+        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
     </div>
   </div>
 
-  <script>
-    // Saudação
+  <script type="module">
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    // Usa a instância do Firebase inicializada no login
+    const auth = getAuth();
+    const db = getFirestore();
+
     const nome = localStorage.getItem("displayName") || "Amigo";
-    document.addEventListener("DOMContentLoaded",()=>{
-      document.getElementById("saudacao").innerHTML = 
-        `👋 Olá, <strong>${nome.split(" ")[0]}</strong>!<br>Que bom ter você aqui 💛`;
+    document.getElementById("saudacao").innerHTML = `👋 Olá, <strong>${nome.split(" ")[0]}</strong>!<br>Que bom ter você aqui 💛`;
+
+    const supportModal = document.getElementById("supportModal");
+    const diamondBtn = document.getElementById("diamondBtn");
+
+    function openSupportModal(){ supportModal.classList.add("open"); }
+    function closeSupportModal(){ supportModal.classList.remove("open"); }
+
+    diamondBtn.addEventListener("click", openSupportModal);
+
+    document.getElementById("btnApoiar").addEventListener("click", async () => {
+      closeSupportModal();
+      alert("💛 Obrigado por apoiar! Atualizando status...");
+      const email = localStorage.getItem("savedEmail");
+      if(email){
+        const ref = doc(db, "usuariosGoogle", email);
+        await updateDoc(ref, { removeAds: true });
+        localStorage.setItem("removeAds", "true");
+        diamondBtn.style.display = "none";
+      }
+      alert("✅ Apoio registrado! Anúncios removidos.");
     });
 
-    // Funções do app
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const ref = doc(db, "usuariosGoogle", user.email);
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) {
+          diamondBtn.style.display = "none";
+        }
+      }
+    });
+
+    // Funções de navegação
     function abrirApp(){abrirTela("app/index.html","app");}
     function abrirAtividades(){abrirTela("atividades/index.html","atividades");}
     function abrirPdf(){abrirTela("pdfcompleto/index.html","pdfcompleto");}
@@ -274,24 +289,11 @@
       i.style.display="block"; i.src=src;
       history.pushState({tela:t},"","#"+t);
     }
-
-    // Voltar universal pro menu
     window.onpopstate=function(){
       const c=document.getElementById("conteudo"),m=document.getElementById("menuContainer");
       c.style.display="none"; m.style.display="block";
       history.replaceState({}, "", location.pathname);
     };
-
-    // 💎 Modal Apoio
-    function openSupportModal(){ document.getElementById("supportModal").classList.add("open"); }
-    function closeSupportModal(){ document.getElementById("supportModal").classList.remove("open"); }
-
-    // Pré-configuração Play Store Billing
-    function comprarApoio(){
-      closeSupportModal();
-      alert("🛒 Redirecionando para compra interna da Play Store...");
-      // billing.purchase('remove_ads'); (ativar no Play Console)
-    }
 
     function logout(){ localStorage.clear(); window.location.replace("login.html"); }
   </script>
