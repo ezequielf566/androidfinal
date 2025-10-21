@@ -1,0 +1,204 @@
+<!-- 🔸 Coloreando la Palabra — Menú principal con saludo + Firebase + 💎 + Historia del Proyecto -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coloreando la Palabra — Menú</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg,#fff7d1 0%,#fff3bf 40%,#fff9e6 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(90deg,#ffd54f,#ffea80);
+      padding: .8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;top: 0;z-index: 20;
+      border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
+    }
+    .notif-icon{cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
+    .notif-icon:hover svg{transform:scale(1.1);}
+    .notif-icon svg{width:28px;height:28px;stroke:#444;filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));}
+    .diamond{margin-left:10px;font-size:1.5rem;cursor:pointer;animation:spinDiamond 3.5s linear infinite;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
+    @keyframes spinDiamond{0%{transform:rotateY(0deg);}50%{transform:rotateY(180deg);}100%{transform:rotateY(360deg);}}
+    .diamond:hover{transform:scale(1.15);}
+    header .btn{background:#fff;border:none;padding:.6rem 1.1rem;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);transition:all .25s ease;display:flex;align-items:center;gap:6px;}
+    header .btn:hover{transform:scale(1.05);background:#fff7d1;}
+    main{flex:1;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 3rem;text-align:center;}
+    .saudacao{
+      font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;
+      background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);
+      display:inline-block;opacity:0;transition:opacity .6s ease;
+    }
+    .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
+    .menu button{background:#ffd54f;border:none;padding:1rem;border-radius:16px;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);transition:all .25s ease;}
+    .menu button:hover{transform:scale(1.03);background:#ffe066;}
+    .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
+    .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+    .socials button:hover{background:#fff2b3;transform:scale(1.05);}
+    .support-modal,.story-modal{position:fixed;inset:0;background:rgba(255,240,180,0.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px;}
+    .support-modal.open,.story-modal.open{display:flex;}
+    .support-box,.story-box{background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;}
+    .story-box p{line-height:1.6;color:#333;font-size:1rem;}
+  </style>
+</head>
+
+<body>
+  <div id="menuContainer">
+    <header>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="notif-icon" title="Historia del Proyecto" onclick="openStoryModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l9 6 9-6"></path>
+            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+          </svg>
+        </div>
+        <div class="diamond" id="diamondBtn" title="Apoyar Proyecto">💎</div>
+      </div>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button id="logoutBtn" class="btn">🚪 Salir</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="saudacao" class="saudacao"></div>
+      <div class="menu">
+        <button onclick="abrirTela('app/index.html','app')">📖 Historias</button>
+        <!-- ✅ ajustado para indexes -->
+        <button onclick="abrirTela('atividades/indexes.html','atividades')">🎨 Actividades</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+      </div>
+      <h2>¡Síguenos en las redes sociales!</h2>
+      <div class="socials">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
+  </div>
+
+  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
+
+  <div id="supportModal" class="support-modal">
+    <div class="support-box">
+      <h2>Sé Premium</h2>
+      <p>¡Elimina los anuncios y apoya nuestro proyecto!<br>Tu ayuda mantiene todo el contenido gratuito<br>y permite llegar a más familias. 🙏</p>
+      <div class="support-actions">
+        <button class="btn" onclick="closeSupportModal()">Ahora no</button>
+        <button class="btn" id="btnApoiar">💳 Apoyar ahora</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="storyModal" class="story-modal">
+    <div class="story-box">
+      <h2>Cómo comenzó todo...</h2>
+      <p>No sabía mucho de programación.</p>
+      <p>Pero tenía un sueño: llevar la Palabra de Dios a los niños de una forma alegre y divertida.</p>
+      <p>Todo comenzó pensando en mi hijo y mis hermanas, que siempre amaron colorear.</p>
+      <p>Eso me inspiró y, con fe y dedicación, el sueño se hizo realidad.</p>
+      <p>Hoy Coloreando la Palabra llega a familias de muchos países. 🌍💛</p>
+      <p>✨ Tu ayuda mantiene vivo este sueño y comparte el amor de Dios con el mundo.</p>
+      <button class="btn" onclick="closeStoryModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const supportModal = document.getElementById("supportModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 ¡Hola, <strong>${firstName}</strong>!<br>Qué alegría tenerte aquí 💛`;
+          saudacao.style.opacity = "1";
+        }, 300);
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) {
+          diamondBtn.style.display = "none";
+        }
+      } else {
+        window.location.replace("logines.html");
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        localStorage.clear();
+        window.location.replace("logines.html");
+      });
+    });
+
+    function openSupportModal(){ supportModal.classList.add("open"); }
+    function closeSupportModal(){ supportModal.classList.remove("open"); }
+    diamondBtn.addEventListener("click", openSupportModal);
+
+    document.getElementById("btnApoiar").addEventListener("click", async () => {
+      closeSupportModal();
+      alert("💛 ¡Gracias por tu apoyo! Actualizando...");
+      const user = auth.currentUser;
+      if(user){
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        await updateDoc(ref, { removeAds: true });
+        diamondBtn.style.display = "none";
+      }
+      alert("✅ ¡Apoyo registrado con éxito!");
+    });
+
+    function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
+    function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
+
+    window.openStoryModal = openStoryModal;
+    window.closeStoryModal = closeStoryModal;
+
+    function abrirTela(src,t){
+      document.getElementById("menuContainer").style.display="none";
+      const i=document.getElementById("conteudo");
+      i.style.display="block"; i.src=src;
+      history.pushState({tela:t},"","#"+t);
+    }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate=function(){
+      const c=document.getElementById("conteudo"),m=document.getElementById("menuContainer");
+      c.style.display="none"; m.style.display="block";
+      history.replaceState({}, "", location.pathname);
+    };
+  </script>
+</body>
+</html>

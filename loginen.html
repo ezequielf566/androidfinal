@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coloring the Word — Login</title>
+
+  <style>
+    body {
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(180deg, #FFF6D6 0%, #FFE7A1 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .login-container {
+      text-align: center;
+      background: #fff;
+      padding: 45px 35px;
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 380px;
+      position: relative;
+      animation: fadeIn 0.8s ease;
+    }
+
+    /* 🌍 Language Flags */
+    .language-switch {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .flag {
+      width: 34px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      animation: pulseLight 3s ease-in-out infinite;
+    }
+
+    .flag:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(255, 213, 79, 0.9);
+    }
+
+    @keyframes pulseLight {
+      0%, 100% { box-shadow: 0 0 5px rgba(255, 213, 79, 0.5); }
+      50% { box-shadow: 0 0 12px rgba(255, 213, 79, 0.9); }
+    }
+
+    .logo { width: 110px; margin-bottom: 10px; }
+    h1 { font-size: 1.8rem; color: #222; margin-bottom: 8px; }
+    .subtitle { color: #555; font-size: 1rem; margin-bottom: 10px; }
+    .quote { font-size: 14px; color: #666; font-style: italic; margin-bottom: 25px; }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #fff;
+      border: 2px solid #dadce0;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #3c4043;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    .google-btn:hover { transform: scale(1.03); background: #f8f9fa; }
+    .google-icon { width: 22px; height: 22px; }
+    .footer { margin-top: 25px; font-size: 13px; color: #777; }
+
+    .spinner {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .spinner.active { display: flex; }
+    .spinner::after {
+      content: "";
+      width: 55px;
+      height: 55px;
+      border: 6px solid #ffd54f;
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error {
+      color: red;
+      font-weight: 600;
+      margin-top: 15px;
+      font-size: 14px;
+      display: none;
+    }
+    .error.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <!-- 🌍 Language Flags -->
+    <div class="language-switch">
+      <!-- 🇧🇷 -->
+      <a href="index.html" title="Português (Brasil)">
+        <svg class="flag" viewBox="0 0 640 480">
+          <rect width="640" height="480" fill="#009b3a"/>
+          <polygon points="320,80 580,240 320,400 60,240" fill="#ffdf00"/>
+          <circle cx="320" cy="240" r="90" fill="#002776"/>
+          <path d="M230 230 A90 90 0 0 1 410 250 A90 90 0 0 1 230 230" fill="none" stroke="#fff" stroke-width="15"/>
+        </svg>
+      </a>
+      <!-- 🇪🇸 -->
+      <a href="indexes.html" title="Español">
+        <svg class="flag" viewBox="0 0 640 480">
+          <rect width="640" height="480" fill="#aa151b"/>
+          <rect y="160" width="640" height="160" fill="#f1bf00"/>
+        </svg>
+      </a>
+      <!-- 🇺🇸 -->
+      <a href="indexen.html" title="English">
+        <svg class="flag" viewBox="0 0 7410 3900">
+          <rect width="7410" height="3900" fill="#b22234"/>
+          <path d="M0,450h7410v300H0zM0,1050h7410v300H0zM0,1650h7410v300H0zM0,2250h7410v300H0zM0,2850h7410v300H0zM0,3450h7410v300H0z" fill="#fff"/>
+          <rect width="2964" height="2100" fill="#3c3b6e"/>
+        </svg>
+      </a>
+    </div>
+
+    <img src="./icon-512.png" alt="Logo" class="logo" />
+    <h1>Coloring the Word</h1>
+    <p class="subtitle">Coloring Bible stories</p>
+    <p class="quote">🌈 “Let the little children come to me...” — Matthew 19:14</p>
+
+    <button id="loginGoogle" class="google-btn">
+      <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.15 0 5.91 1.09 8.12 2.88l6.03-6.03C34.21 3.41 29.42 1.5 24 1.5C14.64 1.5 6.56 7.24 3.04 15.09l7.35 5.71C12.18 13.03 17.61 9.5 24 9.5z"/>
+        <path fill="#34A853" d="M46.5 24.5c0-1.6-.14-3.13-.39-4.63H24v9.13h12.7c-.57 2.9-2.26 5.36-4.83 7.03l7.48 5.83C43.51 38.02 46.5 31.76 46.5 24.5z"/>
+        <path fill="#4A90E2" d="M9.39 28.8C8.72 26.95 8.33 24.83 8.33 22.5c0-2.33.39-4.45 1.06-6.3L2.04 10.49C.75 13.64 0 17.03 0 20.5c0 7.26 2.99 13.52 7.77 17.87l7.48-5.83c-2.35-1.6-4.05-4.06-4.71-6.74l-.15-.43z"/>
+        <path fill="#FBBC05" d="M24 47.5c6.3 0 11.6-2.07 15.46-5.61l-7.48-5.83c-2.13 1.4-4.87 2.2-7.98 2.2c-6.39 0-11.82-3.53-14.61-8.7l-7.35 5.71C6.56 40.76 14.64 47.5 24 47.5z"/>
+      </svg>
+      <span>Sign in with Google</span>
+    </button>
+
+    <p id="errorMsg" class="error"></p>
+    <p class="footer">✨ Made with faith by <strong>Coloring the Word</strong></p>
+  </div>
+
+  <div class="spinner" id="spinner"></div>
+
+  <!-- 🔥 Firebase Login -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, getRedirectResult, signInWithRedirect } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById("loginGoogle");
+    const spinner = document.getElementById("spinner");
+    const errorMsg = document.getElementById("errorMsg");
+
+    async function handleLogin(user){
+      const email = user.email.toLowerCase();
+      const ref = doc(db, "usuariosGoogle", email);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) await setDoc(ref, { email, premium: false, removeAds: false, createdAt: new Date().toISOString() });
+      const userData = (await getDoc(ref)).data();
+
+      localStorage.setItem("displayName", user.displayName || "");
+      localStorage.setItem("savedEmail", email);
+      localStorage.setItem("isLogged", "true");
+      localStorage.setItem("premium", userData.premium ? "true" : "false");
+      localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
+
+      spinner.classList.add("active");
+      setTimeout(() => window.location.replace("./indexen.html"), 900);
+    }
+
+    loginBtn.addEventListener("click", async () => {
+      errorMsg.textContent = "";
+      errorMsg.classList.remove("visible");
+      spinner.classList.add("active");
+      try {
+        const result = await signInWithPopup(auth, provider);
+        await handleLogin(result.user);
+      } catch (err) {
+        spinner.classList.remove("active");
+
+        if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") {
+          errorMsg.textContent = "Login cancelled. Please try again.";
+          errorMsg.classList.add("visible");
+          return;
+        }
+
+        if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
+          await signInWithRedirect(auth, provider);
+        } else {
+          console.error(err);
+          errorMsg.textContent = "⚠️ Error signing in with Google. Please try again.";
+          errorMsg.classList.add("visible");
+        }
+      }
+    });
+
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) await handleLogin(result.user);
+    });
+  </script>
+</body>
+</html>
