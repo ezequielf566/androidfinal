@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com saudação suave + Firebase + 💎 + História do Projeto -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL com saudação suave + Firebase + 💎 + História do Projeto + Service Worker -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -117,6 +117,7 @@
     </div>
   </div>
 
+  <!-- 🔥 Firebase + lógica -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -202,6 +203,17 @@
       c.style.display="none"; m.style.display="block";
       history.replaceState({}, "", location.pathname);
     };
+  </script>
+
+  <!-- ✅ Registro do Service Worker -->
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('✅ Service Worker registrado:', reg.scope))
+        .catch(err => console.error('❌ Erro ao registrar SW:', err));
+    });
+  }
   </script>
 </body>
 </html>
