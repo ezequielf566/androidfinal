@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu completo com áudio, Firebase, instalação, 💎 e modais corrigidos -->
+<!-- 🔸 Pintando a Palavra — Menu completo FINAL (Firebase + Áudio + Modais + PWA + Navegação interna) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -127,8 +127,10 @@
     </div>
   </div>
 
+  <!-- 🎵 Áudio -->
   <script src="audio/audioController.js" defer></script>
 
+  <!-- 🔥 Firebase + Navegação -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -212,8 +214,28 @@
         if (result.outcome === "accepted") installBtn.style.display = "none";
       }
     });
+
+    // 🔹 Navegação interna (iframe)
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
+    }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
+      history.replaceState({}, "", location.pathname);
+    };
   </script>
 
+  <!-- ✅ Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
