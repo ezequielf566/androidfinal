@@ -79,7 +79,6 @@
       <div id="saudacao" class="saudacao"></div>
       <div class="menu">
         <button onclick="abrirTela('app/index.html','app')">📖 Stories</button>
-        <!-- ✅ Adjusted for English version -->
         <button onclick="abrirTela('atividades/indexen.html','atividades')">🎨 Activities</button>
         <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Full PDF</button>
       </div>
@@ -183,6 +182,9 @@
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
     function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
 
+    // ✅ FIX: expose functions globally for modal buttons
+    window.openSupportModal = openSupportModal;
+    window.closeSupportModal = closeSupportModal;
     window.openStoryModal = openStoryModal;
     window.closeStoryModal = closeStoryModal;
 
