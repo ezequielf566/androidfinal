@@ -1,4 +1,4 @@
-<!-- 🔸 Coloring the Word — Main Menu with greeting + Firebase + 💎 + Project Story -->
+<!-- 🔸 Coloring the Word — Final Menu (Firebase + Audio + Modals + PWA + Internal Navigation EN) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
   <title>Coloring the Word — Menu</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
+
   <style>
     body {
       margin: 0;
@@ -29,7 +30,7 @@
       position: sticky;top: 0;z-index: 20;
       border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
     }
-    .notif-icon{cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
+    .notif-icon {cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
     .notif-icon:hover svg{transform:scale(1.1);}
     .notif-icon svg{width:28px;height:28px;stroke:#444;filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));}
     .diamond{margin-left:10px;font-size:1.5rem;cursor:pointer;animation:spinDiamond 3.5s linear infinite;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
@@ -50,10 +51,18 @@
     .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
     .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
     .socials button:hover{background:#fff2b3;transform:scale(1.05);}
-    .support-modal,.story-modal{position:fixed;inset:0;background:rgba(255,240,180,0.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px;}
-    .support-modal.open,.story-modal.open{display:flex;}
-    .support-box,.story-box{background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;}
-    .story-box p{line-height:1.6;color:#333;font-size:1rem;}
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(255,240,180,0.45);
+      backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
+      z-index:1200;padding:16px;opacity:0;transition:opacity .3s ease;
+    }
+    .modal-backdrop.open{display:flex;opacity:1;}
+    .modal-box{
+      background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
+      border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;
+    }
+    .modal-box p{line-height:1.6;color:#333;font-size:1rem;}
   </style>
 </head>
 
@@ -61,7 +70,7 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="notif-icon" title="Project Story" onclick="openStoryModal()">
+        <div class="notif-icon" title="Project Story" onclick="window.openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
@@ -76,15 +85,15 @@
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao"></div>
+      <div id="saudacao" class="saudacao">👋 Hello! Welcome 💛</div>
       <div class="menu">
         <button onclick="abrirTela('app/indexen.html','app')">📖 Stories</button>
-        <button onclick="abrirTela('atividades/indexen.html','atividades')">🎨 Activities</button>
-        <button onclick="abrirTela('pdfcompleto/indexen.html','pdfcompleto')">📚 Full PDF</button>
+        <button onclick="abrirTela('activities/indexen.html','activities')">🎨 Activities</button>
+        <button onclick="abrirTela('pdfcompleto/indexen.html','pdfcompleto')">📚 Complete PDF</button>
       </div>
       <h2>Follow us on social media</h2>
       <div class="socials">
-        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.instagram.com/pintandoapalabra_', '_blank')">📸 Instagram</button>
         <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
       </div>
     </main>
@@ -92,29 +101,35 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <div id="supportModal" class="support-modal">
-    <div class="support-box">
-      <h2>Be Premium</h2>
-      <p>Remove ads and support our project!<br>Your help keeps all content free<br>and helps reach more families. 🙏</p>
+  <!-- 💎 Support Modal -->
+  <div id="supportModal" class="modal-backdrop">
+    <div class="modal-box">
+      <h2>Become Premium</h2>
+      <p>Remove ads and support our project!<br>
+      Your contribution keeps all content free<br>
+      and helps us reach more families. 🙏</p>
       <div class="support-actions">
-        <button class="btn" onclick="closeSupportModal()">Not now</button>
+        <button class="btn" onclick="window.closeSupportModal()">Not now</button>
         <button class="btn" id="btnApoiar">💳 Support now</button>
       </div>
     </div>
   </div>
 
-  <div id="storyModal" class="story-modal">
-    <div class="story-box">
+  <!-- 📜 Story Modal -->
+  <div id="storyModal" class="modal-backdrop">
+    <div class="modal-box">
       <h2>How it all began...</h2>
       <p>I didn’t know much about programming.</p>
-      <p>But I had a dream — to bring God’s Word to children in a light and joyful way.</p>
-      <p>It all started thinking about my son and my sisters, who always loved coloring.</p>
-      <p>That gave me the inspiration, and with faith and dedication, the dream became reality!</p>
-      <p>Today, Coloring the Word reaches families around the world. 🌍💛</p>
-      <p>✨ Your support keeps this dream alive and spreads God’s love across the world.</p>
-      <button class="btn" onclick="closeStoryModal()">Close</button>
+      <p>But I had a dream — to bring God’s Word to children in a fun and creative way.</p>
+      <p>It all started thinking about my son and my sisters, who always loved to color.</p>
+      <p>With faith and dedication, this dream became reality.</p>
+      <p>Today Coloring the Word reaches families all around the world. 🌍💛</p>
+      <p>✨ Your support keeps this dream alive and spreads God’s love.</p>
+      <button class="btn" onclick="window.closeStoryModal()">Close</button>
     </div>
   </div>
+
+  <script src="audio/audioController.js" defer></script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
@@ -136,71 +151,90 @@
 
     const diamondBtn = document.getElementById("diamondBtn");
     const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
     const logoutBtn = document.getElementById("logoutBtn");
+    const installBtn = document.getElementById("installBtn");
     const saudacao = document.getElementById("saudacao");
+
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
+
+    diamondBtn.addEventListener("click", window.openSupportModal);
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Friend";
         setTimeout(() => {
-          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>Glad to have you here 💛`;
+          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>We’re happy to see you 💛`;
           saudacao.style.opacity = "1";
-        }, 300);
+        }, 400);
+
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().removeAds) {
-          diamondBtn.style.display = "none";
-        }
-      } else {
-        window.location.replace("loginen.html");
-      }
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("login.html");
     });
 
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        localStorage.clear();
-        window.location.replace("loginen.html");
-      });
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("login.html");
     });
-
-    function openSupportModal(){ supportModal.classList.add("open"); }
-    function closeSupportModal(){ supportModal.classList.remove("open"); }
-    diamondBtn.addEventListener("click", openSupportModal);
 
     document.getElementById("btnApoiar").addEventListener("click", async () => {
-      closeSupportModal();
-      alert("💛 Thank you for your support! Updating...");
+      window.closeSupportModal();
+      alert("💛 Thank you for supporting! Updating...");
       const user = auth.currentUser;
-      if(user){
+      if (user) {
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         await updateDoc(ref, { removeAds: true });
         diamondBtn.style.display = "none";
+        alert("✅ Support successfully registered!");
       }
-      alert("✅ Support registered successfully!");
     });
 
-    function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
-    function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "flex";
+    });
 
-    // ✅ FIX: expose functions globally for modal buttons
-    window.openSupportModal = openSupportModal;
-    window.closeSupportModal = closeSupportModal;
-    window.openStoryModal = openStoryModal;
-    window.closeStoryModal = closeStoryModal;
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === "accepted") installBtn.style.display = "none";
+      }
+    });
 
-    function abrirTela(src,t){
-      document.getElementById("menuContainer").style.display="none";
-      const i=document.getElementById("conteudo");
-      i.style.display="block"; i.src=src;
-      history.pushState({tela:t},"","#"+t);
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
     }
     window.abrirTela = abrirTela;
 
-    window.onpopstate=function(){
-      const c=document.getElementById("conteudo"),m=document.getElementById("menuContainer");
-      c.style.display="none"; m.style.display="block";
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
       history.replaceState({}, "", location.pathname);
     };
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(r => console.log('✅ SW registered:', r.scope))
+        .catch(e => console.error('❌ SW error:', e));
+    }
   </script>
 </body>
 </html>
