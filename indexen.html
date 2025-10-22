@@ -88,7 +88,7 @@
       <div id="saudacao" class="saudacao">👋 Hello! Welcome 💛</div>
       <div class="menu">
         <button onclick="abrirTela('app/indexen.html','app')">📖 Stories</button>
-        <button onclick="abrirTela('activities/indexen.html','activities')">🎨 Activities</button>
+        <button onclick="abrirTela('atividades/indexen.html','activities')">🎨 Activities</button>
         <button onclick="abrirTela('pdfcompleto/indexen.html','pdfcompleto')">📚 Complete PDF</button>
       </div>
       <h2>Follow us on social media</h2>
@@ -167,20 +167,20 @@
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Friend";
         setTimeout(() => {
-          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>We’re happy to see you 💛`;
+          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>We’re happy to see you`;
           saudacao.style.opacity = "1";
         }, 400);
 
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
-      } else window.location.replace("login.html");
+      } else window.location.replace("loginen.html");
     });
 
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       localStorage.clear();
-      window.location.replace("login.html");
+      window.location.replace("loginen.html");
     });
 
     document.getElementById("btnApoiar").addEventListener("click", async () => {
