@@ -1,14 +1,14 @@
-// ✅ Pintando a Palavra — Service Worker Híbrido Universal (v1.4.2)
-// Combina pré-cache completo (1–80 SVGs) + cache dinâmico + suporte multilíngue
+// ✅ Pintando a Palavra — Service Worker Híbrido Universal (v1.4.3)
+// Mantém idioma offline (PT / ES / EN) + pré-cache SVGs + cache dinâmico
 
-const CACHE_NAME = 'pintando-a-palavra-v1.4.2';
+const CACHE_NAME = 'pintando-a-palavra-v1.4.3';
 const OFFLINE_URL = '/offline.html';
 
 /* -------------------------------------------------------------
    🗂️ 1. LISTA BASE DE ARQUIVOS ESSENCIAIS (app shell)
 ------------------------------------------------------------- */
 const CORE_FILES = [
-  '/', '/index.html',
+  '/', '/index.html', '/indexes.html', '/indexen.html',
   '/login.html', '/manifest.json', OFFLINE_URL,
   '/icon-192.png', '/icon-512.png',
   '/icons/icon-192.png', '/icons/icon-512.png',
@@ -80,7 +80,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // 1️⃣ HTML — network-first com fallback
+  // 1️⃣ HTML — network-first com fallback multilíngue
   if (isHTML(request)) {
     event.respondWith((async () => {
       try {
@@ -90,10 +90,21 @@ self.addEventListener('fetch', (event) => {
         return net;
       } catch {
         const cache = await caches.open(CACHE_NAME);
-        let path = url.pathname.replace(/^\/(en|es)\//, '/');
+        let path = url.pathname;
+        let fallback;
+
+        // 🔤 Detecta idioma do arquivo
+        if (path.includes('indexes')) {
+          fallback = '/indexes.html';     // espanhol
+        } else if (path.includes('indexen')) {
+          fallback = '/indexen.html';     // inglês
+        } else {
+          fallback = '/index.html';       // português
+        }
+
         return (
           (await cache.match(path)) ||
-          (await cache.match('/index.html')) ||
+          (await cache.match(fallback)) ||
           (await cache.match(OFFLINE_URL))
         );
       }
