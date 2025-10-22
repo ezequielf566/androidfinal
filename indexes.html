@@ -175,13 +175,13 @@
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
-      } else window.location.replace("login.html");
+      } else window.location.replace("logines.html");
     });
 
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       localStorage.clear();
-      window.location.replace("login.html");
+      window.location.replace("logines.html");
     });
 
     document.getElementById("btnApoiar").addEventListener("click", async () => {
