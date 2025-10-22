@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com áudio + saudação + instalar app + Firebase -->
+<!-- 🔸 Pintando a Palavra — Menu COMPLETO: áudio + saudação + instalar + 💎 com Firebase -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -122,7 +122,7 @@
   <!-- 🎵 Áudio de fundo -->
   <script src="audio/audioController.js" defer></script>
 
-  <!-- 🔥 Firebase -->
+  <!-- 🔥 Firebase + lógica completa -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -141,13 +141,54 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const installBtn = document.getElementById("installBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
     const diamondBtn = document.getElementById("diamondBtn");
-    const saudacao = document.getElementById("saudacao");
     const supportModal = document.getElementById("supportModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const installBtn = document.getElementById("installBtn");
+    const saudacao = document.getElementById("saudacao");
 
-    // 🧡 Instalação PWA
+    // 💎 abrir/fechar modal
+    function openSupportModal(){ supportModal.classList.add("open"); }
+    function closeSupportModal(){ supportModal.classList.remove("open"); }
+    diamondBtn.addEventListener("click", openSupportModal);
+
+    // 👤 Autenticação + saudação
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+
+        // verifica premium
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("login.html");
+    });
+
+    // 🚪 Logout
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("login.html");
+    });
+
+    // 💳 Apoiar (atualiza no Firestore e oculta o ícone)
+    document.getElementById("btnApoiar").addEventListener("click", async () => {
+      closeSupportModal();
+      alert("💛 Obrigado por apoiar! Atualizando...");
+      const user = auth.currentUser;
+      if (user) {
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        await updateDoc(ref, { removeAds: true });
+        diamondBtn.style.display = "none";
+        alert("✅ Apoio registrado com sucesso!");
+      }
+    });
+
+    // 📲 Instalação PWA
     let deferredPrompt;
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -165,27 +206,6 @@
         }
       }
     });
-
-    // 👤 Firebase login
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Amigo";
-        setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
-          saudacao.style.opacity = "1";
-        }, 400);
-      } else window.location.replace("login.html");
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      localStorage.clear();
-      window.location.replace("login.html");
-    });
-
-    function openSupportModal(){ supportModal.classList.add("open"); }
-    function closeSupportModal(){ supportModal.classList.remove("open"); }
-    diamondBtn.addEventListener("click", openSupportModal);
   </script>
 
   <!-- ✅ Service Worker -->
