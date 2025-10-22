@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="pt-BR">  
+<html lang="es">
 <head>  
   <meta charset="utf-8" />  
   <meta name="viewport" content="width=device-width, initial-scale=1" />  
-  <title>Pintando a Palavra — Colorir</title>  
+  <title>Coloreando la Palabra — Colorear</title>  
   <link rel="stylesheet" href="css/style.css" />  
 
   <style>  
-    /* 🌀 Tela de carregamento */  
+    /* 🌀 Pantalla de carga */  
     #loadingOverlay {  
       position: fixed; inset: 0;  
       background: #fff9e6;  
@@ -28,7 +28,7 @@
       font-size: 1.1rem; color: #444; text-align: center;  
     }  
 
-    /* 🎨 Popup de tons e extras */  
+    /* 🎨 Popup de tonos adicionales */  
     .palette-popup {  
       position: fixed;  
       background: #fff;  
@@ -92,7 +92,7 @@
 <body>  
   <div id="loadingOverlay">  
     <div class="spinner"></div>  
-    <div class="loading-text">🎨 Carregando artes...</div>  
+    <div class="loading-text">🎨 Cargando dibujos...</div>  
   </div>  
 
   <header class="topbar">  
@@ -130,10 +130,10 @@
         </div>  
 
         <div class="tools">  
-          <button id="eraserBtn" class="btn">Borracha</button>  
-          <button id="undoBtn" class="btn">Desfazer</button>  
-          <button id="redoBtn" class="btn">Refazer</button>  
-          <button id="savePng" class="btn primary">Salvar PNG</button>  
+          <button id="eraserBtn" class="btn">Borrador</button>  
+          <button id="undoBtn" class="btn">Deshacer</button>  
+          <button id="redoBtn" class="btn">Rehacer</button>  
+          <button id="savePng" class="btn primary">Guardar PNG</button>  
         </div>  
 
         <div class="pager">  
@@ -148,6 +148,7 @@
   <script src="js/script.js"></script>  
   <script src="js/patch-gestures-scroll.js"></script>  
 
+  <!-- 🧠 Todo el código lógico y de Firebase permanece intacto -->
   <script>  
     document.addEventListener("DOMContentLoaded", () => {  
       const customBtn = document.getElementById("customColorBtn");  
@@ -249,7 +250,7 @@
       });  
     });  
 
-    // ⏳ Tela de loading  
+    // ⏳ Pantalla de carga  
     const overlay = document.getElementById("loadingOverlay");  
     const observer = new MutationObserver(() => {  
       const svgLoaded = document.querySelector("#svgMount svg");  
@@ -261,18 +262,18 @@
     observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
   </script>  
 
-  <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
+  <!-- 🟡 Anuncio automático AdMob (cada 2 minutos) -->
   <script>
-    const TESTE = true; // mudar pra false após aprovação
+    const TESTE = true; // cambiar a false después de la aprobación
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
     function exibirAnuncio() {
       if (TESTE) {
-        alert("🎬 Anúncio em exibição (modo de teste)");
+        alert("🎬 Mostrando anuncio (modo de prueba)");
       } else {
-        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-        // Aqui entra o SDK real do AdMob após publicação
+        console.log("🎬 Mostrando anuncio real:", ADMOB_INTERSTITIAL_ID);
+        // Aquí entra el SDK real de AdMob después de la publicación
       }
     }
 
