@@ -1,4 +1,4 @@
-/* 🕊️ Pintando a Palavra — Service Worker Universal v1.1.2 */
+/* 🕊️ Pintando a Palavra — Service Worker Universal v1.1.4 */
 const SW_VERSION = 'pp-sw-v1.1.2';
 
 /* ---------------- CORE CACHE (shell) ---------------- */
