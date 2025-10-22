@@ -1,115 +1,128 @@
-/* 🕊️ Pintando a Palavra — Service Worker Universal v1.1.4 */
-const SW_VERSION = 'pp-sw-v1.1.2';
+// ✅ Pintando a Palavra — Service Worker Híbrido Universal (v1.4.2)
+// Combina pré-cache completo (1–80 SVGs) + cache dinâmico + suporte multilíngue
 
-/* ---------------- CORE CACHE (shell) ---------------- */
-const CORE = [
-  '/', '/index.html', '/indexes.html', '/indexen.html',
-  '/login.html', '/offline.html', '/manifest.json',
+const CACHE_NAME = 'pintando-a-palavra-v1.4.2';
+const OFFLINE_URL = '/offline.html';
+
+/* -------------------------------------------------------------
+   🗂️ 1. LISTA BASE DE ARQUIVOS ESSENCIAIS (app shell)
+------------------------------------------------------------- */
+const CORE_FILES = [
+  '/', '/index.html',
+  '/login.html', '/manifest.json', OFFLINE_URL,
   '/icon-192.png', '/icon-512.png',
   '/icons/icon-192.png', '/icons/icon-512.png',
+  '/audio/entrada.mp3',
   '/app/index.html',
   '/atividades/index.html',
   '/pdfcompleto/index.html'
 ];
 
-/* ---------------- HELPERS ---------------- */
-const isHTML = (req) => req.destination === 'document' || req.mode === 'navigate';
-const isStatic = (req) => ['style','script','font'].includes(req.destination);
+/* -------------------------------------------------------------
+   🎨 2. PRÉ-CACHE DE SVGs (1–80)
+------------------------------------------------------------- */
+const SVG_LIST = Array.from({ length: 80 }, (_, i) => `/app/svgs/${i + 1}.svg`);
+
+/* -------------------------------------------------------------
+   🧠 3. HELPERS
+------------------------------------------------------------- */
+const isHTML = req => req.destination === 'document' || req.mode === 'navigate';
+const isStatic = req => ['style', 'script', 'font'].includes(req.destination);
 const isImageOrSVG = (url, req) =>
   req.destination === 'image' ||
   url.pathname.endsWith('.svg') ||
   url.pathname.match(/\/\d+\.svg$/);
-const isPDF = (url) =>
-  url.pathname.startsWith('/pdfcompleto/pdfs/') ||
-  url.pathname.startsWith('/atividades/pdfs/');
+const isPDF = url => url.pathname.endsWith('.pdf') || url.pathname.includes('/pdf');
 
-/* ---------------- NETWORK TIMEOUT (HTML) ---------------- */
-const networkWithTimeout = async (request, ms = 3500) => {
-  const ctrl = new AbortController();
-  const id = setTimeout(() => ctrl.abort(), ms);
-  try {
-    const resp = await fetch(request, { signal: ctrl.signal });
-    clearTimeout(id);
-    return resp;
-  } catch {
-    clearTimeout(id);
-    throw new Error('timeout-or-network-fail');
-  }
-};
-
-/* ---------------- INSTALL ---------------- */
+/* -------------------------------------------------------------
+   ⚙️ 4. INSTALAÇÃO — pré-cache do shell + SVGs
+------------------------------------------------------------- */
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(SW_VERSION);
-    await cache.addAll(CORE);
-    console.log('✅ [SW] Core cache instalado');
+    const cache = await caches.open(CACHE_NAME);
+    const allFiles = [...CORE_FILES, ...SVG_LIST];
+    let ok = 0;
+
+    for (const url of allFiles) {
+      try {
+        const res = await fetch(url, { cache: 'no-cache' });
+        if (res.ok) {
+          await cache.put(url, res.clone());
+          ok++;
+        }
+      } catch {
+        console.warn('⚠️ Ignorado (não encontrado):', url);
+      }
+    }
+
+    console.log(`✅ [SW] ${ok} arquivos pré-cacheados (inclui SVGs 1–80).`);
     self.skipWaiting();
   })());
 });
 
-/* ---------------- ACTIVATE ---------------- */
+/* -------------------------------------------------------------
+   ♻️ 5. ATIVAÇÃO — remove versões antigas
+------------------------------------------------------------- */
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k !== SW_VERSION).map(k => caches.delete(k)));
-    console.log('🔄 [SW] Versões antigas limpas');
+    await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+    console.log('🔄 [SW] Caches antigos removidos');
     await self.clients.claim();
   })());
 });
 
-/* ---------------- FETCH ---------------- */
+/* -------------------------------------------------------------
+   🌐 6. FETCH — estratégias principais
+------------------------------------------------------------- */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-
-  // Só mesma origem
   if (url.origin !== self.location.origin) return;
 
-  /* 1️⃣ HTML — network-first com fallback */
+  // 1️⃣ HTML — network-first com fallback
   if (isHTML(request)) {
     event.respondWith((async () => {
       try {
-        const net = await networkWithTimeout(request, 3000);
-        const cache = await caches.open(SW_VERSION);
-        cache.put(url.pathname, net.clone()).catch(()=>{});
+        const net = await fetch(request);
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(url.pathname, net.clone());
         return net;
       } catch {
-        const cache = await caches.open(SW_VERSION);
-        let path = url.pathname;
-        if (path.startsWith('/en/')) path = path.replace('/en/', '/');
-        else if (path.startsWith('/es/')) path = path.replace('/es/', '/');
+        const cache = await caches.open(CACHE_NAME);
+        let path = url.pathname.replace(/^\/(en|es)\//, '/');
         return (
           (await cache.match(path)) ||
           (await cache.match('/index.html')) ||
-          (await cache.match('/offline.html'))
+          (await cache.match(OFFLINE_URL))
         );
       }
     })());
     return;
   }
 
-  /* 2️⃣ PDFs — cache-first sob demanda */
+  // 2️⃣ PDFs — cache sob demanda
   if (isPDF(url)) {
     event.respondWith((async () => {
-      const cache = await caches.open(SW_VERSION + '-pdfs');
+      const cache = await caches.open(CACHE_NAME + '-pdfs');
       const cached = await cache.match(request);
       if (cached) return cached;
       try {
-        const resp = await fetch(request, { cache: 'no-cache' });
+        const resp = await fetch(request);
         if (resp.ok) cache.put(request, resp.clone());
         return resp;
       } catch {
-        const core = await caches.open(SW_VERSION);
-        return core.match('/offline.html');
+        const core = await caches.open(CACHE_NAME);
+        return core.match(OFFLINE_URL);
       }
     })());
     return;
   }
 
-  /* 3️⃣ CSS / JS / FONTS — stale-while-revalidate */
+  // 3️⃣ CSS / JS / FONTS — stale-while-revalidate
   if (isStatic(request)) {
     event.respondWith((async () => {
-      const cache = await caches.open(SW_VERSION + '-assets');
+      const cache = await caches.open(CACHE_NAME + '-assets');
       const cached = await cache.match(request);
       const fetchPromise = fetch(request).then((resp) => {
         if (resp && resp.ok) cache.put(request, resp.clone());
@@ -120,27 +133,31 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* 4️⃣ Imagens e SVGs — cache-first com atualização */
+  // 4️⃣ IMAGENS / SVGs — cache-first (dinâmico)
   if (isImageOrSVG(url, request)) {
     event.respondWith((async () => {
-      const cache = await caches.open(SW_VERSION + '-images');
+      const cache = await caches.open(CACHE_NAME + '-images');
       const cached = await cache.match(request);
-      const fetchPromise = fetch(request).then((resp) => {
-        if (resp && resp.ok) cache.put(request, resp.clone());
+      if (cached) return cached;
+      try {
+        const resp = await fetch(request);
+        if (resp.ok) cache.put(request, resp.clone());
         return resp;
-      }).catch(() => null);
-      return cached || fetchPromise || (await caches.match('/offline.html'));
+      } catch {
+        const core = await caches.open(CACHE_NAME);
+        return core.match(OFFLINE_URL);
+      }
     })());
     return;
   }
 
-  /* 5️⃣ Demais — tenta rede, fallback cache */
+  // 5️⃣ OUTROS — rede → cache fallback
   event.respondWith((async () => {
     try {
       return await fetch(request);
     } catch {
-      const cache = await caches.open(SW_VERSION);
-      return cache.match(request) || cache.match('/offline.html');
+      const cache = await caches.open(CACHE_NAME);
+      return cache.match(request) || cache.match(OFFLINE_URL);
     }
   })());
 });
