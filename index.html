@@ -183,6 +183,9 @@
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
     function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
 
+    // ✅ FIX: expõe globalmente as funções do modal
+    window.openSupportModal = openSupportModal;
+    window.closeSupportModal = closeSupportModal;
     window.openStoryModal = openStoryModal;
     window.closeStoryModal = closeStoryModal;
 
