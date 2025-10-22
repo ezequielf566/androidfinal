@@ -97,14 +97,12 @@
   </main>
 
   <script>
-    // 🟢 Lista de atividades (todas gratuitas)
+    // 🟢 Lista de atividades (4 primeiras apenas)
     const ATIVIDADES = [
       { title:'Caça Palavras — Histórias da Bíblia', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
       { title:'Ligar os Pontos — Criação', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
       { title:'Cruzadinha Bíblica — Jesus e os Discípulos', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
-      { title:'Pinte o Desenho — Arca de Noé', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' },
-      { title:'Monte a Palavra — Frutos do Espírito', cover:'img/frutos-espirito.png', file:'frutos-espirito.pdf' },
-      { title:'Ligue o Versículo — Parábolas', cover:'img/ligue-parabolas.png', file:'ligue-parabolas.pdf' }
+      { title:'Pinte o Desenho — Arca de Noé', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' }
     ];
 
     const grid = document.getElementById('gridAtividades');
@@ -120,7 +118,6 @@
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    // Exibe anúncio a cada 2 downloads
     function exibirAnuncio() {
       if (TESTE) {
         alert("🎬 Anúncio em exibição (modo de teste)");
@@ -138,7 +135,6 @@
       });
     });
 
-    // ⏳ Tela de loading
     window.addEventListener('load',()=> {
       document.getElementById('loading').classList.remove('active');
     });
