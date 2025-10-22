@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com saudação suave + Firebase + 💎 + História do Projeto + Service Worker -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL v1.0.5 -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -27,8 +27,11 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      position: sticky;top: 0;z-index: 20;
-      border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
     }
     .notif-icon {cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
     .notif-icon:hover svg{transform:scale(1.1);}
@@ -184,7 +187,7 @@
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
     function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
 
-    // ✅ FIX: expõe globalmente as funções do modal
+    // ✅ Expor globalmente
     window.openSupportModal = openSupportModal;
     window.closeSupportModal = closeSupportModal;
     window.openStoryModal = openStoryModal;
@@ -214,6 +217,32 @@
         .catch(err => console.error('❌ Erro ao registrar SW:', err));
     });
   }
+  </script>
+
+  <!-- 📲 Instalar App -->
+  <script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (installBtn) installBtn.style.display = 'inline-block';
+
+    installBtn?.addEventListener('click', async () => {
+      installBtn.disabled = true;
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      console.log('🪟 Instalação:', choice.outcome);
+      deferredPrompt = null;
+      installBtn.remove();
+    });
+  });
+
+  window.addEventListener('appinstalled', () => {
+    console.log('✅ Aplicativo instalado com sucesso');
+    installBtn?.remove();
+  });
   </script>
 </body>
 </html>
