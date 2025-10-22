@@ -1,100 +1,103 @@
-/* Pintando a Palavra — SW universal v2.0 (PT/ES/EN + Offline total) */
-const SW_VERSION = 'pp-sw-v2.0.1';
+/* 🕊️ Pintando a Palavra — Service Worker Universal v1.1.2 */
+const SW_VERSION = 'pp-sw-v1.1.2';
 
+/* ---------------- CORE CACHE (shell) ---------------- */
 const CORE = [
   '/', '/index.html', '/indexes.html', '/indexen.html',
-  '/login.html', '/logines.html', '/loginen.html',
-  '/offline.html', '/manifest.json',
+  '/login.html', '/offline.html', '/manifest.json',
+  '/icon-192.png', '/icon-512.png',
   '/icons/icon-192.png', '/icons/icon-512.png',
-
-  // Apps
-  '/app/index.html', '/app/indexes.html', '/app/indexen.html',
+  '/app/index.html',
   '/atividades/index.html',
   '/pdfcompleto/index.html'
 ];
 
-// Helpers
-const isHTML = req => req.destination === 'document' || req.mode === 'navigate';
-const isStatic = req => ['style','script','font'].includes(req.destination);
-const isImage = req => req.destination === 'image';
-const isPDF = url => url.pathname.includes('/pdfs/');
+/* ---------------- HELPERS ---------------- */
+const isHTML = (req) => req.destination === 'document' || req.mode === 'navigate';
+const isStatic = (req) => ['style','script','font'].includes(req.destination);
+const isImageOrSVG = (url, req) =>
+  req.destination === 'image' ||
+  url.pathname.endsWith('.svg') ||
+  url.pathname.match(/\/\d+\.svg$/);
+const isPDF = (url) =>
+  url.pathname.startsWith('/pdfcompleto/pdfs/') ||
+  url.pathname.startsWith('/atividades/pdfs/');
 
-const networkWithTimeout = async (req, ms = 3500) => {
+/* ---------------- NETWORK TIMEOUT (HTML) ---------------- */
+const networkWithTimeout = async (request, ms = 3500) => {
   const ctrl = new AbortController();
   const id = setTimeout(() => ctrl.abort(), ms);
   try {
-    const resp = await fetch(req, { signal: ctrl.signal });
+    const resp = await fetch(request, { signal: ctrl.signal });
     clearTimeout(id);
     return resp;
   } catch {
     clearTimeout(id);
-    throw new Error('timeout');
+    throw new Error('timeout-or-network-fail');
   }
 };
 
-// Instalação (pré-cache do shell)
-self.addEventListener('install', e => {
-  e.waitUntil((async () => {
+/* ---------------- INSTALL ---------------- */
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
     const cache = await caches.open(SW_VERSION);
-    const ok = [];
-    for (const url of CORE) {
-      try {
-        await cache.add(url);
-        ok.push(url);
-      } catch {
-        console.warn('⚠️ Falhou ao adicionar:', url);
-      }
-    }
-    console.log('✅ Instalado com sucesso:', ok.length, 'arquivos');
+    await cache.addAll(CORE);
+    console.log('✅ [SW] Core cache instalado');
     self.skipWaiting();
   })());
 });
 
-// Ativação (limpa versões antigas)
-self.addEventListener('activate', e => {
-  e.waitUntil((async () => {
+/* ---------------- ACTIVATE ---------------- */
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(keys.filter(k => k !== SW_VERSION).map(k => caches.delete(k)));
+    console.log('🔄 [SW] Versões antigas limpas');
     await self.clients.claim();
   })());
 });
 
-// Fetch (Offline-first híbrido)
-self.addEventListener('fetch', e => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (url.origin !== location.origin) return;
+/* ---------------- FETCH ---------------- */
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-  // HTML pages
-  if (isHTML(req)) {
-    e.respondWith((async () => {
+  // Só mesma origem
+  if (url.origin !== self.location.origin) return;
+
+  /* 1️⃣ HTML — network-first com fallback */
+  if (isHTML(request)) {
+    event.respondWith((async () => {
       try {
-        const net = await networkWithTimeout(req, 3000);
+        const net = await networkWithTimeout(request, 3000);
         const cache = await caches.open(SW_VERSION);
-        cache.put(req, net.clone());
+        cache.put(url.pathname, net.clone()).catch(()=>{});
         return net;
       } catch {
         const cache = await caches.open(SW_VERSION);
-        const langs = ['/index.html', '/indexes.html', '/indexen.html'];
-        for (const f of [url.pathname, ...langs, '/offline.html']) {
-          const cached = await cache.match(f);
-          if (cached) return cached;
-        }
+        let path = url.pathname;
+        if (path.startsWith('/en/')) path = path.replace('/en/', '/');
+        else if (path.startsWith('/es/')) path = path.replace('/es/', '/');
+        return (
+          (await cache.match(path)) ||
+          (await cache.match('/index.html')) ||
+          (await cache.match('/offline.html'))
+        );
       }
     })());
     return;
   }
 
-  // PDFs (cache-first)
+  /* 2️⃣ PDFs — cache-first sob demanda */
   if (isPDF(url)) {
-    e.respondWith((async () => {
-      const cache = await caches.open(SW_VERSION + '-pdf');
-      const cached = await cache.match(req);
+    event.respondWith((async () => {
+      const cache = await caches.open(SW_VERSION + '-pdfs');
+      const cached = await cache.match(request);
       if (cached) return cached;
       try {
-        const net = await fetch(req);
-        if (net.ok) cache.put(req, net.clone());
-        return net;
+        const resp = await fetch(request, { cache: 'no-cache' });
+        if (resp.ok) cache.put(request, resp.clone());
+        return resp;
       } catch {
         const core = await caches.open(SW_VERSION);
         return core.match('/offline.html');
@@ -103,27 +106,41 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Assets estáticos
-  if (isStatic(req) || isImage(req)) {
-    e.respondWith((async () => {
+  /* 3️⃣ CSS / JS / FONTS — stale-while-revalidate */
+  if (isStatic(request)) {
+    event.respondWith((async () => {
       const cache = await caches.open(SW_VERSION + '-assets');
-      const cached = await cache.match(req);
-      const fetcher = fetch(req).then(r => {
-        if (r && r.ok) cache.put(req, r.clone());
-        return r;
+      const cached = await cache.match(request);
+      const fetchPromise = fetch(request).then((resp) => {
+        if (resp && resp.ok) cache.put(request, resp.clone());
+        return resp;
       }).catch(() => null);
-      return cached || fetcher;
+      return cached || fetchPromise || fetch(request);
     })());
     return;
   }
 
-  // Demais: network fallback cache
-  e.respondWith((async () => {
+  /* 4️⃣ Imagens e SVGs — cache-first com atualização */
+  if (isImageOrSVG(url, request)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(SW_VERSION + '-images');
+      const cached = await cache.match(request);
+      const fetchPromise = fetch(request).then((resp) => {
+        if (resp && resp.ok) cache.put(request, resp.clone());
+        return resp;
+      }).catch(() => null);
+      return cached || fetchPromise || (await caches.match('/offline.html'));
+    })());
+    return;
+  }
+
+  /* 5️⃣ Demais — tenta rede, fallback cache */
+  event.respondWith((async () => {
     try {
-      return await fetch(req);
+      return await fetch(request);
     } catch {
       const cache = await caches.open(SW_VERSION);
-      return cache.match(req) || cache.match('/offline.html');
+      return cache.match(request) || cache.match('/offline.html');
     }
   })());
 });
