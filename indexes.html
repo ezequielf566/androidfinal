@@ -79,7 +79,6 @@
       <div id="saudacao" class="saudacao"></div>
       <div class="menu">
         <button onclick="abrirTela('app/index.html','app')">📖 Historias</button>
-        <!-- ✅ ajustado para indexes -->
         <button onclick="abrirTela('atividades/indexes.html','atividades')">🎨 Actividades</button>
         <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
       </div>
@@ -183,6 +182,9 @@
     function openStoryModal(){ document.getElementById("storyModal").classList.add("open"); }
     function closeStoryModal(){ document.getElementById("storyModal").classList.remove("open"); }
 
+    // 🔧 FIX: expone funciones globales para los botones del modal
+    window.openSupportModal = openSupportModal;
+    window.closeSupportModal = closeSupportModal;
     window.openStoryModal = openStoryModal;
     window.closeStoryModal = closeStoryModal;
 
