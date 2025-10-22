@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu COMPLETO: áudio + saudação + instalar + 💎 com Firebase -->
+<!-- 🔸 Pintando a Palavra — Menu completo com áudio, Firebase, instalação, 💎 e modais corrigidos -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -51,10 +51,18 @@
     .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
     .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
     .socials button:hover{background:#fff2b3;transform:scale(1.05);}
-    .support-modal,.story-modal{position:fixed;inset:0;background:rgba(255,240,180,0.4);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:1200;padding:16px;}
-    .support-modal.open,.story-modal.open{display:flex;}
-    .support-box,.story-box{background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;}
-    .story-box p{line-height:1.6;color:#333;font-size:1rem;}
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(255,240,180,0.45);
+      backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
+      z-index:1200;padding:16px;opacity:0;transition:opacity .3s ease;
+    }
+    .modal-backdrop.open{display:flex;opacity:1;}
+    .modal-box{
+      background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
+      border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;
+    }
+    .modal-box p{line-height:1.6;color:#333;font-size:1rem;}
   </style>
 </head>
 
@@ -62,7 +70,7 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="notif-icon" title="História do Projeto" onclick="openStoryModal()">
+        <div class="notif-icon" title="História do Projeto" onclick="window.openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
@@ -94,20 +102,20 @@
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
   <!-- 💎 Modal Apoiar Projeto -->
-  <div id="supportModal" class="support-modal">
-    <div class="support-box">
+  <div id="supportModal" class="modal-backdrop">
+    <div class="modal-box">
       <h2>Seja Premium</h2>
       <p>Remova os anúncios e apoie nosso projeto!<br>Sua contribuição mantém todos os conteúdos gratuitos<br>e ajuda a alcançar novas famílias. 🙏</p>
       <div class="support-actions">
-        <button class="btn" onclick="closeSupportModal()">Agora não</button>
+        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
     </div>
   </div>
 
   <!-- 📜 Modal História -->
-  <div id="storyModal" class="story-modal">
-    <div class="story-box">
+  <div id="storyModal" class="modal-backdrop">
+    <div class="modal-box">
       <h2>Como tudo começou...</h2>
       <p>Eu não sabia muito de programação.</p>
       <p>Mas eu tinha um sonho — levar a Palavra de Deus às crianças de forma leve e divertida.</p>
@@ -115,14 +123,12 @@
       <p>Isso me trouxe ideias e junto um desejo de tornar real, com fé e dedicação, o sonho se tornou realidade!</p>
       <p>Hoje o Pintando a Palavra alcança famílias em vários países. 🌍💛</p>
       <p>✨ Sua ajuda mantém esse sonho vivo e espalha o amor de Deus pelo mundo.</p>
-      <button class="btn" onclick="closeStoryModal()">Fechar</button>
+      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
     </div>
   </div>
 
-  <!-- 🎵 Áudio de fundo -->
   <script src="audio/audioController.js" defer></script>
 
-  <!-- 🔥 Firebase + lógica completa -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -143,16 +149,20 @@
 
     const diamondBtn = document.getElementById("diamondBtn");
     const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
     const logoutBtn = document.getElementById("logoutBtn");
     const installBtn = document.getElementById("installBtn");
     const saudacao = document.getElementById("saudacao");
 
-    // 💎 abrir/fechar modal
-    function openSupportModal(){ supportModal.classList.add("open"); }
-    function closeSupportModal(){ supportModal.classList.remove("open"); }
-    diamondBtn.addEventListener("click", openSupportModal);
+    // 🔹 Expor globalmente os modais
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
 
-    // 👤 Autenticação + saudação
+    diamondBtn.addEventListener("click", window.openSupportModal);
+
+    // 👤 Login + saudação
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Amigo";
@@ -161,7 +171,6 @@
           saudacao.style.opacity = "1";
         }, 400);
 
-        // verifica premium
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
@@ -175,9 +184,9 @@
       window.location.replace("login.html");
     });
 
-    // 💳 Apoiar (atualiza no Firestore e oculta o ícone)
+    // 💳 Apoiar
     document.getElementById("btnApoiar").addEventListener("click", async () => {
-      closeSupportModal();
+      window.closeSupportModal();
       alert("💛 Obrigado por apoiar! Atualizando...");
       const user = auth.currentUser;
       if (user) {
@@ -200,20 +209,16 @@
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const result = await deferredPrompt.userChoice;
-        if (result.outcome === "accepted") {
-          console.log("✅ App instalado!");
-          installBtn.style.display = "none";
-        }
+        if (result.outcome === "accepted") installBtn.style.display = "none";
       }
     });
   </script>
 
-  <!-- ✅ Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
-        .then(reg => console.log('✅ SW registrado:', reg.scope))
-        .catch(err => console.error('❌ SW erro:', err));
+        .then(r => console.log('✅ SW registrado:', r.scope))
+        .catch(e => console.error('❌ SW erro:', e));
     }
   </script>
 </body>
