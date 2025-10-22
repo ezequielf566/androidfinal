@@ -1,4 +1,4 @@
-// ✅ Pintando a Palavra — Service Worker (v1.0.33)
+// ✅ Pintando a Palavra — Service Worker (v1.0.55)
 // Corrigido: falha 403 no áudio externo + instalação resiliente
 
 const CACHE_NAME = 'pintando-a-palavra-v1.0.40';
@@ -8,14 +8,24 @@ const OFFLINE_URL = '/offline.html';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
+  '/indexes.html',
+  '/indexen.html',
   '/login.html',
+  '/logines.html',
+  '/loginen.html',
   '/manifest.json',
   '/audio/entrada.mp3', // 🔊 Som local (coloque o arquivo na pasta /audio/)
   '/img/icon-512.png',
   '/img/icon-192.png',
   '/app/index.html',
+  '/app/indexes.html',
+  '/app/indexen.html',
   '/atividades/index.html',
+  '/atividades/indexes.html',
+  '/atividades/indexen.html',
   '/pdfcompleto/index.html',
+  '/pdfcompleto/indexes.html',
+  '/pdfcompleto/indexen.html',
   '/offline.html'
 ];
 
