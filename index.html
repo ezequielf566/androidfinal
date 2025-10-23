@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu completo FINAL (Firebase + Áudio + Modais + PWA + Navegação interna) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Billing + Firebase + PWA) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -130,11 +130,15 @@
   <!-- 🎵 Áudio -->
   <script src="audio/audioController.js" defer></script>
 
+  <!-- 💳 Billing -->
+  <script type="module" src="/billing.js"></script>
+
   <!-- 🔥 Firebase + Navegação -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { comprarRemoveAds } from "/billing.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
@@ -156,7 +160,6 @@
     const installBtn = document.getElementById("installBtn");
     const saudacao = document.getElementById("saudacao");
 
-    // 🔹 Expor globalmente os modais
     window.openSupportModal = () => supportModal.classList.add("open");
     window.closeSupportModal = () => supportModal.classList.remove("open");
     window.openStoryModal = () => storyModal.classList.add("open");
@@ -169,7 +172,7 @@
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Amigo";
         setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui`;
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
           saudacao.style.opacity = "1";
         }, 400);
 
@@ -179,23 +182,27 @@
       } else window.location.replace("login.html");
     });
 
-    // 🚪 Logout
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       localStorage.clear();
       window.location.replace("login.html");
     });
 
-    // 💳 Apoiar
+    // 💳 Apoiar com Billing automático
     document.getElementById("btnApoiar").addEventListener("click", async () => {
       window.closeSupportModal();
-      alert("💛 Obrigado por apoiar! Atualizando...");
-      const user = auth.currentUser;
-      if (user) {
-        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
-        await updateDoc(ref, { removeAds: true });
-        diamondBtn.style.display = "none";
-        alert("✅ Apoio registrado com sucesso!");
+      alert("💛 Processando seu apoio...");
+      const success = await comprarRemoveAds();
+      if (success) {
+        const user = auth.currentUser;
+        if (user) {
+          const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+          await updateDoc(ref, { removeAds: true });
+          diamondBtn.style.display = "none";
+          alert("✅ Apoio registrado com sucesso!");
+        }
+      } else {
+        alert("💛 Obrigado por apoiar (modo de teste)!");
       }
     });
 
@@ -206,7 +213,6 @@
       deferredPrompt = e;
       installBtn.style.display = "flex";
     });
-
     installBtn.addEventListener("click", async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
