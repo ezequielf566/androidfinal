@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Excluir conta — Pintando a Palavra</title>
+  <meta name="theme-color" content="#ffd54f" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --gold:#FFD54F;
+      --gold-2:#FFEA80;
+      --ink:#222;
+      --bg1:#FFF7D1;
+      --bg2:#FFF3BF;
+      --card:#fff;
+      --muted:#5c5c5c;
+      --danger:#9b1c1c;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:'Fredoka', sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+      padding: 24px;
+    }
+    .card{
+      width:100%;
+      max-width:720px;
+      background:var(--card);
+      border-radius:24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+      overflow:hidden;
+    }
+    header{
+      background: linear-gradient(90deg, var(--gold), var(--gold-2));
+      padding: 20px 24px;
+    }
+    header h1{
+      margin:0;
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      line-height:1.2;
+    }
+    .content{
+      padding: 24px;
+    }
+    .content p{
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+    .content ul{
+      margin: 0 0 16px 1.25rem;
+      padding: 0;
+    }
+    .content li{ margin: 6px 0; }
+    .muted{ color: var(--muted); font-size:.95rem}
+    .danger{ color: var(--danger); font-weight:600 }
+    .block{
+      display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;
+    }
+    .btn{
+      appearance:none; border:0; cursor:pointer;
+      padding: 12px 18px;
+      border-radius:12px;
+      font-weight:600;
+      text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center;
+      transition: transform .04s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .btn-primary{
+      background: linear-gradient(90deg, var(--gold), var(--gold-2));
+      color:#1a1a1a;
+      box-shadow: 0 6px 16px rgba(255, 213, 79, .35);
+    }
+    .btn-primary:active{ transform: translateY(1px) }
+    .btn-ghost{
+      background: transparent; color:#333; border:2px dashed #e3e3e3;
+    }
+    .email{
+      white-space:nowrap;
+      font-weight:600;
+    }
+    footer{
+      padding: 16px 24px 22px; color:#666; font-size:.9rem
+    }
+    code{
+      background:#f6f6f6; padding:2px 6px; border-radius:6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">Aviso: exclusão de conta e dados</h1>
+    </header>
+
+    <section class="content">
+      <p>
+        Para <strong>excluir sua conta</strong> e <strong>todos os dados associados</strong> (login Google e progresso),
+        basta enviar um e-mail para <span class="email">ezequielf566@gmail.com</span> com o assunto
+        <code>Excluir conta</code>.
+      </p>
+
+      <ul>
+        <li>O pedido será atendido em até <strong>7 dias úteis</strong>.</li>
+        <li>A exclusão é <span class="danger">irreversível</span> e removerá definitivamente seu progresso.</li>
+        <li>Se possível, envie do mesmo e-mail utilizado no app.</li>
+      </ul>
+
+      <div class="block">
+        <a class="btn btn-primary"
+           href="mailto:ezequielf566@gmail.com?subject=Excluir%20conta&body=Ol%C3%A1%2C%20desejo%20excluir%20minha%20conta%20e%20todos%20os%20dados%20associados.%0A%0AEmail%20de%20login%3A%20_________________%0ANome%20(opcional)%3A%20_________________%0A%0AConfirmo%20a%20exclus%C3%A3o%20definitiva.%0A">
+          Enviar e-mail para excluir
+        </a>
+
+        <button class="btn btn-ghost" id="copyBtn" type="button" aria-label="Copiar endereço de e-mail">
+          Copiar e-mail de suporte
+        </button>
+      </div>
+
+      <p class="muted" style="margin-top:14px">
+        Dúvidas? Escreva para <a href="mailto:ezequielf566@gmail.com">ezequielf566@gmail.com</a>.
+      </p>
+    </section>
+
+    <footer>
+      <div>Última atualização: <time datetime="2025-10-23">23/10/2025</time></div>
+    </footer>
+  </main>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn?.addEventListener('click', async () => {
+      const email = 'ezequielf566@gmail.com';
+      try{
+        await navigator.clipboard.writeText(email);
+        copyBtn.textContent = 'E-mail copiado!';
+        setTimeout(()=> copyBtn.textContent = 'Copiar e-mail de suporte', 1600);
+      }catch(e){
+        alert('Copie manualmente: ' + email);
+      }
+    });
+  </script>
+</body>
+</html>
