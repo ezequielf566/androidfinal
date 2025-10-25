@@ -281,5 +281,50 @@
       setInterval(exibirAnuncio, 120000); // 2 minutos
     });
   </script>
+  <!-- 🧩 Salvamento local de pinturas -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const COLOR_SAVE_KEY = 'pp_svg_colors_v1';
+  let COLOR_MAP = JSON.parse(localStorage.getItem(COLOR_SAVE_KEY) || '{}');
+
+  function saveColorsForPage(id) {
+    if (!window.svgEl) return;
+    const data = {};
+    svgEl.querySelectorAll('*[fill]').forEach(el => {
+      const fill = el.getAttribute('fill');
+      if (fill && fill !== '#FFFFFF' && fill !== 'white' && fill !== 'none') {
+        const uid = el.dataset.uid || (el.dataset.uid = Math.random().toString(36).substr(2,9));
+        data[uid] = fill;
+      }
+    });
+    COLOR_MAP[id] = data;
+    localStorage.setItem(COLOR_SAVE_KEY, JSON.stringify(COLOR_MAP));
+  }
+
+  function restoreColorsForPage(id) {
+    const data = COLOR_MAP[id];
+    if (!data || !window.svgEl) return;
+    svgEl.querySelectorAll('*').forEach(el => {
+      const uid = el.dataset.uid;
+      if (uid && data[uid]) {
+        el.setAttribute('fill', data[uid]);
+      }
+    });
+  }
+
+  // 🪄 Integra com funções existentes
+  const originalClick = window.onSvgClick;
+  window.onSvgClick = function(e) {
+    if (originalClick) originalClick(e);
+    saveColorsForPage(window.pageId?.());
+  };
+
+  const originalLoadPage = window.loadPage;
+  window.loadPage = async function(newIdx) {
+    if (originalLoadPage) await originalLoadPage(newIdx);
+    restoreColorsForPage(window.pageId?.());
+  };
+});
+</script>
 </body>  
 </html>
