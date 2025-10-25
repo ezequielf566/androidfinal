@@ -29,31 +29,6 @@
       animation: fadeIn 0.8s ease;
     }
 
-    /* 🌍 Bandeiras */
-    .language-switch {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .flag {
-      width: 34px;
-      height: 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 1px solid rgba(0,0,0,0.1);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .flag:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 8px rgba(255, 213, 79, 0.8);
-    }
-
     .logo { width: 110px; margin-bottom: 10px; }
     h1 { font-size: 1.8rem; color: #222; margin-bottom: 8px; }
     .subtitle { color: #555; font-size: 1rem; margin-bottom: 10px; }
@@ -119,34 +94,6 @@
 
 <body>
   <div class="login-container">
-    <!-- 🌍 Bandeiras -->
-    <div class="language-switch">
-      <!-- 🇧🇷 -->
-      <a href="index.html" title="Português (Brasil)">
-        <svg class="flag" viewBox="0 0 640 480">
-          <rect width="640" height="480" fill="#009b3a"/>
-          <polygon points="320,80 580,240 320,400 60,240" fill="#ffdf00"/>
-          <circle cx="320" cy="240" r="90" fill="#002776"/>
-          <path d="M230 230 A90 90 0 0 1 410 250 A90 90 0 0 1 230 230" fill="none" stroke="#fff" stroke-width="15"/>
-        </svg>
-      </a>
-      <!-- 🇪🇸 -->
-      <a href="indexes.html" title="Español">
-        <svg class="flag" viewBox="0 0 640 480">
-          <rect width="640" height="480" fill="#aa151b"/>
-          <rect y="160" width="640" height="160" fill="#f1bf00"/>
-        </svg>
-      </a>
-      <!-- 🇺🇸 -->
-      <a href="indexen.html" title="English">
-        <svg class="flag" viewBox="0 0 7410 3900">
-          <rect width="7410" height="3900" fill="#b22234"/>
-          <path d="M0,450h7410v300H0zM0,1050h7410v300H0zM0,1650h7410v300H0zM0,2250h7410v300H0zM0,2850h7410v300H0zM0,3450h7410v300H0z" fill="#fff"/>
-          <rect width="2964" height="2100" fill="#3c3b6e"/>
-        </svg>
-      </a>
-    </div>
-
     <img src="./icon-512.png" alt="Logo" class="logo" />
     <h1>Pintando a Palavra</h1>
     <p class="subtitle">Colorindo histórias da Bíblia</p>
