@@ -64,6 +64,7 @@
     .modal-box p{line-height:1.6;color:#333;font-size:1rem;}
   </style>
 </head>
+
 <body>
   <div id="menuContainer">
     <header>
@@ -127,8 +128,6 @@
 
   <!-- 🎵 Áudio -->
   <script src="audio/audioController.js" defer></script>
-
-  <!-- 💳 Billing -->
   <script type="module" src="/billing.js"></script>
 
   <!-- 🔥 Firebase + Navegação -->
@@ -237,6 +236,16 @@
       menu.style.display = "block";
       history.replaceState({}, "", location.pathname);
     };
+
+    // 🔁 Compartilhar login com o app (iframe)
+    window.addEventListener("message", (ev) => {
+      if (ev.data?.type === "requestUser" && auth.currentUser) {
+        ev.source.postMessage(
+          { type: "userSync", email: auth.currentUser.email },
+          "*"
+        );
+      }
+    });
   </script>
 
   <!-- ✅ Service Worker -->
