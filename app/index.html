@@ -149,6 +149,106 @@
   <script src="js/patch-gestures-scroll.js"></script>  
 
   <script>  
+    document.addEventListener("DOMContentLoaded", () => {  
+      const customBtn = document.getElementById("customColorBtn");  
+      let popupRef = null;  
+
+      const EXTRA_COLORS = [  
+        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",  
+        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",  
+        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",  
+        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"  
+      ];  
+
+      function closePopup() {  
+        if (!popupRef) return;  
+        popupRef.remove();  
+        popupRef = null;  
+        customBtn.classList.remove("active");  
+        document.removeEventListener("click", onOutside);  
+        document.removeEventListener("keydown", onEsc);  
+      }  
+
+      function onOutside(e) {  
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();  
+      }  
+      function onEsc(e) { if (e.key === "Escape") closePopup(); }  
+
+      function applyColorSafely(color) {  
+        const sendColor = () => {  
+          if (typeof window.setColor === "function") {  
+            window.setColor(color);  
+          } else {  
+            window.currentColor = color;  
+          }  
+          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));  
+        };  
+
+        if (typeof window.setColor === "function") {  
+          sendColor();  
+        } else {  
+          let tries = 0;  
+          const interval = setInterval(() => {  
+            if (typeof window.setColor === "function") {  
+              sendColor();  
+              clearInterval(interval);  
+            } else if (tries++ > 20) {  
+              clearInterval(interval);  
+            }  
+          }, 100);  
+        }  
+      }  
+
+      function openPopupAboveButton(btn) {  
+        closePopup();  
+        const pop = document.createElement("div");  
+        pop.className = "palette-popup";  
+        customBtn.classList.add("active");  
+
+        EXTRA_COLORS.forEach(c => {  
+          const el = document.createElement("div");  
+          el.className = "extra-color";  
+          el.style.background = c;  
+          el.addEventListener("click", () => {  
+            btn.style.background = c;  
+            btn.setAttribute("data-color", c);  
+            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));  
+            btn.classList.add("active");  
+
+            el.style.boxShadow = "0 0 0 3px #ffd54f";  
+            setTimeout(() => el.style.boxShadow = "", 180);  
+
+            applyColorSafely(c);  
+            setTimeout(() => closePopup(), 80);  
+          });  
+          pop.appendChild(el);  
+        });  
+
+        document.body.appendChild(pop);  
+        const br = btn.getBoundingClientRect();  
+        const pw = pop.offsetWidth;  
+        const ph = pop.offsetHeight;  
+        let left = br.left + br.width / 2 - pw / 2;  
+        let top  = br.top - ph - 8;  
+        const margin = 8;  
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));  
+        if (top < margin) top = margin;  
+        pop.style.left = `${left}px`;  
+        pop.style.top  = `${top}px`;  
+
+        requestAnimationFrame(() => pop.classList.add("active"));  
+        document.addEventListener("click", onOutside);  
+        document.addEventListener("keydown", onEsc);  
+        popupRef = pop;  
+      }  
+
+      customBtn.addEventListener("click", (e) => {  
+        e.stopPropagation();  
+        if (popupRef) closePopup();  
+        else openPopupAboveButton(customBtn);  
+      });  
+    });  
+
     // ⏳ Tela de loading  
     const overlay = document.getElementById("loadingOverlay");  
     const observer = new MutationObserver(() => {  
@@ -172,31 +272,14 @@
         alert("🎬 Anúncio em exibição (modo de teste)");
       } else {
         console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
+        // Aqui entra o SDK real do AdMob após publicação
       }
     }
 
     window.addEventListener("load", () => {
       console.log("⏱️ Contador de 2 minutos iniciado");
-      setInterval(exibirAnuncio, 120000);
+      setInterval(exibirAnuncio, 120000); // 2 minutos
     });
   </script>
-
-  <!-- 🚀 Envio automático de progresso de estrelas -->
-  <script>
-    // Sobrescreve a função awardStarOnce do script.js
-    const oldAwardStarOnce = window.awardStarOnce;
-    window.awardStarOnce = function(...args) {
-      const result = oldAwardStarOnce?.apply(this, args);
-      try {
-        // Envia ao menu que o usuário ganhou uma nova estrela
-        window.parent?.postMessage({ type: "newStarEarned" }, "*");
-        console.log("🌟 Nova estrela conquistada — sincronizando...");
-      } catch (e) {
-        console.warn("⚠️ Falha ao enviar estrela:", e);
-      }
-      return result;
-    };
-  </script>
-
 </body>  
 </html>
