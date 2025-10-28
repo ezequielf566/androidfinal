@@ -1,11 +1,15 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "app.vercel.pintandoapalavra.twa",
-      "sha256_cert_fingerprints":
-        ["E6:4F:28:63:05:62:FA:20:29:25:A5:EE:F9:FF:DB:61:A8:11:5D:E2:90:51:8B:DE:24:6C:F9:E4:1B:04:57:2D"]
+      "sha256_cert_fingerprints": [
+        "E6:4F:28:63:05:62:FA:20:29:25:A5:EE:F9:FF:DB:61:A8:11:5D:E2:90:51:8B:DE:24:6C:F9:E4:1B:04:57:2D"
+      ]
     }
   }
 ]
