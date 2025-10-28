@@ -135,7 +135,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
     import { comprarRemoveAds } from "/billing.js";
 
     const firebaseConfig = {
@@ -157,7 +157,6 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const installBtn = document.getElementById("installBtn");
     const saudacao = document.getElementById("saudacao");
-    const iframe = document.getElementById("conteudo");
 
     window.openSupportModal = () => supportModal.classList.add("open");
     window.closeSupportModal = () => supportModal.classList.remove("open");
@@ -223,6 +222,7 @@
     // 🔹 Navegação interna (iframe)
     function abrirTela(src, tela) {
       const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
       menu.style.display = "none";
       iframe.style.display = "block";
       iframe.src = src;
@@ -231,26 +231,12 @@
     window.abrirTela = abrirTela;
 
     window.onpopstate = function() {
-      iframe.style.display = "none";
+      const iframe = document.getElementById("conteudo");
       const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
       menu.style.display = "block";
       history.replaceState({}, "", location.pathname);
     };
-
-    // ☁️ Sincronização de estrelas (recebe do app)
-    window.addEventListener("message", async (ev) => {
-      if (ev.data?.type === "newStarEarned" && auth.currentUser) {
-        try {
-          const email = auth.currentUser.email.toLowerCase();
-          const stars = JSON.parse(localStorage.getItem("pp_stars_v2") || "{}");
-          const ref = doc(db, "usuariosGoogle", email, "progresso", "estrelas");
-          await setDoc(ref, { stars, updatedAt: serverTimestamp() }, { merge: true });
-          console.log(`☁️ Estrelas sincronizadas: ${Object.keys(stars).length} → ${email}`);
-        } catch (err) {
-          console.warn("⚠️ Erro ao sincronizar estrelas:", err);
-        }
-      }
-    });
   </script>
 
   <!-- ✅ Service Worker -->
