@@ -89,7 +89,7 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-    // Tela de loading
+    // ⏳ Tela de loading
     const overlay = document.getElementById("loadingOverlay");
     const observer = new MutationObserver(() => {
       const svgLoaded = document.querySelector("#svgMount svg");
@@ -101,10 +101,22 @@
     observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
   </script>
 
-  <!-- ☁️ Sincronização de estrelas (Firebase + localStorage) -->
+  <!-- 🔁 Receber login do menu -->
+  <script>
+    window.addEventListener("message", (ev) => {
+      if (ev.data && ev.data.type === "userSync") {
+        window.loggedUserEmail = ev.data.email;
+        console.log("📨 Login recebido do menu:", ev.data.email);
+        document.dispatchEvent(new CustomEvent("userEmailReady"));
+      }
+    });
+    // Solicita login ao menu
+    window.parent?.postMessage({ type: "requestUser" }, "*");
+  </script>
+
+  <!-- ☁️ Sincronização das estrelas -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -117,7 +129,6 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
     const STAR_KEY = "pp_stars_v2";
 
@@ -130,21 +141,21 @@
       catch {}
     };
 
-    async function syncStars(user) {
-      if (!user) return;
-      const ref = doc(db, "usuariosGoogle", user.email.toLowerCase(), "progresso", "estrelas");
+    async function syncStars(email) {
+      if (!email) return;
+      const ref = doc(db, "usuariosGoogle", email.toLowerCase(), "progresso", "estrelas");
       const data = { stars: loadStars(), updatedAt: serverTimestamp() };
       try {
         await setDoc(ref, data, { merge: true });
-        console.log("☁️ Estrelas sincronizadas no Firestore!");
+        console.log("☁️ Estrelas sincronizadas com", email);
       } catch (e) {
         console.warn("⚠️ Falha ao sincronizar estrelas:", e);
       }
     }
 
-    async function restoreStars(user) {
-      if (!user) return;
-      const ref = doc(db, "usuariosGoogle", user.email.toLowerCase(), "progresso", "estrelas");
+    async function restoreStars(email) {
+      if (!email) return;
+      const ref = doc(db, "usuariosGoogle", email.toLowerCase(), "progresso", "estrelas");
       try {
         const snap = await getDoc(ref);
         if (snap.exists()) {
@@ -152,9 +163,7 @@
           if (data?.stars) {
             saveStars(data.stars);
             console.log("🌟 Estrelas restauradas do Firestore!");
-            if (typeof window.updateProgressUI === "function") {
-              window.updateProgressUI();
-            }
+            if (typeof window.updateProgressUI === "function") window.updateProgressUI();
           }
         }
       } catch (e) {
@@ -162,24 +171,18 @@
       }
     }
 
-    // Escuta o updateProgressUI original e adiciona sync automático
-    const _oldUpdate = window.updateProgressUI;
-    window.updateProgressUI = function(...args) {
-      const res = _oldUpdate?.apply(this, args);
-      if (window.currentUserForSync) {
-        syncStars(window.currentUserForSync);
-      }
-      return res;
-    };
+    // Espera o login chegar do menu
+    document.addEventListener("userEmailReady", async () => {
+      const email = window.loggedUserEmail;
+      if (!email) return;
+      await restoreStars(email);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log("👤 Logado:", user.email);
-        window.currentUserForSync = user;
-        await restoreStars(user);
-      } else {
-        console.log("🚪 Sem login: progresso salvo só localmente");
-      }
+      // 🔁 Sincroniza toda vez que o progresso mudar
+      const original = localStorage.setItem;
+      localStorage.setItem = function(k, v) {
+        original.apply(this, arguments);
+        if (k === STAR_KEY) syncStars(email);
+      };
     });
   </script>
 </body>
