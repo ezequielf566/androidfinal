@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <style>
-    /* 🌀 Tela de carregamento */
     #loadingOverlay {
       position: fixed; inset: 0;
       background: #fff9e6;
@@ -26,65 +25,6 @@
     .loading-text {
       font-family: "Fredoka", sans-serif;
       font-size: 1.1rem; color: #444; text-align: center;
-    }
-
-    /* 🎨 Popup de tons e extras */
-    .palette-popup {
-      position: fixed;
-      background: #fff;
-      border: 2px solid #ffd54f;
-      border-radius: 14px;
-      padding: 10px;
-      display: grid;
-      grid-template-columns: repeat(6, 28px);
-      gap: 6px;
-      box-shadow: 0 6px 16px rgba(0,0,0,.18);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(8px) scale(.96);
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 1000;
-    }
-    .palette-popup.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-    }
-
-    .extra-color {
-      width: 28px; height: 28px;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 2px solid rgba(0,0,0,0.1);
-      box-shadow: 0 2px 4px rgba(0,0,0,.25);
-      transition: transform .12s, box-shadow .2s;
-    }
-    .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }
-    .extra-color:active {
-      transform: scale(.9);
-      box-shadow: 0 0 0 3px #ffd54f;
-    }
-
-    .sw.custom {
-      width: 36px; height: 36px;
-      border-radius: 10px !important;
-      background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb);
-      background-size: 300% 300%;
-      animation: hueShift 8s ease infinite;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 1.4rem;
-      color: #fff; border: 2px solid #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,.2);
-      transition: box-shadow .3s ease;
-    }
-    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }
-    @keyframes hueShift {
-      0%,100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
-      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
     }
   </style>
 </head>
@@ -149,107 +89,7 @@
   <script src="js/patch-gestures-scroll.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const customBtn = document.getElementById("customColorBtn");
-      let popupRef = null;
-
-      const EXTRA_COLORS = [
-        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",
-        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",
-        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",
-        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"
-      ];
-
-      function closePopup() {
-        if (!popupRef) return;
-        popupRef.remove();
-        popupRef = null;
-        customBtn.classList.remove("active");
-        document.removeEventListener("click", onOutside);
-        document.removeEventListener("keydown", onEsc);
-      }
-
-      function onOutside(e) {
-        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();
-      }
-      function onEsc(e) { if (e.key === "Escape") closePopup(); }
-
-      function applyColorSafely(color) {
-        const sendColor = () => {
-          if (typeof window.setColor === "function") {
-            window.setColor(color);
-          } else {
-            window.currentColor = color;
-          }
-          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));
-        };
-
-        if (typeof window.setColor === "function") {
-          sendColor();
-        } else {
-          let tries = 0;
-          const interval = setInterval(() => {
-            if (typeof window.setColor === "function") {
-              sendColor();
-              clearInterval(interval);
-            } else if (tries++ > 20) {
-              clearInterval(interval);
-            }
-          }, 100);
-        }
-      }
-
-      function openPopupAboveButton(btn) {
-        closePopup();
-        const pop = document.createElement("div");
-        pop.className = "palette-popup";
-        customBtn.classList.add("active");
-
-        EXTRA_COLORS.forEach(c => {
-          const el = document.createElement("div");
-          el.className = "extra-color";
-          el.style.background = c;
-          el.addEventListener("click", () => {
-            btn.style.background = c;
-            btn.setAttribute("data-color", c);
-            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            el.style.boxShadow = "0 0 0 3px #ffd54f";
-            setTimeout(() => el.style.boxShadow = "", 180);
-
-            applyColorSafely(c);
-            setTimeout(() => closePopup(), 80);
-          });
-          pop.appendChild(el);
-        });
-
-        document.body.appendChild(pop);
-        const br = btn.getBoundingClientRect();
-        const pw = pop.offsetWidth;
-        const ph = pop.offsetHeight;
-        let left = br.left + br.width / 2 - pw / 2;
-        let top  = br.top - ph - 8;
-        const margin = 8;
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
-        if (top < margin) top = margin;
-        pop.style.left = `${left}px`;
-        pop.style.top  = `${top}px`;
-
-        requestAnimationFrame(() => pop.classList.add("active"));
-        document.addEventListener("click", onOutside);
-        document.addEventListener("keydown", onEsc);
-        popupRef = pop;
-      }
-
-      customBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (popupRef) closePopup();
-        else openPopupAboveButton(customBtn);
-      });
-    });
-
-    // ⏳ Tela de loading
+    // Tela de loading
     const overlay = document.getElementById("loadingOverlay");
     const observer = new MutationObserver(() => {
       const svgLoaded = document.querySelector("#svgMount svg");
@@ -294,8 +134,12 @@
       if (!user) return;
       const ref = doc(db, "usuariosGoogle", user.email.toLowerCase(), "progresso", "estrelas");
       const data = { stars: loadStars(), updatedAt: serverTimestamp() };
-      try { await setDoc(ref, data, { merge: true }); console.log("☁️ Estrelas sincronizadas!"); }
-      catch (e) { console.warn("⚠️ Falha ao sincronizar estrelas:", e); }
+      try {
+        await setDoc(ref, data, { merge: true });
+        console.log("☁️ Estrelas sincronizadas no Firestore!");
+      } catch (e) {
+        console.warn("⚠️ Falha ao sincronizar estrelas:", e);
+      }
     }
 
     async function restoreStars(user) {
@@ -308,27 +152,33 @@
           if (data?.stars) {
             saveStars(data.stars);
             console.log("🌟 Estrelas restauradas do Firestore!");
-            if (typeof window.updateProgressUI === "function") window.updateProgressUI();
+            if (typeof window.updateProgressUI === "function") {
+              window.updateProgressUI();
+            }
           }
         }
-      } catch (e) { console.warn("⚠️ Falha ao restaurar estrelas:", e); }
+      } catch (e) {
+        console.warn("⚠️ Falha ao restaurar estrelas:", e);
+      }
     }
 
-    function watchLocalChanges(user) {
-      if (!user) return;
-      const originalSet = localStorage.setItem;
-      localStorage.setItem = function(k, v) {
-        originalSet.apply(this, arguments);
-        if (k === STAR_KEY) syncStars(user);
-      };
-    }
+    // Escuta o updateProgressUI original e adiciona sync automático
+    const _oldUpdate = window.updateProgressUI;
+    window.updateProgressUI = function(...args) {
+      const res = _oldUpdate?.apply(this, args);
+      if (window.currentUserForSync) {
+        syncStars(window.currentUserForSync);
+      }
+      return res;
+    };
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
+        console.log("👤 Logado:", user.email);
+        window.currentUserForSync = user;
         await restoreStars(user);
-        watchLocalChanges(user);
       } else {
-        console.log("🚪 Usuário não logado — progresso apenas local");
+        console.log("🚪 Sem login: progresso salvo só localmente");
       }
     });
   </script>
