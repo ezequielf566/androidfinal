@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Billing + Firebase + PWA) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Premium Link) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -53,15 +53,20 @@
     .modal-backdrop{
       position:fixed;inset:0;background:rgba(255,240,180,0.45);
       backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
-      z-index:1200;padding:16px;opacity:0;transition:opacity .3s ease;
+      z-index:1200;padding:16px;opacity:0;transition:opacity .4s ease;
     }
     .modal-backdrop.open{display:flex;opacity:1;}
     .modal-box{
       background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
       border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);
-      box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);
+      animation:fadeInModal .5s ease;
     }
-    .modal-box p{line-height:1.6;color:#333;font-size:1rem;}
+    @keyframes fadeInModal {
+      from {transform:translateY(20px);opacity:0;}
+      to {transform:translateY(0);opacity:1;}
+    }
+    .modal-box p{line-height:1.6;color:#333;font-size:1rem;text-align:justify;text-justify:inter-word;margin:0;padding-inline:8px;}
   </style>
 </head>
 <body>
@@ -102,9 +107,11 @@
   <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
-      <h2>Seja Premium</h2>
-      <p>Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar ainda mais famílias.💛</p>
-      <div class="support-actions">
+      <h2 style="text-align:center;">Seja Premium</h2>
+      <p>
+        Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar ainda mais famílias. 💛
+      </p>
+      <div class="support-actions" style="margin-top:1.2rem; display:flex; justify-content:center; gap:.6rem;">
         <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
@@ -132,7 +139,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
@@ -182,7 +189,7 @@
       window.location.replace("login.html");
     });
 
-    // 💳 Apoiar via Checkout Kiwify
+    // 💳 Apoiar redireciona para o checkout da Kiwify
     document.getElementById("btnApoiar").addEventListener("click", () => {
       window.closeSupportModal();
       window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
