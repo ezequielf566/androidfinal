@@ -58,11 +58,22 @@
     .modal-backdrop.open{display:flex;opacity:1;}
     .modal-box{
       background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
-      border-radius:20px;padding:14px 16px 18px;width:min(90%,460px);
+      border-radius:20px;padding:16px 18px 20px;width:min(90%,460px);
       box-shadow:0 8px 24px rgba(0,0,0,0.25);
-      text-align:center;
     }
-    .modal-box p{line-height:1.35;color:#333;font-size:1rem;text-align:left;margin:0;}
+    /* 💎 Ajuste do modal Premium */
+    #supportModal .modal-box h2{
+      text-align:center;
+      margin:0 0 10px;
+      line-height:1.15;
+    }
+    #supportModal .modal-box p{
+      text-align:justify;
+      margin:0;
+      line-height:1.35;
+      color:#333;
+      font-size:1rem;
+    }
   </style>
 </head>
 <body>
@@ -100,10 +111,10 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto (Kiwify) -->
+  <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
-      <h2 style="text-align:center;margin:0 0 10px;">Seja Premium</h2>
+      <h2>Seja Premium</h2>
       <p>
         Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar ainda mais famílias. 💛
       </p>
