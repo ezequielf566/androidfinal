@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Premium Link) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Premium Link Corrigido) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -58,7 +58,7 @@
     .modal-backdrop.open{display:flex;opacity:1;}
     .modal-box{
       background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
-      border-radius:20px;padding:24px 20px 28px;width:min(90%,460px);
+      border-radius:20px;
       box-shadow:0 8px 24px rgba(0,0,0,0.25);
       animation:fadeInModal .5s ease;
     }
@@ -66,7 +66,7 @@
       from {transform:translateY(20px);opacity:0;}
       to {transform:translateY(0);opacity:1;}
     }
-    .modal-box p{line-height:1.6;color:#333;font-size:1rem;text-align:justify;text-justify:inter-word;margin:0;padding-inline:8px;}
+    .modal-box p{color:#333;font-size:1rem;}
   </style>
 </head>
 <body>
@@ -104,23 +104,23 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto -->
+  <!-- 💎 Modal Apoiar Projeto (corrigido) -->
   <div id="supportModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h2 style="text-align:center;">Seja Premium</h2>
-      <p>
+    <div class="modal-box" style="padding:18px 18px 22px;width:min(90%,460px);text-align:center;">
+      <h2 style="margin-bottom:8px;">Seja Premium</h2>
+      <p style="text-align:justify; text-justify:inter-word; line-height:1.45; color:#333; font-size:1rem; margin:0; padding-inline:6px;">
         Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar ainda mais famílias. 💛
       </p>
-      <div class="support-actions" style="margin-top:1.2rem; display:flex; justify-content:center; gap:.6rem;">
+      <div class="support-actions" style="margin-top:0.9rem; display:flex; justify-content:center; gap:.5rem;">
         <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
     </div>
   </div>
 
-  <!-- 📜 Modal História -->
+  <!-- 📜 Modal História (mantido igual) -->
   <div id="storyModal" class="modal-backdrop">
-    <div class="modal-box" style="text-align:left;">
+    <div class="modal-box" style="text-align:left; padding:24px 20px 28px; width:min(90%,460px);">
       <h2>🚀 Atualização especial!</h2>
       <p>
         • Uso off-line agora disponível<br>
@@ -168,7 +168,6 @@
 
     diamondBtn.addEventListener("click", window.openSupportModal);
 
-    // 👤 Login + saudação
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const firstName = user.displayName?.split(" ")[0] || "Amigo";
@@ -176,7 +175,6 @@
           saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
           saudacao.style.opacity = "1";
         }, 400);
-
         const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
         const snap = await getDoc(ref);
         if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
@@ -189,13 +187,11 @@
       window.location.replace("login.html");
     });
 
-    // 💳 Apoiar redireciona para o checkout da Kiwify
     document.getElementById("btnApoiar").addEventListener("click", () => {
       window.closeSupportModal();
       window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
     });
 
-    // 📲 Instalação PWA
     let deferredPrompt;
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -210,7 +206,6 @@
       }
     });
 
-    // 🔹 Navegação interna (iframe)
     function abrirTela(src, tela) {
       const menu = document.getElementById("menuContainer");
       const iframe = document.getElementById("conteudo");
@@ -230,7 +225,6 @@
     };
   </script>
 
-  <!-- ✅ Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
