@@ -148,6 +148,7 @@
 
       localStorage.setItem("displayName", user.displayName || "");
       localStorage.setItem("savedEmail", email);
+      localStorage.setItem("userEmail", email); // ✅ usado pelo Supabase
       localStorage.setItem("isLogged", "true");
       localStorage.setItem("premium", userData.premium ? "true" : "false");
       localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
