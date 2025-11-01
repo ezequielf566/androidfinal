@@ -100,7 +100,7 @@
       <div class="counter">  
         <span id="starCount" class="star-count">00</span>  
         <span class="sep">/</span>  
-        <span id="totalPages" class="total-pages">80</span>  
+        <span id="totalPages" class="total-pages">00</span>  
         <span class="star-icon">★</span>  
         <span id="progressPercent" class="percent">0%</span>  
       </div>  
@@ -261,35 +261,25 @@
     observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
   </script>  
 
-  <!-- 💾 Supabase: progresso de estrelas -->
-  <script>
-  /* ===== Supabase – Salvar/Restaurar Progresso de Estrelas ===== */
-  const SUPABASE_URL = 'https://ntnwcpluuzaimujvgpip.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50bndjcGx1dXphaW11anZncGlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MzY3MTEsImV4cCI6MjA3NzUxMjcxMX0.gv0YHkhJZWgUIWrqkaO8hG0vvcrU9vtzPJPL8wJ0ITk';
-  const TABLE = 'progresso_usuarios';
-  const hdrs = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
-  const $starCount = document.getElementById('starCount');
-  const $totalPages = document.getElementById('totalPages');
-  const $progressFill = document.getElementById('progressFill');
-  const $progressPercent = document.getElementById('progressPercent');
-  function getEmail(){return (localStorage.getItem('savedEmail')||'').toLowerCase().trim();}
-  function getStars(){return parseInt($starCount?.textContent||'0');}
-  function setStars(s){$starCount.textContent=String(s).padStart(2,'0');const total=parseInt($totalPages?.textContent||'80');const pct=Math.min(100,Math.round((s/total)*100));$progressFill.style.width=pct+'%';$progressPercent.textContent=pct+'%';}
-  async function fetchProgress(email){const r=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?email=eq.${email}&select=stars`,{headers:hdrs});if(!r.ok)return 0;const j=await r.json();return j[0]?.stars||0;}
-  async function saveProgress(email,stars){await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`,{method:'POST',headers:{...hdrs,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify([{email,stars,updated_at:new Date().toISOString()}])});}
-  window.addEventListener('load',async()=>{const email=getEmail();if(!email)return;try{const cloud=await fetchProgress(email);const local=getStars();const best=Math.max(local,cloud);setStars(best);if(local>cloud)await saveProgress(email,local);}catch(e){console.warn(e);}const obs=new MutationObserver(()=>{saveProgress(email,getStars())});obs.observe($starCount,{childList:true,characterData:true,subtree:true});});
-  </script>
-
   <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
   <script>
-    const TESTE = true;
+    const TESTE = true; // mudar pra false após aprovação
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
+
     function exibirAnuncio() {
-      if (TESTE) alert("🎬 Anúncio em exibição (modo de teste)");
-      else console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
+      if (TESTE) {
+        alert("🎬 Anúncio em exibição (modo de teste)");
+      } else {
+        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
+        // Aqui entra o SDK real do AdMob após publicação
+      }
     }
-    window.addEventListener("load", () => setInterval(exibirAnuncio, 120000));
+
+    window.addEventListener("load", () => {
+      console.log("⏱️ Contador de 2 minutos iniciado");
+      setInterval(exibirAnuncio, 120000); // 2 minutos
+    });
   </script>
 </body>  
 </html>
