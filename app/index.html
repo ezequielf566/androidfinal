@@ -148,122 +148,89 @@
   <script src="js/script.js"></script>  
   <script src="js/patch-gestures-scroll.js"></script>  
 
-  <script>  
-    document.addEventListener("DOMContentLoaded", () => {  
-      const customBtn = document.getElementById("customColorBtn");  
-      let popupRef = null;  
-
-      const EXTRA_COLORS = [  
-        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",  
-        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",  
-        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",  
-        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"  
-      ];  
-
-      function closePopup() {  
-        if (!popupRef) return;  
-        popupRef.remove();  
-        popupRef = null;  
-        customBtn.classList.remove("active");  
-        document.removeEventListener("click", onOutside);  
-        document.removeEventListener("keydown", onEsc);  
-      }  
-
-      function onOutside(e) {  
-        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();  
-      }  
-      function onEsc(e) { if (e.key === "Escape") closePopup(); }  
-
-      function applyColorSafely(color) {  
-        const sendColor = () => {  
-          if (typeof window.setColor === "function") {  
-            window.setColor(color);  
-          } else {  
-            window.currentColor = color;  
-          }  
-          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));  
-        };  
-
-        if (typeof window.setColor === "function") {  
-          sendColor();  
-        } else {  
-          let tries = 0;  
-          const interval = setInterval(() => {  
-            if (typeof window.setColor === "function") {  
-              sendColor();  
-              clearInterval(interval);  
-            } else if (tries++ > 20) {  
-              clearInterval(interval);  
-            }  
-          }, 100);  
-        }  
-      }  
-
-      function openPopupAboveButton(btn) {  
-        closePopup();  
-        const pop = document.createElement("div");  
-        pop.className = "palette-popup";  
-        customBtn.classList.add("active");  
-
-        EXTRA_COLORS.forEach(c => {  
-          const el = document.createElement("div");  
-          el.className = "extra-color";  
-          el.style.background = c;  
-          el.addEventListener("click", () => {  
-            btn.style.background = c;  
-            btn.setAttribute("data-color", c);  
-            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));  
-            btn.classList.add("active");  
-
-            el.style.boxShadow = "0 0 0 3px #ffd54f";  
-            setTimeout(() => el.style.boxShadow = "", 180);  
-
-            applyColorSafely(c);  
-            setTimeout(() => closePopup(), 80);  
-          });  
-          pop.appendChild(el);  
-        });  
-
-        document.body.appendChild(pop);  
-        const br = btn.getBoundingClientRect();  
-        const pw = pop.offsetWidth;  
-        const ph = pop.offsetHeight;  
-        let left = br.left + br.width / 2 - pw / 2;  
-        let top  = br.top - ph - 8;  
-        const margin = 8;  
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));  
-        if (top < margin) top = margin;  
-        pop.style.left = `${left}px`;  
-        pop.style.top  = `${top}px`;  
-
-        requestAnimationFrame(() => pop.classList.add("active"));  
-        document.addEventListener("click", onOutside);  
-        document.addEventListener("keydown", onEsc);  
-        popupRef = pop;  
-      }  
-
-      customBtn.addEventListener("click", (e) => {  
-        e.stopPropagation();  
-        if (popupRef) closePopup();  
-        else openPopupAboveButton(customBtn);  
-      });  
-    });  
-
-    // ⏳ Tela de loading  
-    const overlay = document.getElementById("loadingOverlay");  
-    const observer = new MutationObserver(() => {  
-      const svgLoaded = document.querySelector("#svgMount svg");  
-      if (svgLoaded) {  
-        setTimeout(() => overlay.classList.add("hidden"), 400);  
-        observer.disconnect();  
-      }  
-    });  
-    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
-  </script>  
-
-  <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
+  <!-- ☁️ SUPABASE SYNC DE PROGRESSO -->
   <script>
-    const TESTE = true; // mudar pra false após aprovação
+  const SUPABASE_URL = "https://ntnwcpluuzaimujvgpip.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50bndjcGx1dXphaW11anZncGlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MzY3MTEsImV4cCI6MjA3NzUxMjcxMX0.gv0YHkhJZWgUIWrqkaO8hG0vvcrU9vtzPJPL8wJ0ITk";
+
+  async function salvarProgresso(email, estrelas) {
+    if (!email) return;
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/progresso_usuarios`, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "resolution=merge-duplicates"
+        },
+        body: JSON.stringify([{ email, estrelas }])
+      });
+      mostrarAviso("☁️ Progresso salvo na nuvem!");
+    } catch (err) {
+      console.error("Erro ao salvar progresso:", err);
+    }
+  }
+
+  async function restaurarProgresso(email) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/progresso_usuarios?email=eq.${email}`, {
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+      });
+      const data = await res.json();
+      if (data.length > 0) {
+        const starCountEl = document.getElementById("starCount");
+        starCountEl.textContent = data[0].estrelas.toString().padStart(2, "0");
+        mostrarAviso(`⭐ Progresso restaurado (${data[0].estrelas} estrelas)`);
+      }
+    } catch (err) {
+      console.error("Erro ao restaurar progresso:", err);
+    }
+  }
+
+  function mostrarAviso(msg) {
+    const aviso = document.createElement("div");
+    aviso.textContent = msg;
+    Object.assign(aviso.style, {
+      position: "fixed",
+      bottom: "20px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      background: "#ffd54f",
+      padding: "10px 18px",
+      borderRadius: "12px",
+      boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+      fontFamily: "Fredoka, sans-serif",
+      fontWeight: "600",
+      transition: "opacity .4s",
+      zIndex: 2000
+    });
+    document.body.appendChild(aviso);
+    setTimeout(() => aviso.style.opacity = "0", 1800);
+    setTimeout(() => aviso.remove(), 2200);
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const email = localStorage.getItem("userEmail");
+    if (!email) return console.warn("Nenhum e-mail encontrado.");
+    await restaurarProgresso(email);
+
+    const starCountEl = document.getElementById("starCount");
+    let estrelasAtuais = parseInt(starCountEl.textContent);
+    const observer = new MutationObserver(async () => {
+      const novoValor = parseInt(starCountEl.textContent);
+      if (novoValor > estrelasAtuais) {
+        estrelasAtuais = novoValor;
+        await salvarProgresso(email, novoValor);
+      }
+    });
+    observer.observe(starCountEl, { childList: true });
+  });
+  </script>
+
+  <!-- 🟡 Anúncio automático AdMob -->
+  <script>
+    const TESTE = true;
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
@@ -272,13 +239,12 @@
         alert("🎬 Anúncio em exibição (modo de teste)");
       } else {
         console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-        // Aqui entra o SDK real do AdMob após publicação
       }
     }
 
     window.addEventListener("load", () => {
       console.log("⏱️ Contador de 2 minutos iniciado");
-      setInterval(exibirAnuncio, 120000); // 2 minutos
+      setInterval(exibirAnuncio, 120000);
     });
   </script>
 </body>  
