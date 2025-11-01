@@ -28,26 +28,6 @@
       font-size: 1.1rem; color: #444; text-align: center;  
     }  
 
-    /* ☁️ Mensagens visuais Supabase */
-    #syncMsg {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #fffbea;
-      color: #444;
-      border: 2px solid #ffd54f;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-family: "Fredoka", sans-serif;
-      font-size: 0.95rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,.1);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .4s ease;
-      z-index: 9999;
-    }
-    #syncMsg.show { opacity: 1; }
-
     /* 🎨 Popup de tons e extras */  
     .palette-popup {  
       position: fixed;  
@@ -165,74 +145,151 @@
     </section>  
   </main>  
 
-  <div id="syncMsg">☁️ Sincronizando progresso...</div>
-
   <script src="js/script.js"></script>  
   <script src="js/patch-gestures-scroll.js"></script>  
 
-  <!-- ☁️ SDK Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script>  
+    document.addEventListener("DOMContentLoaded", () => {  
+      const customBtn = document.getElementById("customColorBtn");  
+      let popupRef = null;  
 
-  <!-- ☁️ Sincronização de progresso com Supabase -->
+      const EXTRA_COLORS = [  
+        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",  
+        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",  
+        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",  
+        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"  
+      ];  
+
+      function closePopup() {  
+        if (!popupRef) return;  
+        popupRef.remove();  
+        popupRef = null;  
+        customBtn.classList.remove("active");  
+        document.removeEventListener("click", onOutside);  
+        document.removeEventListener("keydown", onEsc);  
+      }  
+
+      function onOutside(e) {  
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();  
+      }  
+      function onEsc(e) { if (e.key === "Escape") closePopup(); }  
+
+      function applyColorSafely(color) {  
+        const sendColor = () => {  
+          if (typeof window.setColor === "function") {  
+            window.setColor(color);  
+          } else {  
+            window.currentColor = color;  
+          }  
+          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));  
+        };  
+
+        if (typeof window.setColor === "function") {  
+          sendColor();  
+        } else {  
+          let tries = 0;  
+          const interval = setInterval(() => {  
+            if (typeof window.setColor === "function") {  
+              sendColor();  
+              clearInterval(interval);  
+            } else if (tries++ > 20) {  
+              clearInterval(interval);  
+            }  
+          }, 100);  
+        }  
+      }  
+
+      function openPopupAboveButton(btn) {  
+        closePopup();  
+        const pop = document.createElement("div");  
+        pop.className = "palette-popup";  
+        customBtn.classList.add("active");  
+
+        EXTRA_COLORS.forEach(c => {  
+          const el = document.createElement("div");  
+          el.className = "extra-color";  
+          el.style.background = c;  
+          el.addEventListener("click", () => {  
+            btn.style.background = c;  
+            btn.setAttribute("data-color", c);  
+            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));  
+            btn.classList.add("active");  
+
+            el.style.boxShadow = "0 0 0 3px #ffd54f";  
+            setTimeout(() => el.style.boxShadow = "", 180);  
+
+            applyColorSafely(c);  
+            setTimeout(() => closePopup(), 80);  
+          });  
+          pop.appendChild(el);  
+        });  
+
+        document.body.appendChild(pop);  
+        const br = btn.getBoundingClientRect();  
+        const pw = pop.offsetWidth;  
+        const ph = pop.offsetHeight;  
+        let left = br.left + br.width / 2 - pw / 2;  
+        let top  = br.top - ph - 8;  
+        const margin = 8;  
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));  
+        if (top < margin) top = margin;  
+        pop.style.left = `${left}px`;  
+        pop.style.top  = `${top}px`;  
+
+        requestAnimationFrame(() => pop.classList.add("active"));  
+        document.addEventListener("click", onOutside);  
+        document.addEventListener("keydown", onEsc);  
+        popupRef = pop;  
+      }  
+
+      customBtn.addEventListener("click", (e) => {  
+        e.stopPropagation();  
+        if (popupRef) closePopup();  
+        else openPopupAboveButton(customBtn);  
+      });  
+    });  
+
+    // ⏳ Tela de loading  
+    const overlay = document.getElementById("loadingOverlay");  
+    const observer = new MutationObserver(() => {  
+      const svgLoaded = document.querySelector("#svgMount svg");  
+      if (svgLoaded) {  
+        setTimeout(() => overlay.classList.add("hidden"), 400);  
+        observer.disconnect();  
+      }  
+    });  
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
+  </script>  
+
+  <!-- 💾 Supabase: progresso de estrelas -->
   <script>
-    const SUPABASE_URL = "https://ntnwcpluuzaimujvgpip.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50bndjcGx1dXphaW11anZncGlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MzY3MTEsImV4cCI6MjA3NzUxMjcxMX0.gv0YHkhJZWgUIWrqkaO8hG0vvcrU9vtzPJPL8wJ0ITk";
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const email = localStorage.getItem("savedEmail");
-    const starCountEl = document.getElementById("starCount");
-    const syncMsg = document.getElementById("syncMsg");
-
-    async function salvarProgresso(email, progresso) {
-      if (!email) return;
-      await db.from("progresso_usuarios").upsert({ email, progresso });
-      syncMsg.textContent = "☁️ Progresso salvo na nuvem!";
-      syncMsg.classList.add("show");
-      setTimeout(() => syncMsg.classList.remove("show"), 2000);
-    }
-
-    async function restaurarProgresso(email) {
-      if (!email) return;
-      const { data } = await db.from("progresso_usuarios").select("progresso").eq("email", email).single();
-      if (data && data.progresso >= 0) {
-        starCountEl.textContent = data.progresso.toString().padStart(2, "0");
-      }
-      syncMsg.textContent = "☁️ Sincronização concluída!";
-      syncMsg.classList.add("show");
-      setTimeout(() => syncMsg.classList.remove("show"), 2000);
-    }
-
-    let estrelasAtuais = parseInt(starCountEl.textContent) || 0;
-    restaurarProgresso(email);
-
-    const observer = new MutationObserver(async () => {
-      const novoValor = parseInt(starCountEl.textContent);
-      if (novoValor > estrelasAtuais) {
-        estrelasAtuais = novoValor;
-        await salvarProgresso(email, novoValor);
-      }
-    });
-    observer.observe(starCountEl, { childList: true });
+  /* ===== Supabase – Salvar/Restaurar Progresso de Estrelas ===== */
+  const SUPABASE_URL = 'https://ntnwcpluuzaimujvgpip.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50bndjcGx1dXphaW11anZncGlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MzY3MTEsImV4cCI6MjA3NzUxMjcxMX0.gv0YHkhJZWgUIWrqkaO8hG0vvcrU9vtzPJPL8wJ0ITk';
+  const TABLE = 'progresso_usuarios';
+  const hdrs = { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' };
+  const $starCount = document.getElementById('starCount');
+  const $totalPages = document.getElementById('totalPages');
+  const $progressFill = document.getElementById('progressFill');
+  const $progressPercent = document.getElementById('progressPercent');
+  function getEmail(){return (localStorage.getItem('savedEmail')||'').toLowerCase().trim();}
+  function getStars(){return parseInt($starCount?.textContent||'0');}
+  function setStars(s){$starCount.textContent=String(s).padStart(2,'0');const total=parseInt($totalPages?.textContent||'80');const pct=Math.min(100,Math.round((s/total)*100));$progressFill.style.width=pct+'%';$progressPercent.textContent=pct+'%';}
+  async function fetchProgress(email){const r=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?email=eq.${email}&select=stars`,{headers:hdrs});if(!r.ok)return 0;const j=await r.json();return j[0]?.stars||0;}
+  async function saveProgress(email,stars){await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`,{method:'POST',headers:{...hdrs,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify([{email,stars,updated_at:new Date().toISOString()}])});}
+  window.addEventListener('load',async()=>{const email=getEmail();if(!email)return;try{const cloud=await fetchProgress(email);const local=getStars();const best=Math.max(local,cloud);setStars(best);if(local>cloud)await saveProgress(email,local);}catch(e){console.warn(e);}const obs=new MutationObserver(()=>{saveProgress(email,getStars())});obs.observe($starCount,{childList:true,characterData:true,subtree:true});});
   </script>
 
-  <!-- 🟡 Anúncio automático AdMob -->
+  <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
   <script>
     const TESTE = true;
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
-
     function exibirAnuncio() {
-      if (TESTE) {
-        alert("🎬 Anúncio em exibição (modo de teste)");
-      } else {
-        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-      }
+      if (TESTE) alert("🎬 Anúncio em exibição (modo de teste)");
+      else console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
     }
-
-    window.addEventListener("load", () => {
-      console.log("⏱️ Contador de 2 minutos iniciado");
-      setInterval(exibirAnuncio, 120000);
-    });
+    window.addEventListener("load", () => setInterval(exibirAnuncio, 120000));
   </script>
 </body>  
 </html>
