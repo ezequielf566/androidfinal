@@ -1,34 +1,35 @@
 {
-  "id": "https://pintandoapalavra.vercel.app",
-  "name": "Pintando a Palavra",
-  "short_name": "Pintando",
-  "description": "Colorindo histórias da Bíblia — app infantil cristão",
-  "start_url": "/index.html",
+  "id": "https://pintandoapalavra.vercel.app/es/",
+  "name": "Coloreando la Palabra",
+  "short_name": "Coloreando",
+  "description": "Coloreando historias de la Biblia — aplicación infantil cristiana",
+  "start_url": "/es/index.html",
+  "scope": "/es/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff9e6",
   "theme_color": "#ffd54f",
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "/es/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "/es/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512-maskable.png",
+      "src": "/es/icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icons/favicon.ico",
+      "src": "/es/icons/favicon.ico",
       "sizes": "48x48 96x96 128x128 256x256",
       "type": "image/x-icon"
     }
