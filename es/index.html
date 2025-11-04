@@ -1,11 +1,11 @@
-<!-- 🔸 Coloreando la Palabra — Menú FINAL (con Audio + Firebase + PWA) -->
+<!-- 🔸 Coloreando la Palabra — Menú FINAL (con limpieza completa al salir) -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coloreando la Palabra — Menú</title>
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="/es/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
     body {
@@ -179,13 +179,24 @@
       } else window.location.replace("seletor.html");
     });
 
+    // 🚪 Salir con limpieza total
     logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
+      try { await signOut(auth); } catch(e) { console.warn("Error al cerrar sesión:", e); }
       localStorage.clear();
-      window.location.replace("seletor.html");
+      if (window.indexedDB) {
+        const dbs = await indexedDB.databases();
+        dbs.forEach(db => indexedDB.deleteDatabase(db.name));
+      }
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const reg of regs) await reg.unregister();
+        const keys = await caches.keys();
+        for (const key of keys) await caches.delete(key);
+      }
+      window.location.href = "/seletor.html";
     });
 
-    // 💳 Abrir checkout Kiwify dentro del app
+    // 💳 Abrir checkout Kiwify
     document.getElementById("btnApoiar").addEventListener("click", () => {
       window.closeSupportModal();
       window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
@@ -228,7 +239,7 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('/es/service-worker.js')
         .then(r => console.log('✅ SW registrado:', r.scope))
         .catch(e => console.error('❌ Error SW:', e));
     }
