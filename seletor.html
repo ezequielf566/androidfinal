@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=portrait">
+  <title>Pintando a Palavra — Idioma</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Fredoka', sans-serif;
+      background: linear-gradient(180deg,#A8D8FF 0%,#DFF3FF 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100vh;
+      overflow: hidden;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: #333;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      margin-bottom: 2.2rem;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: #fffbea;
+      border: 2px solid #FFD54F;
+      border-radius: 18px;
+      padding: 14px 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255,213,79,0.4);
+      transition: all .25s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: #fff3c8;
+      box-shadow: 0 6px 16px rgba(255,213,79,0.55);
+    }
+
+    svg {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 4px rgba(0,0,0,0.15);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 24px;
+      font-size: .9rem;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Vamos começar!<br>Escolha seu idioma favorito.</h1>
+
+  <div class="buttons">
+    <button onclick="setLanguage('pt')">
+      <!-- 🇧🇷 -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        <rect width="640" height="480" fill="#009b3a"/>
+        <polygon fill="#ffdf00" points="320,80 600,240 320,400 40,240"/>
+        <circle cx="320" cy="240" r="96" fill="#002776"/>
+      </svg>
+      Português (BR)
+    </button>
+
+    <button onclick="setLanguage('es')">
+      <!-- 🇪🇸 -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480">
+        <rect width="640" height="480" fill="#aa151b"/>
+        <rect y="120" width="640" height="240" fill="#f1bf00"/>
+      </svg>
+      Español
+    </button>
+
+    <button onclick="setLanguage('en')">
+      <!-- 🇺🇸 -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 7410 3900">
+        <rect width="7410" height="3900" fill="#b22234"/>
+        <path stroke="#fff" stroke-width="300" d="M0 450h7410M0 1050h7410M0 1650h7410M0 2250h7410M0 2850h7410M0 3450h7410"/>
+        <rect width="2964" height="2100" fill="#3c3b6e"/>
+        <g fill="#fff">
+          <g id="s">
+            <polygon points="247,90 316,330 104,165 390,165 178,330"/>
+          </g>
+          <use xlink:href="#s" y="420"/><use xlink:href="#s" y="840"/><use xlink:href="#s" y="1260"/><use xlink:href="#s" y="1680"/>
+          <use xlink:href="#s" x="247" y="210"/><use xlink:href="#s" x="247" y="630"/><use xlink:href="#s" x="247" y="1050"/><use xlink:href="#s" x="247" y="1470"/><use xlink:href="#s" x="247" y="1890"/>
+        </g>
+      </svg>
+      English
+    </button>
+  </div>
+
+  <footer>✨ Pintando a Palavra</footer>
+
+  <script>
+    function setLanguage(lang) {
+      localStorage.setItem("lang", lang);
+      if (lang === "pt") window.location.href = "login.html";
+      else if (lang === "es") window.location.href = "es/login.html";
+      else if (lang === "en") window.location.href = "en/login.html";
+    }
+
+    // Redireciona automaticamente se já tiver idioma salvo
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("lang");
+      if (saved === "pt") window.location.href = "login.html";
+      else if (saved === "es") window.location.href = "es/login.html";
+      else if (saved === "en") window.location.href = "en/login.html";
+    });
+  </script>
+</body>
+</html>
