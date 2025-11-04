@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coloreando la Palabra — Menú</title>
-  <link rel="manifest" href="/manifest.json" />
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
     body {
@@ -86,9 +86,9 @@
     <main>
       <div id="saudacao" class="saudacao">👋 ¡Hola! Bienvenido</div>
       <div class="menu">
-        <button onclick="abrirTela('es/app/index.html','app')">📖 Historias</button>
-        <button onclick="abrirTela('es/atividades/index.html','atividades')">🎨 Actividades</button>
-        <button onclick="abrirTela('es/pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+        <button onclick="abrirTela('app/index.html','app')">📖 Historias</button>
+        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Actividades</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
       </div>
       <h2>Síguenos en las redes sociales</h2>
       <div class="socials">
@@ -115,7 +115,7 @@
     </div>
   </div>
 
-  <!-- 📜 Modal Historia (sin cambios funcionales) -->
+  <!-- 📜 Modal Historia -->
   <div id="storyModal" class="modal-backdrop">
     <div class="modal-box" style="text-align:left;">
       <h2>🚀 ¡Actualización especial!</h2>
@@ -228,7 +228,7 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+      navigator.serviceWorker.register('service-worker.js')
         .then(r => console.log('✅ SW registrado:', r.scope))
         .catch(e => console.error('❌ Error SW:', e));
     }
