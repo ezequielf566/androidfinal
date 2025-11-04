@@ -1,0 +1,15 @@
+{
+  "name": "pintandoapalavra-api",
+  "version": "1.0.0",
+  "main": "api/webhook.js",
+  "type": "module",
+  "scripts": {
+    "start": "node api/webhook.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1"
+  }
+}
