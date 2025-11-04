@@ -4,14 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=portrait">
   <title>Pintando a Palavra — Idioma</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     body {
       margin: 0;
       font-family: 'Fredoka', sans-serif;
-      background: linear-gradient(180deg,#A8D8FF 0%,#DFF3FF 100%);
+      background: linear-gradient(180deg, #7ec8ff 0%, #b3e0ff 50%, #dff6ff 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -19,14 +17,15 @@
       text-align: center;
       height: 100vh;
       overflow: hidden;
-      color: #222;
+      color: #fff;
     }
 
     h1 {
-      font-size: 1.8rem;
-      color: #333;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: #fff;
       margin-bottom: 2.2rem;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
 
     .buttons {
@@ -36,7 +35,7 @@
       justify-content: center;
       gap: 1rem;
       width: 100%;
-      max-width: 300px;
+      max-width: 320px;
     }
 
     button {
@@ -47,19 +46,20 @@
       gap: 12px;
       font-size: 1.2rem;
       font-weight: 600;
-      background: #fffbea;
-      border: 2px solid #FFD54F;
-      border-radius: 18px;
+      background: linear-gradient(180deg, #fffef7 0%, #fff9e6 100%);
+      border: 2px solid #ffd54f;
+      border-radius: 20px;
       padding: 14px 18px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(255,213,79,0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15), 0 0 12px rgba(255, 213, 79, 0.35);
       transition: all .25s ease;
+      color: #333;
     }
 
     button:hover {
       transform: scale(1.05);
-      background: #fff3c8;
-      box-shadow: 0 6px 16px rgba(255,213,79,0.55);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 0 16px rgba(255, 213, 79, 0.55);
+      background: linear-gradient(180deg, #fffbe0 0%, #fff4c4 100%);
     }
 
     svg {
@@ -74,7 +74,8 @@
       position: absolute;
       bottom: 24px;
       font-size: .9rem;
-      color: #555;
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
   </style>
 </head>
