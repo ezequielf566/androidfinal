@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>Coloreando la Palabra — Colorear</title>  
+  <link rel="stylesheet" href="css/style.css" />  
+
+  <style>  
+    /* 🌀 Pantalla de carga */  
+    #loadingOverlay {  
+      position: fixed; inset: 0;  
+      background: #fff9e6;  
+      display: flex; flex-direction: column;  
+      align-items: center; justify-content: center;  
+      z-index: 9999;  
+      transition: opacity .5s ease, visibility .5s ease;  
+    }  
+    #loadingOverlay.hidden { opacity: 0; visibility: hidden; }  
+    .spinner {  
+      width: 60px; height: 60px;  
+      border: 6px solid #ffd54f; border-top: 6px solid transparent;  
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;  
+    }  
+    @keyframes spin { to { transform: rotate(360deg); } }  
+    .loading-text {  
+      font-family: "Fredoka", sans-serif;  
+      font-size: 1.1rem; color: #444; text-align: center;  
+    }  
+
+    /* 🎨 Paleta de colores adicionales */  
+    .palette-popup {  
+      position: fixed;  
+      background: #fff;  
+      border: 2px solid #ffd54f;  
+      border-radius: 14px;  
+      padding: 10px;  
+      display: grid;  
+      grid-template-columns: repeat(6, 28px);  
+      gap: 6px;  
+      box-shadow: 0 6px 16px rgba(0,0,0,.18);  
+      opacity: 0;  
+      pointer-events: none;  
+      transform: translateY(8px) scale(.96);  
+      transition: opacity .2s ease, transform .2s ease;  
+      z-index: 1000;  
+    }  
+    .palette-popup.active {  
+      opacity: 1;  
+      pointer-events: auto;  
+      transform: translateY(0) scale(1);  
+    }  
+
+    .extra-color {  
+      width: 28px; height: 28px;  
+      border-radius: 8px;  
+      cursor: pointer;  
+      border: 2px solid rgba(0,0,0,0.1);  
+      box-shadow: 0 2px 4px rgba(0,0,0,.25);  
+      transition: transform .12s, box-shadow .2s;  
+    }  
+    .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }  
+    .extra-color:active {  
+      transform: scale(.9);  
+      box-shadow: 0 0 0 3px #ffd54f;  
+    }  
+
+    .sw.custom {  
+      width: 36px; height: 36px;  
+      border-radius: 10px !important;  
+      background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb);  
+      background-size: 300% 300%;  
+      animation: hueShift 8s ease infinite;  
+      display: flex; align-items: center; justify-content: center;  
+      font-weight: bold; font-size: 1.4rem;  
+      color: #fff; border: 2px solid #fff;  
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);  
+      transition: box-shadow .3s ease;  
+    }  
+    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }  
+    @keyframes hueShift {  
+      0%,100% { background-position: 0% 50%; }  
+      50% { background-position: 100% 50%; }  
+    }  
+    @keyframes glowPulse {  
+      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }  
+      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }  
+    }  
+  </style>  
+</head>  
+
+<body>  
+  <div id="loadingOverlay">  
+    <div class="spinner"></div>  
+    <div class="loading-text">🎨 Cargando dibujos...</div>  
+  </div>  
+
+  <header class="topbar">  
+    <div id="progressWidget" class="progress-widget">  
+      <div class="counter">  
+        <span id="starCount" class="star-count">00</span>  
+        <span class="sep">/</span>  
+        <span id="totalPages" class="total-pages">00</span>  
+        <span class="star-icon">★</span>  
+        <span id="progressPercent" class="percent">0%</span>  
+      </div>  
+      <div class="progressbar"><div id="progressFill" class="progress-fill"></div></div>  
+      <audio id="starSound" src="assets/sounds/estrela.mp3" preload="auto"></audio>  
+    </div>  
+  </header>  
+
+  <main class="wrap">  
+    <section class="stage">  
+      <div id="svgMount" class="svgMount"></div>  
+    </section>  
+
+    <section class="controls">  
+      <div class="palette">  
+        <div class="swatches" id="swatches">  
+          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>  
+          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>  
+          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>  
+          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>  
+          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>  
+          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>  
+          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>  
+          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>  
+          <button class="sw" data-color="#263238" style="--c:#263238"></button>  
+          <button class="sw custom" id="customColorBtn">+</button>  
+        </div>  
+
+        <div class="tools">  
+          <button id="eraserBtn" class="btn">Borrador</button>  
+          <button id="undoBtn" class="btn">Deshacer</button>  
+          <button id="redoBtn" class="btn">Rehacer</button>  
+          <button id="savePng" class="btn primary">Guardar</button>  
+        </div>  
+
+        <div class="pager">  
+          <button id="prevBtn" class="navbtn">◀</button>  
+          <span id="pageLabel">1 / ?</span>  
+          <button id="nextBtn" class="navbtn">▶</button>  
+        </div>  
+      </div>  
+    </section>  
+  </main>  
+
+  <script src="js/script.js"></script>  
+  <script src="js/patch-gestures-scroll.js"></script>  
+
+  <script>  
+    document.addEventListener("DOMContentLoaded", () => {  
+      const customBtn = document.getElementById("customColorBtn");  
+      let popupRef = null;  
+
+      const EXTRA_COLORS = [  
+        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",  
+        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",  
+        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",  
+        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"  
+      ];  
+
+      function closePopup() {  
+        if (!popupRef) return;  
+        popupRef.remove();  
+        popupRef = null;  
+        customBtn.classList.remove("active");  
+        document.removeEventListener("click", onOutside);  
+        document.removeEventListener("keydown", onEsc);  
+      }  
+
+      function onOutside(e) {  
+        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();  
+      }  
+      function onEsc(e) { if (e.key === "Escape") closePopup(); }  
+
+      function applyColorSafely(color) {  
+        const sendColor = () => {  
+          if (typeof window.setColor === "function") {  
+            window.setColor(color);  
+          } else {  
+            window.currentColor = color;  
+          }  
+          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));  
+        };  
+
+        if (typeof window.setColor === "function") {  
+          sendColor();  
+        } else {  
+          let tries = 0;  
+          const interval = setInterval(() => {  
+            if (typeof window.setColor === "function") {  
+              sendColor();  
+              clearInterval(interval);  
+            } else if (tries++ > 20) {  
+              clearInterval(interval);  
+            }  
+          }, 100);  
+        }  
+      }  
+
+      function openPopupAboveButton(btn) {  
+        closePopup();  
+        const pop = document.createElement("div");  
+        pop.className = "palette-popup";  
+        customBtn.classList.add("active");  
+
+        EXTRA_COLORS.forEach(c => {  
+          const el = document.createElement("div");  
+          el.className = "extra-color";  
+          el.style.background = c;  
+          el.addEventListener("click", () => {  
+            btn.style.background = c;  
+            btn.setAttribute("data-color", c);  
+            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));  
+            btn.classList.add("active");  
+
+            el.style.boxShadow = "0 0 0 3px #ffd54f";  
+            setTimeout(() => el.style.boxShadow = "", 180);  
+
+            applyColorSafely(c);  
+            setTimeout(() => closePopup(), 80);  
+          });  
+          pop.appendChild(el);  
+        });  
+
+        document.body.appendChild(pop);  
+        const br = btn.getBoundingClientRect();  
+        const pw = pop.offsetWidth;  
+        const ph = pop.offsetHeight;  
+        let left = br.left + br.width / 2 - pw / 2;  
+        let top  = br.top - ph - 8;  
+        const margin = 8;  
+        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));  
+        if (top < margin) top = margin;  
+        pop.style.left = `${left}px`;  
+        pop.style.top  = `${top}px`;  
+
+        requestAnimationFrame(() => pop.classList.add("active"));  
+        document.addEventListener("click", onOutside);  
+        document.addEventListener("keydown", onEsc);  
+        popupRef = pop;  
+      }  
+
+      customBtn.addEventListener("click", (e) => {  
+        e.stopPropagation();  
+        if (popupRef) closePopup();  
+        else openPopupAboveButton(customBtn);  
+      });  
+    });  
+
+    // ⏳ Pantalla de carga  
+    const overlay = document.getElementById("loadingOverlay");  
+    const observer = new MutationObserver(() => {  
+      const svgLoaded = document.querySelector("#svgMount svg");  
+      if (svgLoaded) {  
+        setTimeout(() => overlay.classList.add("hidden"), 400);  
+        observer.disconnect();  
+      }  
+    });  
+    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
+  </script>  
+
+  <!-- 🟡 Anuncio automático AdMob (cada 2 minutos) -->
+  <script>
+    const TESTE = true;
+    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
+    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
+
+    function exibirAnuncio() {
+      if (TESTE) {
+        alert("🎬 Anuncio en modo de prueba");
+      } else {
+        console.log("🎬 Mostrando anuncio real:", ADMOB_INTERSTITIAL_ID);
+      }
+    }
+
+    window.addEventListener("load", () => {
+      console.log("⏱️ Temporizador de 2 minutos iniciado");
+      setInterval(exibirAnuncio, 120000);
+    });
+  </script>
+</body>  
+</html>

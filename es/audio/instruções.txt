@@ -1,0 +1,6 @@
+🎶 Instruções — Fundo Musical
+1. Coloque a pasta 'audio' na raiz do seu projeto.
+2. No arquivo 'menu.html', adicione antes do </body>:
+   <script src="audio/audioController.js" defer></script>
+3. Ao abrir o app, o fundo musical iniciará automaticamente.
+4. Ele permanece tocando entre telas e pausa ao minimizar.
