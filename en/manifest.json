@@ -1,0 +1,39 @@
+{
+  "id": "https://pintandoapalavra.vercel.app/en/",
+  "name": "Coloring the Word",
+  "short_name": "Coloring",
+  "description": "Coloring the Word — Christian coloring app for kids",
+  "start_url": "/en/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff9e6",
+  "theme_color": "#ffd54f",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/favicon.ico",
+      "sizes": "48x48 96x96 128x128 256x256",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["education", "kids", "christian", "coloring", "art"],
+  "lang": "en",
+  "dir": "ltr"
+}
