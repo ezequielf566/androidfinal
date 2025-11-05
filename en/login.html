@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pintando a Palavra — Login</title>
+  <title>Coloring the Word — Login</title>
 
   <style>
     body {
@@ -95,9 +95,9 @@
 <body>
   <div class="login-container">
     <img src="./icon-512.png" alt="Logo" class="logo" />
-    <h1>Pintando a Palavra</h1>
-    <p class="subtitle">Colorindo histórias da Bíblia</p>
-    <p class="quote">🌈 “Deixem vir a mim as crianças...” — Mateus 19:14</p>
+    <h1>Coloring the Word</h1>
+    <p class="subtitle">Bringing Bible stories to life</p>
+    <p class="quote">🌈 “Let the little children come to me...” — Matthew 19:14</p>
 
     <button id="loginGoogle" class="google-btn">
       <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
@@ -106,11 +106,11 @@
         <path fill="#4A90E2" d="M9.39 28.8C8.72 26.95 8.33 24.83 8.33 22.5c0-2.33.39-4.45 1.06-6.3L2.04 10.49C.75 13.64 0 17.03 0 20.5c0 7.26 2.99 13.52 7.77 17.87l7.48-5.83c-2.35-1.6-4.05-4.06-4.71-6.74l-.15-.43z"/>
         <path fill="#FBBC05" d="M24 47.5c6.3 0 11.6-2.07 15.46-5.61l-7.48-5.83c-2.13 1.4-4.87 2.2-7.98 2.2c-6.39 0-11.82-3.53-14.61-8.7l-7.35 5.71C6.56 40.76 14.64 47.5 24 47.5z"/>
       </svg>
-      <span>Entrar com Google</span>
+      <span>Sign in with Google</span>
     </button>
 
     <p id="errorMsg" class="error"></p>
-    <p class="footer">✨ Feito com fé por <strong>Pintando a Palavra</strong></p>
+    <p class="footer">✨ Made with faith by <strong>Coloring the Word</strong></p>
   </div>
 
   <div class="spinner" id="spinner"></div>
@@ -148,7 +148,7 @@
 
       localStorage.setItem("displayName", user.displayName || "");
       localStorage.setItem("savedEmail", email);
-      localStorage.setItem("userEmail", email); // ✅ usado pelo Supabase
+      localStorage.setItem("userEmail", email);
       localStorage.setItem("isLogged", "true");
       localStorage.setItem("premium", userData.premium ? "true" : "false");
       localStorage.setItem("removeAds", userData.removeAds ? "true" : "false");
@@ -167,7 +167,7 @@
       } catch (err) {
         spinner.classList.remove("active");
         if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") {
-          errorMsg.textContent = "Login cancelado. Tente novamente.";
+          errorMsg.textContent = "Login canceled. Please try again.";
           errorMsg.classList.add("visible");
           return;
         }
@@ -175,7 +175,7 @@
           await signInWithRedirect(auth, provider);
         } else {
           console.error(err);
-          errorMsg.textContent = "⚠️ Erro ao autenticar com o Google. Tente novamente.";
+          errorMsg.textContent = "⚠️ Error signing in with Google. Please try again.";
           errorMsg.classList.add("visible");
         }
       }
