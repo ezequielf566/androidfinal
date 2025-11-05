@@ -1,11 +1,11 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA) -->
+<!-- 🔸 Coloring the Word — FINAL Menu (with Audio + Firebase + PWA) -->
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pintando a Palavra — Menu</title>
-  <link rel="manifest" href="/manifest.json" />
+  <title>Coloring the Word — Menu</title>
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
     body {
@@ -69,28 +69,28 @@
   <div id="menuContainer">
     <header>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="notif-icon" title="História do Projeto" onclick="window.openStoryModal()">
+        <div class="notif-icon" title="Project Story" onclick="window.openStoryModal()">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <path d="M3 8l9 6 9-6"></path>
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
           </svg>
         </div>
-        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
+        <div class="diamond" id="diamondBtn" title="Support Project">💎</div>
       </div>
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
-        <button id="logoutBtn" class="btn">🚪 Sair</button>
+        <button id="installBtn" class="btn" style="display:none;">📲 Install App</button>
+        <button id="logoutBtn" class="btn">🚪 Log Out</button>
       </div>
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao">👋 Olá! Seja bem-vindo</div>
+      <div id="saudacao" class="saudacao">👋 Hello! Welcome</div>
       <div class="menu">
-        <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
-        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
-        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+        <button onclick="abrirTela('app/index.html','app')">📖 Bible Stories</button>
+        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Activities</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Complete PDFs</button>
       </div>
-      <h2>Siga-nos nas redes sociais</h2>
+      <h2>Follow us on social media</h2>
       <div class="socials">
         <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
         <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
@@ -100,31 +100,32 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto (Kiwify) -->
+  <!-- 💎 Support Project Modal (Kiwify) -->
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
-      <h2 style="text-align:center;margin:0 0 10px;">Seja Premium</h2>
+      <h2 style="text-align:center;margin:0 0 10px;">Become Premium</h2>
       <p>
-        Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar mais famílias. 💛
+        Remove ads and be part of this purpose.  
+        With your support, we can keep everything free and reach more families. 💛
       </p>
       <div class="support-actions" style="margin-top:0.6rem; display:flex; justify-content:center; gap:.45rem;">
-        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
-        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
+        <button class="btn" onclick="window.closeSupportModal()">Not now</button>
+        <button class="btn" id="btnApoiar">💳 Support now</button>
       </div>
     </div>
   </div>
 
-  <!-- 📜 Modal História (inalterado) -->
+  <!-- 📜 Update Modal -->
   <div id="storyModal" class="modal-backdrop">
     <div class="modal-box" style="text-align:left;">
-      <h2>🚀 Atualização especial!</h2>
+      <h2>🚀 Special Update!</h2>
       <p>
-        • Uso off-line agora disponível<br>
-        • Design reformulado e mais leve<br>
-        • Paleta atualizada<br>
-        • Novos conteúdos e histórias adicionadas!
+        • Offline mode now available<br>
+        • Refreshed and lighter design<br>
+        • Updated color palette<br>
+        • New stories and lessons added!
       </p>
-      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
+      <button class="btn" onclick="window.closeStoryModal()">Close</button>
     </div>
   </div>
 
@@ -163,12 +164,12 @@
 
     diamondBtn.addEventListener("click", window.openSupportModal);
 
-    // 👤 Login + saudação
+    // 👤 Login + Greeting
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        const firstName = user.displayName?.split(" ")[0] || "Friend";
         setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>We're so glad you're here 💛`;
           saudacao.style.opacity = "1";
         }, 400);
 
@@ -184,13 +185,13 @@
       window.location.replace("seletor.html");
     });
 
-    // 💳 Abrir checkout Kiwify dentro do app
+    // 💳 Open Kiwify Checkout
     document.getElementById("btnApoiar").addEventListener("click", () => {
       window.closeSupportModal();
       window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
     });
 
-    // 📲 Instalação PWA
+    // 📲 PWA Installation
     let deferredPrompt;
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -205,7 +206,7 @@
       }
     });
 
-    // 🔹 Navegação interna (iframe)
+    // 🔹 Internal Navigation (iframe)
     function abrirTela(src, tela) {
       const menu = document.getElementById("menuContainer");
       const iframe = document.getElementById("conteudo");
@@ -227,9 +228,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(r => console.log('✅ SW registrado:', r.scope))
-        .catch(e => console.error('❌ SW erro:', e));
+      navigator.serviceWorker.register('service-worker.js')
+        .then(r => console.log('✅ SW registered:', r.scope))
+        .catch(e => console.error('❌ SW error:', e));
     }
   </script>
 </body>
