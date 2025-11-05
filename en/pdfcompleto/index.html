@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PDFs Completos</title>
+  <title>Complete PDFs</title>
 
   <style>
     :root {
@@ -43,7 +43,7 @@
       box-shadow:0 2px 8px rgba(0,0,0,.08);
     }
 
-    /* ✅ Grade fixa 2x2 */
+    /* ✅ Fixed 2x2 Grid */
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -91,51 +91,51 @@
   </style>
 </head>
 <body>
-  <header><h1>PDFs Completos</h1></header>
+  <header><h1>Complete PDFs</h1></header>
 
   <main>
-    <p class="intro">Acesse os PDFs completos das histórias e parábolas da Bíblia.</p>
+    <p class="intro">Access complete PDF books with Bible stories and parables for children.</p>
     <section class="grid" id="gridFree"></section>
   </main>
 
   <script>
     const FREE = [
-      { title:'Céu — A bela casa de Deus', cover:'img/ceu.png', file:'ceu.pdf' },
-      { title:'O nascimento da Igreja', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf' },
-      { title:'Jesus alimenta 5.000 pessoas', cover:'img/jesus-alimenta.png', file:'jesus-alimenta.pdf' },
-      { title:'Jesus, o grande mestre', cover:'img/jesus-mestre.png', file:'jesus-mestre.pdf' },
-      { title:'Sansão — Um forte homem de Deus', cover:'img/samson.png', file:'samson.pdf' },
-      { title:'O Bom Samaritano', cover:'img/bom-samaritano.png', file:'bom-samaritano.pdf' },
-      { title:'A Ovelha Perdida', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf' },
-      { title:'Jesus cura um cego', cover:'img/jesus-cego.png', file:'jesus-cego.pdf' },
-      { title:'Início da tristeza do homem', cover:'img/tristeza.png', file:'tristeza.pdf' },
-      { title:'Jesus acalma a tempestade', cover:'img/tempestade.png', file:'tempestade.pdf' },
-      { title:'Quando Deus criou todas as coisas', cover:'img/criacao.png', file:'criacao.pdf' },
-      { title:'Jonas e o grande peixe', cover:'img/jonas.png', file:'jonas.pdf' },
+      { title:'Heaven — God’s Beautiful Home', cover:'img/ceu.png', file:'ceu.pdf' },
+      { title:'The Birth of the Church', cover:'img/nascimento-igreja.png', file:'nascimento-igreja.pdf' },
+      { title:'Jesus Feeds 5,000 People', cover:'img/jesus-alimenta.png', file:'jesus-alimenta.pdf' },
+      { title:'Jesus, the Great Teacher', cover:'img/jesus-mestre.png', file:'jesus-mestre.pdf' },
+      { title:'Samson — A Strong Man of God', cover:'img/samson.png', file:'samson.pdf' },
+      { title:'The Good Samaritan', cover:'img/bom-samaritano.png', file:'bom-samaritano.pdf' },
+      { title:'The Lost Sheep', cover:'img/ovelha-perdida.png', file:'ovelha-perdida.pdf' },
+      { title:'Jesus Heals a Blind Man', cover:'img/jesus-cego.png', file:'jesus-cego.pdf' },
+      { title:'The Beginning of Man’s Sorrow', cover:'img/tristeza.png', file:'tristeza.pdf' },
+      { title:'Jesus Calms the Storm', cover:'img/tempestade.png', file:'tempestade.pdf' },
+      { title:'When God Created Everything', cover:'img/criacao.png', file:'criacao.pdf' },
+      { title:'Jonah and the Big Fish', cover:'img/jonas.png', file:'jonas.pdf' },
       { title:'Daniel', cover:'img/daniel.png', file:'daniel.pdf' },
-      { title:'Jesus e Lázaro', cover:'img/lazaro.png', file:'lazaro.pdf' },
-      { title:'O Semeador', cover:'img/semeador.png', file:'semeador.pdf' }
+      { title:'Jesus and Lazarus', cover:'img/lazaro.png', file:'lazaro.pdf' },
+      { title:'The Sower', cover:'img/semeador.png', file:'semeador.pdf' }
     ];
 
     const gridFree = document.getElementById('gridFree');
     gridFree.innerHTML = FREE.map(item => `
       <article class="card">
-        <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
+        <img class="cover" src="${item.cover}" alt="Cover ${item.title}" loading="lazy">
+        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Free Download</a>
       </article>
     `).join('');
 
     // 🟡 AdMob IDs
-    const TESTE = true; // altere pra false após aprovação
+    const TESTE = true; // change to false after approval
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    // 🟢 Exibição de anúncio a cada 2 downloads
+    // 🟢 Show ad every 2 downloads
     function exibirAnuncio() {
       if (TESTE) {
-        alert("🎬 Anúncio em exibição (modo de teste)");
+        alert("🎬 Showing ad (test mode)");
       } else {
-        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
+        console.log("🎬 Showing real ad:", ADMOB_INTERSTITIAL_ID);
       }
     }
 
