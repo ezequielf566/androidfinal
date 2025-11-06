@@ -97,28 +97,32 @@
   </main>
 
   <script>
-    // 🟢 Lista de actividades (4 primeras)
+    // 🟢 Lista de actividades (mismos archivos, traducidos)
     const ATIVIDADES = [
-      { title:'Sopa de Letras — Historias de la Biblia', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
-      { title:'Une los Puntos — La Creación', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
-      { title:'Crucigrama Bíblico — Jesús y los Discípulos', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
-      { title:'Colorea el Dibujo — El Arca de Noé', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' }
+      { title:'Sopa de Letras — Historias de la Biblia', cover:'img/caca-palavras.png', file:'pdfs/caca-palavras.pdf' },
+      { title:'Une los Puntos — La Creación', cover:'img/ligar-pontos.png', file:'pdfs/ligar-pontos.pdf' },
+      { title:'Cruzada Bíblica — Jesús y los Discípulos', cover:'img/cruzadinha.png', file:'pdfs/cruzadinha.pdf' },
+      { title:'Colorea el Dibujo — El Arca de Noé', cover:'img/pinte-noe.png', file:'pdfs/pinte-noe.pdf' },
+      { title:'Une y Descubre — Personajes Bíblicos', cover:'img/ligue-descubra.png', file:'pdfs/ligue-descubra.pdf' },
+      { title:'Encuentra las Parejas — Parábolas de Jesús', cover:'img/ache-pares.png', file:'pdfs/ache-pares.pdf' },
+      { title:'Completa la Palabra — Versículos Famosos', cover:'img/complete-palavra.png', file:'pdfs/complete-palavra.pdf' },
+      { title:'Colorea y Ora — El Padre Nuestro', cover:'img/pinte-ore.png', file:'pdfs/pinte-ore.pdf' }
     ];
 
     const grid = document.getElementById('gridAtividades');
     grid.innerHTML = ATIVIDADES.map(item => `
       <article class="card">
         <img class="cover" src="${item.cover}" alt="Portada ${item.title}" loading="lazy">
-        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Descarga gratuita</a>
+        <a href="${item.file}" target="_blank" class="btn">📗 Descarga gratuita</a>
       </article>
     `).join('');
 
-    // 🟡 Configuración de AdMob
-    const TESTE = true; // cambiar a false después de la publicación
+    // 🟡 AdMob Configuración
+    const TESTE = true; // cambiar a false después de publicar
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    function exibirAnuncio() {
+    function mostrarAnuncio() {
       if (TESTE) {
         alert("🎬 Anuncio en modo de prueba");
       } else {
@@ -127,10 +131,10 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      const botoes = document.querySelectorAll(".btn");
-      botoes.forEach((btn, i) => {
+      const botones = document.querySelectorAll(".btn");
+      botones.forEach((btn, i) => {
         btn.addEventListener("click", () => {
-          if (i % 2 === 1) exibirAnuncio();
+          if (i % 2 === 1) mostrarAnuncio();
         });
       });
     });
