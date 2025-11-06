@@ -97,23 +97,23 @@
   </main>
 
   <script>
-    // 🟢 Lista de atividades — agora com 8 itens
+    // 🟢 Lista de atividades — agora com 8 itens exclusivos
     const ATIVIDADES = [
-      { title:'Caça Palavras — Histórias da Bíblia', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
-      { title:'Ligar os Pontos — Criação', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
-      { title:'Cruzadinha Bíblica — Jesus e os Discípulos', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
-      { title:'Pinte o Desenho — Arca de Noé', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' },
-      { title:'Ligue e Descubra — Personagens Bíblicos', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
-      { title:'Ache os Pares — Parábolas de Jesus', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
-      { title:'Complete a Palavra — Versículos Famosos', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
-      { title:'Pinte e Ore — Oração do Pai Nosso', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' }
+      { title:'Caça Palavras — Histórias da Bíblia', cover:'img/caca-palavras.png', file:'pdfs/caca-palavras.pdf' },
+      { title:'Ligar os Pontos — Criação', cover:'img/ligar-pontos.png', file:'pdfs/ligar-pontos.pdf' },
+      { title:'Cruzadinha Bíblica — Jesus e os Discípulos', cover:'img/cruzadinha.png', file:'pdfs/cruzadinha.pdf' },
+      { title:'Pinte o Desenho — Arca de Noé', cover:'img/pinte-noe.png', file:'pdfs/pinte-noe.pdf' },
+      { title:'Ligue e Descubra — Personagens Bíblicos', cover:'img/ligue-descubra.png', file:'pdfs/ligue-descubra.pdf' },
+      { title:'Ache os Pares — Parábolas de Jesus', cover:'img/ache-pares.png', file:'pdfs/ache-pares.pdf' },
+      { title:'Complete a Palavra — Versículos Famosos', cover:'img/complete-palavra.png', file:'pdfs/complete-palavra.pdf' },
+      { title:'Pinte e Ore — Oração do Pai Nosso', cover:'img/pinte-ore.png', file:'pdfs/pinte-ore.pdf' }
     ];
 
     const grid = document.getElementById('gridAtividades');
     grid.innerHTML = ATIVIDADES.map(item => `
       <article class="card">
         <img class="cover" src="${item.cover}" alt="Capa ${item.title}" loading="lazy">
-        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
+        <a href="${item.file}" target="_blank" class="btn">📗 Download gratuito</a>
       </article>
     `).join('');
 
