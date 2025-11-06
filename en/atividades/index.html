@@ -92,45 +92,49 @@
   <header><h1>Bible Activities</h1></header>
 
   <main>
-    <p class="intro">Download free printable Bible activities and learn while having fun!</p>
+    <p class="intro">Download Bible activities to print and learn while having fun!</p>
     <section class="grid" id="gridAtividades"></section>
   </main>
 
   <script>
-    // 🟢 Activity list (first 4 only)
+    // 🟢 Same 8 activities (translated titles, same file paths)
     const ATIVIDADES = [
-      { title:'Word Search — Bible Stories', cover:'img/caca-palavras.png', file:'caca-palavras.pdf' },
-      { title:'Connect the Dots — Creation', cover:'img/ligar-pontos.png', file:'ligar-pontos.pdf' },
-      { title:'Bible Crossword — Jesus and His Disciples', cover:'img/cruzadinha.png', file:'cruzadinha.pdf' },
-      { title:'Color the Drawing — Noah’s Ark', cover:'img/pinte-noe.png', file:'pinte-noe.pdf' }
+      { title:'Word Search — Bible Stories', cover:'img/caca-palavras.png', file:'pdfs/caca-palavras.pdf' },
+      { title:'Connect the Dots — Creation', cover:'img/ligar-pontos.png', file:'pdfs/ligar-pontos.pdf' },
+      { title:'Bible Crossword — Jesus and His Disciples', cover:'img/cruzadinha.png', file:'pdfs/cruzadinha.pdf' },
+      { title:'Color the Drawing — Noah’s Ark', cover:'img/pinte-noe.png', file:'pdfs/pinte-noe.pdf' },
+      { title:'Match and Discover — Bible Characters', cover:'img/ligue-descubra.png', file:'pdfs/ligue-descubra.pdf' },
+      { title:'Find the Pairs — Parables of Jesus', cover:'img/ache-pares.png', file:'pdfs/ache-pares.pdf' },
+      { title:'Complete the Word — Famous Verses', cover:'img/complete-palavra.png', file:'pdfs/complete-palavra.pdf' },
+      { title:'Color and Pray — The Lord’s Prayer', cover:'img/pinte-ore.png', file:'pdfs/pinte-ore.pdf' }
     ];
 
     const grid = document.getElementById('gridAtividades');
     grid.innerHTML = ATIVIDADES.map(item => `
       <article class="card">
         <img class="cover" src="${item.cover}" alt="Cover ${item.title}" loading="lazy">
-        <a href="pdfs/${item.file}" target="_blank" class="btn">📗 Free Download</a>
+        <a href="${item.file}" target="_blank" class="btn">📗 Free Download</a>
       </article>
     `).join('');
 
-    // 🟡 AdMob Config
-    const TESTE = true; // change to false after publishing
+    // 🟡 AdMob Settings
+    const TESTE = true; // change to false before publishing
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
-    function exibirAnuncio() {
+    function showAd() {
       if (TESTE) {
-        alert("🎬 Showing ad (test mode)");
+        alert("🎬 Test Ad Displayed");
       } else {
         console.log("🎬 Showing real ad:", ADMOB_INTERSTITIAL_ID);
       }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      const botoes = document.querySelectorAll(".btn");
-      botoes.forEach((btn, i) => {
+      const buttons = document.querySelectorAll(".btn");
+      buttons.forEach((btn, i) => {
         btn.addEventListener("click", () => {
-          if (i % 2 === 1) exibirAnuncio();
+          if (i % 2 === 1) showAd();
         });
       });
     });
