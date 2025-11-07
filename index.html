@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu (versão TWA + Atualização Inteligente + Modais otimizados) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com modal de atualização funcional) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,6 +7,7 @@
   <title>Pintando a Palavra — Menu</title>
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
+
   <style>
     body {
       margin: 0;
@@ -15,77 +16,172 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: linear-gradient(180deg,#fff7d1 0%,#fff3bf 40%,#fff9e6 100%);
+      background: linear-gradient(180deg, #fff7d1 0%, #fff3bf 40%, #fff9e6 100%);
+      background-attachment: fixed;
       overflow-x: hidden;
     }
+
     header {
-      background: linear-gradient(90deg,#ffd54f,#ffea80);
+      background: linear-gradient(90deg, #ffd54f, #ffea80);
       padding: .8rem 1.2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      position: sticky;top: 0;z-index: 20;
-      border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
     }
-    .left-icons {display:flex;align-items:center;gap:10px;}
-    .notif-icon,.update-icon {
-      cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;
+
+    .notif-icon,
+    .refresh-icon {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
     }
-    .notif-icon:hover svg,.update-icon:hover svg,.diamond:hover{transform:scale(1.15);}
-    .notif-icon svg,.update-icon svg{
-      width:26px;height:26px;stroke:#444;
-      filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));
+
+    .notif-icon:hover svg,
+    .refresh-icon:hover svg {
+      transform: scale(1.1);
     }
-    .diamond{
-      font-size:1.5rem;cursor:pointer;
-      animation:spinDiamond 3.5s linear infinite;
-      display:flex;align-items:center;justify-content:center;
+
+    .notif-icon svg,
+    .refresh-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: #444;
+      filter: drop-shadow(0 0 4px rgba(255, 213, 79, 0.6));
     }
-    @keyframes spinDiamond{
-      0%{transform:rotateY(0deg);}
-      50%{transform:rotateY(180deg);}
-      100%{transform:rotateY(360deg);}
+
+    /* 🔁 Animação fixa de balanço */
+    .refresh-icon {
+      margin-left: 10px;
+      animation: swing 2.5s ease-in-out infinite;
     }
-    .update-alert{
-      background:#fffbe6;color:#333;padding:6px 14px;border-radius:12px;
-      font-weight:600;font-family:'Fredoka',sans-serif;
-      box-shadow:0 2px 6px rgba(0,0,0,0.2);
-      position:fixed;top:70px;left:50%;transform:translateX(-50%);
-      opacity:0;transition:opacity .4s ease;font-size:.9rem;z-index:1500;
+
+    @keyframes swing {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(8deg); }
+      75% { transform: rotate(-8deg); }
     }
-    .shake{animation:shake 0.6s ease-in-out infinite alternate;}
-    @keyframes shake{
-      0%,100%{transform:translateX(0);}
-      25%{transform:translateX(-2px);}
-      75%{transform:translateX(2px);}
+
+    .diamond {
+      margin-left: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      animation: spinDiamond 3.5s linear infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
     }
-    header .btn{
-      background:#fff;border:none;padding:.6rem 1rem;border-radius:12px;cursor:pointer;
-      font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);transition:.25s;
-      display:flex;align-items:center;gap:6px;
+
+    @keyframes spinDiamond {
+      0% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg); }
+      100% { transform: rotateY(360deg); }
     }
-    header .btn:hover{transform:scale(1.05);background:#fff7d1;}
-    main{flex:1;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 3rem;text-align:center;}
-    .saudacao{
-      font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;
-      background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;
-      box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);
-      display:inline-block;opacity:0;transition:opacity .6s ease;
+
+    .diamond:hover { transform: scale(1.15); }
+
+    header .btn {
+      background: #fff;
+      border: none;
+      padding: .6rem 1.1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all .25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
-    .menu button{background:#ffd54f;border:none;padding:1rem;border-radius:16px;
-      font-size:1.15rem;font-weight:700;cursor:pointer;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 10px rgba(0,0,0,.15);
-      transition:.25s;}
-    .menu button:hover{transform:scale(1.03);background:#ffe066;}
-    .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
-    .socials button{
-      background:#fffbe6;border:2px solid #ffe066;border-radius:14px;
-      padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;
-      transition:.25s;box-shadow:0 3px 6px rgba(0,0,0,.1);
+
+    header .btn:hover {
+      transform: scale(1.05);
+      background: #fff7d1;
     }
-    .socials button:hover{background:#fff2b3;transform:scale(1.05);}
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1rem 3rem;
+      text-align: center;
+    }
+
+    .saudacao {
+      font-size: 1.6rem;
+      color: #222;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 1rem 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      display: inline-block;
+      opacity: 0;
+      transition: opacity .6s ease;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .menu button {
+      background: #ffd54f;
+      border: none;
+      padding: 1rem;
+      border-radius: 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                  0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: all .25s ease;
+    }
+
+    .menu button:hover {
+      transform: scale(1.03);
+      background: #ffe066;
+    }
+
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .socials button {
+      background: #fffbe6;
+      border: 2px solid #ffe066;
+      border-radius: 14px;
+      padding: .7rem 1.3rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .25s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .socials button:hover {
+      background: #fff2b3;
+      transform: scale(1.05);
+    }
+
+    /* 🪟 Modal de atualização */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -96,13 +192,11 @@
       justify-content: center;
       z-index: 1200;
       opacity: 0;
-      transition: opacity 0.3s ease;
-      padding: 16px;
+      transition: opacity .3s ease;
     }
-    .modal-backdrop.open {
-      display: flex;
-      opacity: 1;
-    }
+
+    .modal-backdrop.open { display: flex; opacity: 1; }
+
     .modal-box {
       background: linear-gradient(180deg, #FFF8DC 0%, #FFEBA3 100%);
       border-radius: 22px;
@@ -110,15 +204,15 @@
       width: min(90%, 420px);
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
       text-align: center;
-      margin-top: -40px;
-      animation: fadeIn 0.4s ease;
     }
+
     .modal-box h2 {
       margin-top: 0;
       margin-bottom: 12px;
       font-size: 1.4rem;
       color: #222;
     }
+
     .modal-box p {
       color: #333;
       font-size: 1rem;
@@ -126,154 +220,106 @@
       margin: 0 auto 16px;
       padding: 0 6px;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    .btn-modal {
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #ffd54f;
+      color: #222;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .btn-modal:hover {
+      transform: scale(1.03);
+      background: #ffe066;
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="left-icons">
-      <div class="notif-icon" title="História do Projeto" onclick="window.openStoryModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M3 8l9 6 9-6"></path><path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
-        </svg>
+  <div id="menuContainer">
+    <header>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="notif-icon" title="História do Projeto">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l9 6 9-6"></path>
+            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+          </svg>
+        </div>
+        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
+        <div class="refresh-icon" id="refreshBtn" title="Atualizar">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </div>
       </div>
-      <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
-      <div class="update-icon" id="updateIcon" title="Atualizar app">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline>
-          <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path><path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path>
-        </svg>
+
+      <div style="display:flex;gap:0.5rem;margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button id="logoutBtn" class="btn">🚪 Sair</button>
       </div>
-    </div>
-    <div class="right-buttons">
-      <button id="logoutBtn" class="btn">🚪 Sair</button>
-    </div>
-  </header>
+    </header>
 
-  <div id="updateAlert" class="update-alert"></div>
+    <main>
+      <div id="saudacao" class="saudacao">👋 Olá! Seja bem-vindo</div>
+      <div class="menu">
+        <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
+        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+      </div>
+      <h2>Siga-nos nas redes sociais</h2>
+      <div class="socials">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
+  </div>
 
-  <main>
-    <div id="saudacao" class="saudacao">👋 Olá! Seja bem-vindo</div>
-    <div class="menu">
-      <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
-      <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
-      <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
-    </div>
-    <h2>Siga-nos nas redes sociais</h2>
-    <div class="socials">
-      <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
-      <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
-    </div>
-  </main>
+  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Modal Apoiar Projeto -->
-  <div id="supportModal" class="modal-backdrop">
+  <!-- 🪟 Modal de atualização -->
+  <div id="updateModal" class="modal-backdrop">
     <div class="modal-box">
-      <h2>💛 Seja Premium</h2>
-      <p>Remova os anúncios e apoie este propósito! Sua ajuda mantém tudo gratuito e alcança mais famílias.🙏</p>
-      <div style="margin-top:1rem;display:flex;gap:.5rem;justify-content:center;">
-        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
-        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
-      </div>
+      <h2>🚀 Atualização especial disponível!</h2>
+      <p>
+        Sempre que este botão aparecer, toque em <strong>“Atualizar agora”</strong><br>
+        para garantir que o Pintando a Palavra carregue a versão mais recente.<br><br>
+        Às vezes é preciso apertar o botão <strong>até 5 vezes</strong> pra completar a atualização.<br><br>
+        💡 Depois, volte à tela inicial pra conferir se tudo foi atualizado certinho.
+      </p>
+      <button class="btn-modal" id="btnAtualizar">🔄 Atualizar agora</button>
     </div>
   </div>
 
-  <!-- 📜 Modal História / Atualização -->
-  <div id="storyModal" class="modal-backdrop">
-    <div class="modal-box" style="text-align:left;">
-      <h2>🚀 Atualização especial!</h2>
-      <p>• Uso off-line disponível<br>
-         • Design reformulado<br>
-         • Paleta atualizada<br>
-         • Novos conteúdos!</p>
-      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
-    </div>
-  </div>
+  <script>
+    const refreshBtn = document.getElementById("refreshBtn");
+    const updateModal = document.getElementById("updateModal");
+    const btnAtualizar = document.getElementById("btnAtualizar");
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
-    };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const diamondBtn = document.getElementById("diamondBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const saudacao = document.getElementById("saudacao");
-    const supportModal = document.getElementById("supportModal");
-    const storyModal = document.getElementById("storyModal");
-    const updateIcon = document.getElementById("updateIcon");
-    const updateAlert = document.getElementById("updateAlert");
-
-    window.openSupportModal = () => supportModal.classList.add("open");
-    window.closeSupportModal = () => supportModal.classList.remove("open");
-    window.openStoryModal = () => storyModal.classList.add("open");
-    window.closeStoryModal = () => storyModal.classList.remove("open");
-
-    diamondBtn.addEventListener("click", window.openSupportModal);
-    document.getElementById("btnApoiar").addEventListener("click", () => {
-      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
+    refreshBtn.addEventListener("click", () => {
+      updateModal.classList.add("open");
     });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Amigo";
-        setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
-          saudacao.style.opacity = "1";
-        }, 400);
-        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
-        const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
-      } else window.location.replace("seletor.html");
+    btnAtualizar.addEventListener("click", async () => {
+      let count = 0;
+      const reloadInterval = setInterval(() => {
+        if (count < 3) {
+          location.reload(true);
+          count++;
+        } else {
+          clearInterval(reloadInterval);
+          updateModal.classList.remove("open");
+        }
+      }, 1000);
     });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      localStorage.clear();
-      window.location.replace("seletor.html");
-    });
-
-    // 🔁 Atualização inteligente (com reload triplo)
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/service-worker.js").then((reg) => {
-        reg.onupdatefound = () => {
-          const newWorker = reg.installing;
-          newWorker.onstatechange = () => {
-            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              updateIcon.classList.add("shake");
-              updateAlert.textContent = "✨ Nova versão disponível!";
-              updateAlert.style.opacity = "1";
-            }
-          };
-        };
-        updateIcon.addEventListener("click", () => {
-          updateAlert.textContent = "🔄 Atualização encontrada, recarregando...";
-          updateIcon.classList.remove("shake");
-          let tries = 0;
-          const reloadTry = () => {
-            tries++;
-            window.location.reload();
-            if (tries < 3) setTimeout(reloadTry, 2000);
-          };
-          reloadTry();
-        });
-      });
-    }
   </script>
 </body>
 </html>
