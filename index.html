@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL com Atualização Inteligente -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -29,41 +29,37 @@
       position: sticky;top: 0;z-index: 20;
       border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
     }
-    .notif-icon {cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
-    .notif-icon:hover svg{transform:scale(1.1);}
-    .notif-icon svg{width:28px;height:28px;stroke:#444;filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));}
-    .diamond{margin-left:10px;font-size:1.5rem;cursor:pointer;animation:spinDiamond 3.5s linear infinite;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
-    @keyframes spinDiamond{0%{transform:rotateY(0deg);}50%{transform:rotateY(180deg);}100%{transform:rotateY(360deg);}}
-    .diamond:hover{transform:scale(1.15);}
-    header .btn{background:#fff;border:none;padding:.6rem 1.1rem;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);transition:all .25s ease;display:flex;align-items:center;gap:6px;}
-    header .btn:hover{transform:scale(1.05);background:#fff7d1;}
-    main{flex:1;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 3rem;text-align:center;}
-    .saudacao{
-      font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;
-      background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;
-      box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);
-      display:inline-block;opacity:0;transition:opacity .6s ease;
+    .notif-icon, .update-icon {
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .2s ease;
     }
-    .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
-    .menu button{background:#ffd54f;border:none;padding:1rem;border-radius:16px;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);transition:all .25s ease;}
-    .menu button:hover{transform:scale(1.03);background:#ffe066;}
-    .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
-    .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
-    .socials button:hover{background:#fff2b3;transform:scale(1.05);}
-    .modal-backdrop{
-      position:fixed;inset:0;background:rgba(255,240,180,0.45);
-      backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
-      z-index:1200;padding:16px;opacity:0;transition:opacity .3s ease;
+    .notif-icon:hover svg, .update-icon:hover svg, .diamond:hover {transform:scale(1.15);}
+    .notif-icon svg, .update-icon svg {
+      width:26px;
+      height:26px;
+      stroke:#444;
+      filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));
     }
-    .modal-backdrop.open{display:flex;opacity:1;}
-    .modal-box{
-      background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
-      border-radius:20px;padding:14px 16px 18px;width:min(90%,460px);
-      box-shadow:0 8px 24px rgba(0,0,0,0.25);
-      text-align:center;
+    .diamond {
+      margin-left:10px;
+      font-size:1.5rem;
+      cursor:pointer;
+      animation:spinDiamond 3.5s linear infinite;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform-style:preserve-3d;
     }
-    .modal-box p{line-height:1.35;color:#333;font-size:1rem;text-align:left;margin:0;}
-    .update-alert{
+    @keyframes spinDiamond {
+      0% {transform:rotateY(0deg);}
+      50% {transform:rotateY(180deg);}
+      100% {transform:rotateY(360deg);}
+    }
+
+    .update-alert {
       background:#fffbe6;
       color:#333;
       padding:8px 14px;
@@ -73,8 +69,93 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.2);
       margin-left:10px;
       opacity:0;
-      transition:opacity .3s ease;
+      transition:opacity .4s ease, transform .4s ease;
+      font-size:0.9rem;
     }
+    .shake {
+      animation: shake 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes shake {
+      0% {transform:translateX(0);}
+      25% {transform:translateX(-2px);}
+      50% {transform:translateX(2px);}
+      75% {transform:translateX(-2px);}
+      100% {transform:translateX(0);}
+    }
+
+    header .btn {
+      background:#fff;
+      border:none;
+      padding:.6rem 1.1rem;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      transition:all .25s ease;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    header .btn:hover {transform:scale(1.05);background:#fff7d1;}
+    main {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:2.5rem 1rem 3rem;
+      text-align:center;
+    }
+    .saudacao {
+      font-size:1.6rem;
+      color:#222;
+      font-weight:600;
+      margin-bottom:2rem;
+      background:rgba(255,255,255,0.6);
+      padding:1rem 1.5rem;
+      border-radius:16px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);
+      backdrop-filter:blur(5px);
+      display:inline-block;
+      opacity:0;
+      transition:opacity .6s ease;
+    }
+    .menu {
+      display:flex;
+      flex-direction:column;
+      gap:1.2rem;
+      width:100%;
+      max-width:340px;
+    }
+    .menu button {
+      background:#ffd54f;
+      border:none;
+      padding:1rem;
+      border-radius:16px;
+      font-size:1.15rem;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);
+      transition:all .25s ease;
+    }
+    .menu button:hover {transform:scale(1.03);background:#ffe066;}
+    .socials {
+      display:flex;
+      justify-content:center;
+      gap:1rem;
+      margin-top:1.5rem;
+    }
+    .socials button {
+      background:#fffbe6;
+      border:2px solid #ffe066;
+      border-radius:14px;
+      padding:.7rem 1.3rem;
+      font-size:1rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:all .25s ease;
+      box-shadow:0 3px 6px rgba(0,0,0,0.1);
+    }
+    .socials button:hover {background:#fff2b3;transform:scale(1.05);}
   </style>
 </head>
 <body>
@@ -88,9 +169,17 @@
           </svg>
         </div>
         <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
-        <button id="updateBtn" class="btn" style="margin-left:10px;">🔄 Atualizar</button>
+        <div class="update-icon" id="updateIcon" title="Atualizar app" style="margin-left:10px;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0114.13-3.36L23 10"></path>
+            <path d="M20.49 15a9 9 0 01-14.13 3.36L1 14"></path>
+          </svg>
+        </div>
         <div id="updateAlert" class="update-alert">✨ Nova versão disponível!</div>
       </div>
+
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
         <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
         <button id="logoutBtn" class="btn">🚪 Sair</button>
@@ -115,146 +204,47 @@
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
   <!-- 💎 Modal Apoiar Projeto -->
-  <div id="supportModal" class="modal-backdrop">
-    <div class="modal-box">
-      <h2 style="text-align:center;margin:0 0 10px;">Seja Premium</h2>
-      <p>Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar mais famílias. 💛</p>
-      <div class="support-actions" style="margin-top:0.6rem; display:flex; justify-content:center; gap:.45rem;">
-        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
-        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
-      </div>
-    </div>
-  </div>
+  <div id="supportModal" class="modal-backdrop"></div>
 
-  <!-- 📜 Modal História -->
-  <div id="storyModal" class="modal-backdrop">
-    <div class="modal-box" style="text-align:left;">
-      <h2>🚀 Atualização especial!</h2>
-      <p>• Uso off-line agora disponível<br>• Design reformulado e mais leve<br>• Paleta atualizada<br>• Novos conteúdos e histórias adicionadas!</p>
-      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
-    </div>
-  </div>
-
-  <script src="audio/audioController.js" defer></script>
-  <script type="module" src="/billing.js"></script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const diamondBtn = document.getElementById("diamondBtn");
-    const updateBtn = document.getElementById("updateBtn");
-    const updateAlert = document.getElementById("updateAlert");
-    const supportModal = document.getElementById("supportModal");
-    const storyModal = document.getElementById("storyModal");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const installBtn = document.getElementById("installBtn");
-    const saudacao = document.getElementById("saudacao");
-
-    window.openSupportModal = () => supportModal.classList.add("open");
-    window.closeSupportModal = () => supportModal.classList.remove("open");
-    window.openStoryModal = () => storyModal.classList.add("open");
-    window.closeStoryModal = () => storyModal.classList.remove("open");
-
-    diamondBtn.addEventListener("click", window.openSupportModal);
-
-    // 👤 Login + saudação
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Amigo";
-        setTimeout(() => {
-          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
-          saudacao.style.opacity = "1";
-        }, 400);
-
-        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
-        const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().removeAds) {
-          diamondBtn.style.display = "none";
-          updateBtn.style.marginLeft = "0";
-        }
-      } else window.location.replace("seletor.html");
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      localStorage.clear();
-      window.location.replace("seletor.html");
-    });
-
-    document.getElementById("btnApoiar").addEventListener("click", () => {
-      window.closeSupportModal();
-      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
-    });
-
-    let deferredPrompt;
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "flex";
-    });
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const result = await deferredPrompt.userChoice;
-        if (result.outcome === "accepted") installBtn.style.display = "none";
-      }
-    });
-
-    function abrirTela(src, tela) {
-      const menu = document.getElementById("menuContainer");
-      const iframe = document.getElementById("conteudo");
-      menu.style.display = "none";
-      iframe.style.display = "block";
-      iframe.src = src;
-      history.pushState({ tela }, "", "#" + tela);
-    }
-    window.abrirTela = abrirTela;
-
-    window.onpopstate = function() {
-      const iframe = document.getElementById("conteudo");
-      const menu = document.getElementById("menuContainer");
-      iframe.style.display = "none";
-      menu.style.display = "block";
-      history.replaceState({}, "", location.pathname);
-    };
-  </script>
-
-  <!-- 🔁 Service Worker + Atualização -->
   <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js').then(reg => {
-      console.log('✅ SW registrado:', reg.scope);
+      const updateIcon = document.getElementById('updateIcon');
+      const diamondBtn = document.getElementById('diamondBtn');
+      const updateAlert = document.getElementById('updateAlert');
 
       reg.onupdatefound = () => {
         const newWorker = reg.installing;
         newWorker.onstatechange = () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            const alert = document.getElementById('updateAlert');
-            alert.style.opacity = '1';
+            updateAlert.style.opacity = '1';
+            updateIcon.classList.add('shake');
           }
         };
       };
 
-      document.getElementById('updateBtn').addEventListener('click', () => {
-        document.getElementById('updateBtn').textContent = '⏳ Atualizando...';
-        setTimeout(() => window.location.reload(), 800);
+      // Clique para atualizar
+      updateIcon.addEventListener('click', () => {
+        updateAlert.textContent = '🔄 Atualização encontrada, recarregando...';
+        updateAlert.style.opacity = '1';
+        updateIcon.classList.remove('shake');
+        let tentativas = 0;
+        const tentar = () => {
+          tentativas++;
+          window.location.reload();
+          if (tentativas < 3) setTimeout(tentar, 2000);
+        };
+        tentar();
       });
-    }).catch(e => console.error('❌ SW erro:', e));
+
+      // Se 💎 sumir, mover ícone pro lugar
+      const checkPremium = setInterval(() => {
+        if (diamondBtn && diamondBtn.style.display === 'none') {
+          updateIcon.style.marginLeft = '0';
+          clearInterval(checkPremium);
+        }
+      }, 1000);
+    });
   }
   </script>
 </body>
