@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL com Atualização Inteligente -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Firebase + Atualização Inteligente) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -69,12 +69,10 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.2);
       margin-left:10px;
       opacity:0;
-      transition:opacity .4s ease, transform .4s ease;
+      transition:opacity .4s ease;
       font-size:0.9rem;
     }
-    .shake {
-      animation: shake 0.6s ease-in-out infinite alternate;
-    }
+    .shake {animation: shake 0.6s ease-in-out infinite alternate;}
     @keyframes shake {
       0% {transform:translateX(0);}
       25% {transform:translateX(-2px);}
@@ -158,6 +156,7 @@
     .socials button:hover {background:#fff2b3;transform:scale(1.05);}
   </style>
 </head>
+
 <body>
   <div id="menuContainer">
     <header>
@@ -179,7 +178,6 @@
         </div>
         <div id="updateAlert" class="update-alert">✨ Nova versão disponível!</div>
       </div>
-
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
         <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
         <button id="logoutBtn" class="btn">🚪 Sair</button>
@@ -206,46 +204,101 @@
   <!-- 💎 Modal Apoiar Projeto -->
   <div id="supportModal" class="modal-backdrop"></div>
 
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js').then(reg => {
-      const updateIcon = document.getElementById('updateIcon');
-      const diamondBtn = document.getElementById('diamondBtn');
-      const updateAlert = document.getElementById('updateAlert');
+  <script src="audio/audioController.js" defer></script>
+  <script type="module" src="/billing.js"></script>
 
-      reg.onupdatefound = () => {
-        const newWorker = reg.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            updateAlert.style.opacity = '1';
-            updateIcon.classList.add('shake');
-          }
-        };
-      };
+  <!-- 🔥 Firebase + PWA + Atualização -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-      // Clique para atualizar
-      updateIcon.addEventListener('click', () => {
-        updateAlert.textContent = '🔄 Atualização encontrada, recarregando...';
-        updateAlert.style.opacity = '1';
-        updateIcon.classList.remove('shake');
-        let tentativas = 0;
-        const tentar = () => {
-          tentativas++;
-          window.location.reload();
-          if (tentativas < 3) setTimeout(tentar, 2000);
-        };
-        tentar();
-      });
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
 
-      // Se 💎 sumir, mover ícone pro lugar
-      const checkPremium = setInterval(() => {
-        if (diamondBtn && diamondBtn.style.display === 'none') {
-          updateIcon.style.marginLeft = '0';
-          clearInterval(checkPremium);
-        }
-      }, 1000);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const installBtn = document.getElementById("installBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("seletor.html");
     });
-  }
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("seletor.html");
+    });
+
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "flex";
+    });
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === "accepted") installBtn.style.display = "none";
+      }
+    });
+
+    // 🌐 Atualização inteligente
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(reg => {
+        const updateIcon = document.getElementById('updateIcon');
+        const updateAlert = document.getElementById('updateAlert');
+        reg.onupdatefound = () => {
+          const newWorker = reg.installing;
+          newWorker.onstatechange = () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              updateAlert.style.opacity = '1';
+              updateIcon.classList.add('shake');
+            }
+          };
+        };
+        updateIcon.addEventListener('click', () => {
+          updateAlert.textContent = '🔄 Atualização encontrada, recarregando...';
+          updateAlert.style.opacity = '1';
+          updateIcon.classList.remove('shake');
+          let tries = 0;
+          const reloadTry = () => {
+            tries++;
+            window.location.reload();
+            if (tries < 3) setTimeout(reloadTry, 2000);
+          };
+          reloadTry();
+        });
+        // Move ícone se 💎 sumir
+        const mover = setInterval(() => {
+          if (diamondBtn && diamondBtn.style.display === 'none') {
+            updateIcon.style.marginLeft = '0';
+            clearInterval(mover);
+          }
+        }, 1000);
+      });
+    }
   </script>
 </body>
 </html>
