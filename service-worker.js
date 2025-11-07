@@ -2,7 +2,7 @@
 // Corrigido: falha 403 no áudio externo + instalação resiliente
 // Compatível com SVGs e cache automático conforme o uso
 
-const CACHE_NAME = 'pintando-a-palavra-v1.0.44';
+const CACHE_NAME = 'pintando-a-palavra-v1.0.45';
 const OFFLINE_URL = '/offline.html';
 
 // 🗂️ Lista de arquivos essenciais a serem cacheados
