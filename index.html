@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização Automática) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização Automática Estável) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -67,7 +67,7 @@
     #updateMessage {
       position: fixed;
       inset: 0;
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(6px);
       display: none;
       align-items: center;
@@ -78,50 +78,71 @@
       font-size: 1.3rem;
       font-weight: 600;
       text-align: center;
+      animation: fadeIn .6s ease forwards;
     }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
+
 <body>
   <div id="updateMessage">
     ✨ App atualizado para a versão mais recente!<br><small>Recarregando...</small>
   </div>
 
-  <!-- resto do seu código original -->
   <div id="menuContainer">
+    <!-- seu menu e botões originais aqui -->
     <header> ... </header>
     <main> ... </main>
   </div>
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 🔥 Firebase e SW (inalterado) -->
+  <!-- 🔥 Firebase + Áudio + Billing -->
   <script src="audio/audioController.js" defer></script>
   <script type="module" src="/billing.js"></script>
 
-  <!-- 🔄 Atualização automática de versão -->
+  <!-- 🔄 Atualização automática aprimorada -->
   <script>
-    const APP_VERSION = '1.5.0'; // ⬅️ altere a cada deploy
+    const APP_VERSION = '1.5.2'; // ⬅️ altere a cada deploy
     const SAVED_VERSION = localStorage.getItem('appVersion');
 
     if (SAVED_VERSION !== APP_VERSION) {
       console.log('🆕 Nova versão detectada! Atualizando...');
       localStorage.setItem('appVersion', APP_VERSION);
-
-      // Exibe mensagem de atualização
       const msg = document.getElementById('updateMessage');
-      msg.style.display = 'flex';
+      if (msg) msg.style.display = 'flex';
 
-      // Limpa cache e SW antigos
-      if ('caches' in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-      }
+      const clearCachesAndSW = async () => {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+      };
 
-      // Recarrega após breve pausa
-      setTimeout(() => location.reload(true), 2000);
+      const safeReload = () => {
+        console.log('♻️ Recarregando app...');
+        try {
+          location.reload(true);
+        } catch {
+          window.location.href = window.location.origin + window.location.pathname;
+        }
+      };
+
+      (async () => {
+        await clearCachesAndSW();
+        // tenta recarregar normalmente
+        setTimeout(safeReload, 1500);
+        // fallback absoluto após 5s
+        setTimeout(safeReload, 5000);
+      })();
     }
   </script>
 
+  <!-- 🧩 Service Worker padrão -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
