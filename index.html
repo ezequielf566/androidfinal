@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização Automática Estável) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -63,92 +63,199 @@
       text-align:center;
     }
     .modal-box p{line-height:1.35;color:#333;font-size:1rem;text-align:left;margin:0;}
-    /* ✨ Mensagem de atualização */
-    #updateMessage {
-      position: fixed;
-      inset: 0;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(6px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      z-index: 2000;
-      color: #333;
-      font-size: 1.3rem;
-      font-weight: 600;
-      text-align: center;
-      animation: fadeIn .6s ease forwards;
+    .update-alert{
+      background:#fffbe6;
+      color:#333;
+      padding:8px 14px;
+      border-radius:12px;
+      font-weight:600;
+      font-family:'Fredoka',sans-serif;
+      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+      margin-left:10px;
+      opacity:0;
+      transition:opacity .3s ease;
     }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
-
 <body>
-  <div id="updateMessage">
-    ✨ App atualizado para a versão mais recente!<br><small>Recarregando...</small>
-  </div>
-
   <div id="menuContainer">
-    <!-- seu menu e botões originais aqui -->
-    <header> ... </header>
-    <main> ... </main>
+    <header>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="notif-icon" title="História do Projeto" onclick="window.openStoryModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l9 6 9-6"></path>
+            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+          </svg>
+        </div>
+        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
+        <button id="updateBtn" class="btn" style="margin-left:10px;">🔄 Atualizar</button>
+        <div id="updateAlert" class="update-alert">✨ Nova versão disponível!</div>
+      </div>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
+        <button id="logoutBtn" class="btn">🚪 Sair</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="saudacao" class="saudacao">👋 Olá! Seja bem-vindo</div>
+      <div class="menu">
+        <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
+        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+      </div>
+      <h2>Siga-nos nas redes sociais</h2>
+      <div class="socials">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
   </div>
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 🔥 Firebase + Áudio + Billing -->
+  <!-- 💎 Modal Apoiar Projeto -->
+  <div id="supportModal" class="modal-backdrop">
+    <div class="modal-box">
+      <h2 style="text-align:center;margin:0 0 10px;">Seja Premium</h2>
+      <p>Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar mais famílias. 💛</p>
+      <div class="support-actions" style="margin-top:0.6rem; display:flex; justify-content:center; gap:.45rem;">
+        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
+        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📜 Modal História -->
+  <div id="storyModal" class="modal-backdrop">
+    <div class="modal-box" style="text-align:left;">
+      <h2>🚀 Atualização especial!</h2>
+      <p>• Uso off-line agora disponível<br>• Design reformulado e mais leve<br>• Paleta atualizada<br>• Novos conteúdos e histórias adicionadas!</p>
+      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
+    </div>
+  </div>
+
   <script src="audio/audioController.js" defer></script>
   <script type="module" src="/billing.js"></script>
 
-  <!-- 🔄 Atualização automática aprimorada -->
-  <script>
-    const APP_VERSION = '1.5.2'; // ⬅️ altere a cada deploy
-    const SAVED_VERSION = localStorage.getItem('appVersion');
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-    if (SAVED_VERSION !== APP_VERSION) {
-      console.log('🆕 Nova versão detectada! Atualizando...');
-      localStorage.setItem('appVersion', APP_VERSION);
-      const msg = document.getElementById('updateMessage');
-      if (msg) msg.style.display = 'flex';
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
 
-      const clearCachesAndSW = async () => {
-        if ('caches' in window) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map(k => caches.delete(k)));
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const updateBtn = document.getElementById("updateBtn");
+    const updateAlert = document.getElementById("updateAlert");
+    const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const installBtn = document.getElementById("installBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
+
+    diamondBtn.addEventListener("click", window.openSupportModal);
+
+    // 👤 Login + saudação
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) {
+          diamondBtn.style.display = "none";
+          updateBtn.style.marginLeft = "0";
         }
-        if ('serviceWorker' in navigator) {
-          const regs = await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(r => r.unregister()));
-        }
-      };
+      } else window.location.replace("seletor.html");
+    });
 
-      const safeReload = () => {
-        console.log('♻️ Recarregando app...');
-        try {
-          location.reload(true);
-        } catch {
-          window.location.href = window.location.origin + window.location.pathname;
-        }
-      };
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("seletor.html");
+    });
 
-      (async () => {
-        await clearCachesAndSW();
-        // tenta recarregar normalmente
-        setTimeout(safeReload, 1500);
-        // fallback absoluto após 5s
-        setTimeout(safeReload, 5000);
-      })();
+    document.getElementById("btnApoiar").addEventListener("click", () => {
+      window.closeSupportModal();
+      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
+    });
+
+    let deferredPrompt;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "flex";
+    });
+    installBtn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const result = await deferredPrompt.userChoice;
+        if (result.outcome === "accepted") installBtn.style.display = "none";
+      }
+    });
+
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
     }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
+      history.replaceState({}, "", location.pathname);
+    };
   </script>
 
-  <!-- 🧩 Service Worker padrão -->
+  <!-- 🔁 Service Worker + Atualização -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(r => console.log('✅ SW registrado:', r.scope))
-        .catch(e => console.error('❌ SW erro:', e));
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').then(reg => {
+      console.log('✅ SW registrado:', reg.scope);
+
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            const alert = document.getElementById('updateAlert');
+            alert.style.opacity = '1';
+          }
+        };
+      };
+
+      document.getElementById('updateBtn').addEventListener('click', () => {
+        document.getElementById('updateBtn').textContent = '⏳ Atualizando...';
+        setTimeout(() => window.location.reload(), 800);
+      });
+    }).catch(e => console.error('❌ SW erro:', e));
+  }
   </script>
 </body>
 </html>
