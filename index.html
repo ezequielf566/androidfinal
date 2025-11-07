@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Áudio + Firebase + PWA + Atualização) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Atualização e correções) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -50,7 +50,7 @@
       animation:shake 2.5s infinite ease-in-out;
     }
     @keyframes shake {
-      0%, 100% { transform: rotate(0deg); }
+      0%,100% { transform: rotate(0deg); }
       25% { transform: rotate(5deg); }
       50% { transform: rotate(0deg); }
       75% { transform: rotate(-5deg); }
@@ -171,7 +171,6 @@
         </div>
       </div>
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Instalar app</button>
         <button id="logoutBtn" class="btn">🚪 Sair</button>
       </div>
     </header>
@@ -205,7 +204,7 @@
     </div>
   </div>
 
-  <!-- 🚀 Modal de Atualização -->
+  <!-- 🚀 Modal Atualização -->
   <div id="updateModal" class="modal-backdrop">
     <div class="modal-box" style="text-align:left;">
       <h2>🚀 Atualização</h2>
@@ -220,6 +219,20 @@
       <div style="text-align:center;margin-top:1rem;">
         <button class="btn" id="btnReload">🔄 Atualizar agora</button>
       </div>
+    </div>
+  </div>
+
+  <!-- 📜 Modal História -->
+  <div id="storyModal" class="modal-backdrop">
+    <div class="modal-box" style="text-align:left;">
+      <h2>🚀 Atualização especial!</h2>
+      <p>
+        • Uso off-line agora disponível<br>
+        • Design reformulado e mais leve<br>
+        • Paleta atualizada<br>
+        • Novos conteúdos e histórias adicionadas!
+      </p>
+      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
     </div>
   </div>
 
@@ -249,18 +262,21 @@
     const updateModal = document.getElementById("updateModal");
     const btnReload = document.getElementById("btnReload");
     const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
     const logoutBtn = document.getElementById("logoutBtn");
-    const installBtn = document.getElementById("installBtn");
     const saudacao = document.getElementById("saudacao");
 
     window.openSupportModal = () => supportModal.classList.add("open");
     window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
     const openUpdateModal = () => updateModal.classList.add("open");
     const closeUpdateModal = () => updateModal.classList.remove("open");
 
+    diamondBtn.addEventListener("click", window.openSupportModal);
     updateIcon.addEventListener("click", openUpdateModal);
 
-    btnReload.addEventListener("click", async () => {
+    btnReload.addEventListener("click", () => {
       let count = 0;
       const interval = setInterval(() => {
         location.reload(true);
@@ -295,20 +311,6 @@
     document.getElementById("btnApoiar").addEventListener("click", () => {
       window.closeSupportModal();
       window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
-    });
-
-    let deferredPrompt;
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "flex";
-    });
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const result = await deferredPrompt.userChoice;
-        if (result.outcome === "accepted") installBtn.style.display = "none";
-      }
     });
 
     function abrirTela(src, tela) {
