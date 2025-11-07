@@ -1,4 +1,4 @@
-<!-- 🔸 Pintando a Palavra — Menu FINAL (com Atualização e correções) -->
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Atualização e ajustes finais) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -47,13 +47,13 @@
     }
     .update-icon {
       margin-left:10px;
-      animation:shake 2.5s infinite ease-in-out;
+      animation:shake 1.8s infinite linear;
     }
     @keyframes shake {
-      0%,100% { transform: rotate(0deg); }
-      25% { transform: rotate(5deg); }
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(3deg); }
       50% { transform: rotate(0deg); }
-      75% { transform: rotate(-5deg); }
+      75% { transform: rotate(-3deg); }
     }
     .diamond {
       margin-left:10px;
@@ -144,11 +144,14 @@
     .modal-backdrop.open{display:flex;opacity:1;}
     .modal-box{
       background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
-      border-radius:20px;padding:16px 18px 22px;width:min(90%,460px);
+      border-radius:20px;
+      padding:24px 22px 30px;
+      width:min(90%,460px);
       box-shadow:0 8px 24px rgba(0,0,0,0.25);
       text-align:center;
     }
-    .modal-box p{line-height:1.45;color:#333;font-size:1rem;margin:0;text-align:left;}
+    .modal-box p{line-height:1.45;color:#333;font-size:1rem;margin:0 0 18px 0;text-align:left;}
+    .modal-box button{margin-top:10px;}
   </style>
 </head>
 <body>
@@ -197,7 +200,7 @@
     <div class="modal-box">
       <h2>Seja Premium</h2>
       <p>Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar mais famílias. 💛</p>
-      <div style="margin-top:0.6rem; display:flex; justify-content:center; gap:.45rem;">
+      <div style="display:flex; justify-content:center; gap:.6rem;">
         <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
         <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
       </div>
@@ -216,7 +219,7 @@
         até <strong>5 vezes</strong> para concluir a atualização por completo.<br><br>
         💡 Depois de atualizar, volte à tela inicial e verifique se tudo foi renovado direitinho.
       </p>
-      <div style="text-align:center;margin-top:1rem;">
+      <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn" id="btnReload">🔄 Atualizar agora</button>
       </div>
     </div>
@@ -232,7 +235,9 @@
         • Paleta atualizada<br>
         • Novos conteúdos e histórias adicionadas!
       </p>
-      <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
+      </div>
     </div>
   </div>
 
@@ -276,7 +281,8 @@
     diamondBtn.addEventListener("click", window.openSupportModal);
     updateIcon.addEventListener("click", openUpdateModal);
 
-    btnReload.addEventListener("click", () => {
+    btnReload.addEventListener("click", async () => {
+      btnReload.textContent = "🔄 Atualizando, aguarde...";
       let count = 0;
       const interval = setInterval(() => {
         location.reload(true);
@@ -284,6 +290,7 @@
         if (count >= 3) {
           clearInterval(interval);
           closeUpdateModal();
+          btnReload.textContent = "🔄 Atualizar agora";
         }
       }, 1000);
     });
