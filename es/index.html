@@ -121,7 +121,7 @@
             <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
           </svg>
         </div>
-        <div class="diamond" id="diamondBtn" title="Apoyar Proyecto">💎</div>
+        <div class="diamond" id="diamondBtn" title="Apoyar el Proyecto">💎</div>
         <div class="update-icon" id="updateIcon" title="Actualizar App">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
             <polyline points="23 4 23 10 17 10"></polyline>
@@ -136,13 +136,13 @@
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao">👋 ¡Hola! Bienvenido(a)</div>
+      <div id="saudacao" class="saudacao">👋 ¡Hola! Bienvenido</div>
       <div class="menu">
         <button onclick="abrirTela('app/index.html','app')">📖 Historias</button>
         <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Actividades</button>
         <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
       </div>
-      <h2>Síguenos en las redes sociales</h2>
+      <h2>Síguenos en redes sociales</h2>
       <div class="socials">
         <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
         <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
@@ -156,7 +156,7 @@
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
       <h2>Hazte Premium</h2>
-      <p>Elimina los anuncios y sé parte de este propósito. Con tu ayuda mantenemos todo gratuito y llegamos a más familias. 💛</p>
+      <p>Elimina los anuncios y forma parte de este propósito. Con tu ayuda podemos mantener todo gratuito y llegar a más familias. 💛</p>
       <div style="display:flex; justify-content:center; gap:.6rem;">
         <button class="btn" onclick="window.closeSupportModal()">Ahora no</button>
         <button class="btn" id="btnApoiar">💳 Apoyar ahora</button>
@@ -169,12 +169,12 @@
     <div class="modal-box" style="text-align:left;">
       <h2>🚀 Actualización</h2>
       <p>
-        Cada vez que <strong>Coloreando la Palabra</strong> se actualice en <strong>Google Play</strong>,<br>
-        usa este botón para asegurarte de que la aplicación cargue la nueva versión correctamente.<br><br>
-        Como la app funciona en modo especial (<strong>TWA</strong>),<br>
+        Siempre que <strong>Coloreando la Palabra</strong> se actualice en <strong>Google Play</strong>,<br>
+        usa este botón para asegurarte de que la app cargue la nueva versión correctamente.<br><br>
+        Como la app funciona en un modo especial (<strong>TWA</strong>),<br>
         a veces es necesario tocar en <strong>“Actualizar ahora”</strong><br>
         hasta <strong>5 veces</strong> para completar la actualización por completo.<br><br>
-        💡 Después de actualizar, regresa a la pantalla principal y verifica que todo se haya renovado correctamente.
+        💡 Después de actualizar, vuelve a la pantalla de inicio y verifica que todo esté renovado correctamente.
       </p>
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn" id="btnReload">🔄 Actualizar ahora</button>
@@ -201,11 +201,106 @@
   <script src="audio/audioController.js" defer></script>
   <script type="module" src="/billing.js"></script>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const updateIcon = document.getElementById("updateIcon");
+    const updateModal = document.getElementById("updateModal");
+    const btnReload = document.getElementById("btnReload");
+    const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
+    const openUpdateModal = () => updateModal.classList.add("open");
+    const closeUpdateModal = () => updateModal.classList.remove("open");
+
+    diamondBtn.addEventListener("click", window.openSupportModal);
+    updateIcon.addEventListener("click", openUpdateModal);
+
+    btnReload.addEventListener("click", async () => {
+      btnReload.textContent = "🔄 Actualizando, espera...";
+      let count = 0;
+      const interval = setInterval(() => {
+        location.reload(true);
+        count++;
+        if (count >= 3) {
+          clearInterval(interval);
+          closeUpdateModal();
+          btnReload.textContent = "🔄 Actualizar ahora";
+        }
+      }, 1000);
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 ¡Hola, <strong>${firstName}</strong>!<br>Qué alegría tenerte aquí 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("seletor.html");
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("seletor.html");
+    });
+
+    document.getElementById("btnApoiar").addEventListener("click", () => {
+      window.closeSupportModal();
+      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
+    });
+
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
+    }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
+      history.replaceState({}, "", location.pathname);
+    };
+  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
         .then(r => console.log('✅ SW registrado:', r.scope))
-        .catch(e => console.error('❌ Error SW:', e));
+        .catch(e => console.error('❌ Error en SW:', e));
     }
   </script>
 </body>
