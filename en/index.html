@@ -136,11 +136,11 @@
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao">👋 Hi there! Welcome</div>
+      <div id="saudacao" class="saudacao">👋 Hi! Welcome</div>
       <div class="menu">
         <button onclick="abrirTela('app/index.html','app')">📖 Stories</button>
         <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Activities</button>
-        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Complete PDF</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Full PDF</button>
       </div>
       <h2>Follow us on social media</h2>
       <div class="socials">
@@ -156,7 +156,7 @@
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
       <h2>Go Premium</h2>
-      <p>Remove ads and be part of this purpose. Your support helps us keep everything free and reach more families. 💛</p>
+      <p>Remove the ads and be part of this purpose. Your help allows us to keep everything free and reach more families. 💛</p>
       <div style="display:flex; justify-content:center; gap:.6rem;">
         <button class="btn" onclick="window.closeSupportModal()">Not now</button>
         <button class="btn" id="btnApoiar">💳 Support now</button>
@@ -171,10 +171,10 @@
       <p>
         Whenever <strong>Coloring the Word</strong> is updated on <strong>Google Play</strong>,<br>
         use this button to make sure the app loads the latest version correctly.<br><br>
-        Since the app works in a special mode (<strong>TWA</strong>),<br>
+        Since the app runs in a special mode (<strong>TWA</strong>),<br>
         sometimes you’ll need to tap <strong>“Update now”</strong><br>
-        up to <strong>5 times</strong> to complete the update process.<br><br>
-        💡 After updating, go back to the home screen and make sure everything looks refreshed.
+        up to <strong>5 times</strong> to complete the process.<br><br>
+        💡 After updating, go back to the home screen and check if everything looks new.
       </p>
       <div style="text-align:center;margin-top:1.5rem;">
         <button class="btn" id="btnReload">🔄 Update now</button>
@@ -200,6 +200,101 @@
 
   <script src="audio/audioController.js" defer></script>
   <script type="module" src="/billing.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const updateIcon = document.getElementById("updateIcon");
+    const updateModal = document.getElementById("updateModal");
+    const btnReload = document.getElementById("btnReload");
+    const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
+    const openUpdateModal = () => updateModal.classList.add("open");
+    const closeUpdateModal = () => updateModal.classList.remove("open");
+
+    diamondBtn.addEventListener("click", window.openSupportModal);
+    updateIcon.addEventListener("click", openUpdateModal);
+
+    btnReload.addEventListener("click", async () => {
+      btnReload.textContent = "🔄 Updating, please wait...";
+      let count = 0;
+      const interval = setInterval(() => {
+        location.reload(true);
+        count++;
+        if (count >= 3) {
+          clearInterval(interval);
+          closeUpdateModal();
+          btnReload.textContent = "🔄 Update now";
+        }
+      }, 1000);
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Friend";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Hi, <strong>${firstName}</strong>!<br>Glad to have you here 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("seletor.html");
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("seletor.html");
+    });
+
+    document.getElementById("btnApoiar").addEventListener("click", () => {
+      window.closeSupportModal();
+      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
+    });
+
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
+    }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
+      history.replaceState({}, "", location.pathname);
+    };
+  </script>
 
   <script>
     if ('serviceWorker' in navigator) {
