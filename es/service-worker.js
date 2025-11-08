@@ -7,7 +7,7 @@ if (!self.location.pathname.startsWith('/es/')) {
   self.skipWaiting();
 }
 
-const CACHE_NAME = 'pintando-a-palavra-es-v1.0.40';
+const CACHE_NAME = 'pintando-a-palavra-es-v1.0.43';
 const OFFLINE_URL = '/es/offline.html';
 
 // 🗂️ Lista de arquivos essenciais a serem cacheados
