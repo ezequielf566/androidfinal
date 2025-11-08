@@ -10,7 +10,7 @@
       margin: 0;
       font-family: 'Fredoka', sans-serif;
       /* 🌈 Azul mais forte no topo e branco suave no rodapé */
-      background: linear-gradient(180deg, #3ba4f9 0%, #9ed9ff 55%, #ffffff 100%);
+      background: linear-gradient(180deg, #3b93f9 0%, #9ed9ff 55%, #ffffff 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -56,7 +56,7 @@
       font-size: 1.2rem;
       font-weight: 600;
       background: #ffffff;
-      border: 2px solid #3ba4f9;
+      border: 2px solid #3b93f9;
       border-radius: 20px;
       padding: 14px 18px;
       cursor: pointer;
@@ -125,17 +125,17 @@
   <script>
     function setLanguage(lang) {
       localStorage.setItem("lang", lang);
-      if (lang === "pt") window.location.href = "login.html";
-      else if (lang === "es") window.location.href = "es/login.html";
-      else if (lang === "en") window.location.href = "en/login.html";
+      if (lang === "pt") window.location.href = "/login.html";
+      else if (lang === "es") window.location.href = "/es/login.html";
+      else if (lang === "en") window.location.href = "/en/login.html";
     }
 
     // Redireciona automaticamente se já tiver idioma salvo
     window.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("lang");
-      if (saved === "pt") window.location.href = "login.html";
-      else if (saved === "es") window.location.href = "es/login.html";
-      else if (saved === "en") window.location.href = "en/login.html";
+      if (saved === "pt") window.location.href = "/login.html";
+      else if (saved === "es") window.location.href = "/es/login.html";
+      else if (saved === "en") window.location.href = "/en/login.html";
     });
   </script>
 </body>
