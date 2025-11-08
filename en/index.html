@@ -1,11 +1,11 @@
-<!-- 🔸 Coloring the Word — FINAL Menu (with Audio + Firebase + PWA) -->
+<!-- 🔸 Coloring the Word — FINAL Menu (with Update and final adjustments) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coloring the Word — Menu</title>
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <style>
     body {
@@ -29,26 +29,72 @@
       position: sticky;top: 0;z-index: 20;
       border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
     }
-    .notif-icon {cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s ease;}
-    .notif-icon:hover svg{transform:scale(1.1);}
-    .notif-icon svg{width:28px;height:28px;stroke:#444;filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));}
-    .diamond{margin-left:10px;font-size:1.5rem;cursor:pointer;animation:spinDiamond 3.5s linear infinite;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;}
-    @keyframes spinDiamond{0%{transform:rotateY(0deg);}50%{transform:rotateY(180deg);}100%{transform:rotateY(360deg);}}
+    .notif-icon, .update-icon {
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .2s ease;
+    }
+    .notif-icon:hover svg, .update-icon:hover svg {transform:scale(1.1);}
+    .notif-icon svg, .update-icon svg {
+      width:28px;height:28px;stroke:#444;
+      filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));
+    }
+    .update-icon {
+      margin-left:10px;
+      animation:shake 1.8s infinite linear;
+    }
+    @keyframes shake {
+      0%,100%{transform:rotate(0deg);}
+      25%{transform:rotate(3deg);}
+      50%{transform:rotate(0deg);}
+      75%{transform:rotate(-3deg);}
+    }
+    .diamond {
+      margin-left:10px;
+      font-size:1.5rem;
+      cursor:pointer;
+      animation:spinDiamond 3.5s linear infinite;
+      display:flex;align-items:center;justify-content:center;
+      transform-style:preserve-3d;
+    }
+    @keyframes spinDiamond {
+      0%{transform:rotateY(0deg);}
+      50%{transform:rotateY(180deg);}
+      100%{transform:rotateY(360deg);}
+    }
     .diamond:hover{transform:scale(1.15);}
-    header .btn{background:#fff;border:none;padding:.6rem 1.1rem;border-radius:12px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);transition:all .25s ease;display:flex;align-items:center;gap:6px;}
-    header .btn:hover{transform:scale(1.05);background:#fff7d1;}
-    main{flex:1;display:flex;flex-direction:column;align-items:center;padding:2.5rem 1rem 3rem;text-align:center;}
-    .saudacao{
+    header .btn {
+      background:#fff;border:none;padding:.6rem 1.1rem;border-radius:12px;
+      cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      transition:all .25s ease;display:flex;align-items:center;gap:6px;
+    }
+    header .btn:hover {transform:scale(1.05);background:#fff7d1;}
+    main {
+      flex:1;display:flex;flex-direction:column;align-items:center;
+      padding:2.5rem 1rem 3rem;text-align:center;
+    }
+    .saudacao {
       font-size:1.6rem;color:#222;font-weight:600;margin-bottom:2rem;
       background:rgba(255,255,255,0.6);padding:1rem 1.5rem;border-radius:16px;
       box-shadow:0 4px 8px rgba(0,0,0,0.1);backdrop-filter:blur(5px);
       display:inline-block;opacity:0;transition:opacity .6s ease;
     }
     .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
-    .menu button{background:#ffd54f;border:none;padding:1rem;border-radius:16px;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);transition:all .25s ease;}
+    .menu button{
+      background:#ffd54f;border:none;padding:1rem;border-radius:16px;
+      font-size:1.15rem;font-weight:700;cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);
+      transition:all .25s ease;
+    }
     .menu button:hover{transform:scale(1.03);background:#ffe066;}
     .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
-    .socials button{background:#fffbe6;border:2px solid #ffe066;border-radius:14px;padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);}
+    .socials button{
+      background:#fffbe6;border:2px solid #ffe066;border-radius:14px;
+      padding:.7rem 1.3rem;font-size:1rem;font-weight:600;cursor:pointer;
+      transition:all .25s ease;box-shadow:0 3px 6px rgba(0,0,0,0.1);
+    }
     .socials button:hover{background:#fff2b3;transform:scale(1.05);}
     .modal-backdrop{
       position:fixed;inset:0;background:rgba(255,240,180,0.45);
@@ -58,11 +104,11 @@
     .modal-backdrop.open{display:flex;opacity:1;}
     .modal-box{
       background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
-      border-radius:20px;padding:14px 16px 18px;width:min(90%,460px);
-      box-shadow:0 8px 24px rgba(0,0,0,0.25);
-      text-align:center;
+      border-radius:20px;padding:24px 22px 30px;width:min(90%,460px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);text-align:center;
     }
-    .modal-box p{line-height:1.35;color:#333;font-size:1rem;text-align:left;margin:0;}
+    .modal-box p{line-height:1.45;color:#333;font-size:1rem;margin:0 0 18px;text-align:left;}
+    .modal-box button{margin-top:10px;}
   </style>
 </head>
 <body>
@@ -76,19 +122,25 @@
           </svg>
         </div>
         <div class="diamond" id="diamondBtn" title="Support Project">💎</div>
+        <div class="update-icon" id="updateIcon" title="Update App">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10M1 14l5.36 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </div>
       </div>
       <div style="display:flex; gap:0.5rem; margin-left:auto;">
-        <button id="installBtn" class="btn" style="display:none;">📲 Install App</button>
-        <button id="logoutBtn" class="btn">🚪 Log Out</button>
+        <button id="logoutBtn" class="btn">🚪 Log out</button>
       </div>
     </header>
 
     <main>
-      <div id="saudacao" class="saudacao">👋 Hello! Welcome</div>
+      <div id="saudacao" class="saudacao">👋 Hi there! Welcome</div>
       <div class="menu">
-        <button onclick="abrirTela('app/index.html','app')">📖 Bible Stories</button>
+        <button onclick="abrirTela('app/index.html','app')">📖 Stories</button>
         <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Activities</button>
-        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Complete PDFs</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 Complete PDF</button>
       </div>
       <h2>Follow us on social media</h2>
       <div class="socials">
@@ -100,135 +152,58 @@
 
   <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
 
-  <!-- 💎 Support Project Modal (Kiwify) -->
+  <!-- 💎 Modal Support Project -->
   <div id="supportModal" class="modal-backdrop">
     <div class="modal-box">
-      <h2 style="text-align:center;margin:0 0 10px;">Become Premium</h2>
-      <p>
-        Remove ads and be part of this purpose.  
-        With your support, we can keep everything free and reach more families. 💛
-      </p>
-      <div class="support-actions" style="margin-top:0.6rem; display:flex; justify-content:center; gap:.45rem;">
+      <h2>Go Premium</h2>
+      <p>Remove ads and be part of this purpose. Your support helps us keep everything free and reach more families. 💛</p>
+      <div style="display:flex; justify-content:center; gap:.6rem;">
         <button class="btn" onclick="window.closeSupportModal()">Not now</button>
         <button class="btn" id="btnApoiar">💳 Support now</button>
       </div>
     </div>
   </div>
 
-  <!-- 📜 Update Modal -->
+  <!-- 🚀 Modal Update -->
+  <div id="updateModal" class="modal-backdrop">
+    <div class="modal-box" style="text-align:left;">
+      <h2>🚀 Update</h2>
+      <p>
+        Whenever <strong>Coloring the Word</strong> is updated on <strong>Google Play</strong>,<br>
+        use this button to make sure the app loads the latest version correctly.<br><br>
+        Since the app works in a special mode (<strong>TWA</strong>),<br>
+        sometimes you’ll need to tap <strong>“Update now”</strong><br>
+        up to <strong>5 times</strong> to complete the update process.<br><br>
+        💡 After updating, go back to the home screen and make sure everything looks refreshed.
+      </p>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn" id="btnReload">🔄 Update now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📜 Modal Story -->
   <div id="storyModal" class="modal-backdrop">
     <div class="modal-box" style="text-align:left;">
       <h2>🚀 Special Update!</h2>
       <p>
         • Offline mode now available<br>
-        • Refreshed and lighter design<br>
+        • Lighter and improved design<br>
         • Updated color palette<br>
-        • New stories and lessons added!
+        • New stories and content added!
       </p>
-      <button class="btn" onclick="window.closeStoryModal()">Close</button>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn" onclick="window.closeStoryModal()">Close</button>
+      </div>
     </div>
   </div>
 
   <script src="audio/audioController.js" defer></script>
   <script type="module" src="/billing.js"></script>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
-      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
-      projectId: "pintando-a-palavra-fnl",
-      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
-      messagingSenderId: "394858613454",
-      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const diamondBtn = document.getElementById("diamondBtn");
-    const supportModal = document.getElementById("supportModal");
-    const storyModal = document.getElementById("storyModal");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const installBtn = document.getElementById("installBtn");
-    const saudacao = document.getElementById("saudacao");
-
-    window.openSupportModal = () => supportModal.classList.add("open");
-    window.closeSupportModal = () => supportModal.classList.remove("open");
-    window.openStoryModal = () => storyModal.classList.add("open");
-    window.closeStoryModal = () => storyModal.classList.remove("open");
-
-    diamondBtn.addEventListener("click", window.openSupportModal);
-
-    // 👤 Login + Greeting
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const firstName = user.displayName?.split(" ")[0] || "Friend";
-        setTimeout(() => {
-          saudacao.innerHTML = `👋 Hello, <strong>${firstName}</strong>!<br>We're so glad you're here 💛`;
-          saudacao.style.opacity = "1";
-        }, 400);
-
-        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
-        const snap = await getDoc(ref);
-        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
-      } else window.location.replace("seletor.html");
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      localStorage.clear();
-      window.location.replace("seletor.html");
-    });
-
-    // 💳 Open Kiwify Checkout
-    document.getElementById("btnApoiar").addEventListener("click", () => {
-      window.closeSupportModal();
-      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
-    });
-
-    // 📲 PWA Installation
-    let deferredPrompt;
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = "flex";
-    });
-    installBtn.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const result = await deferredPrompt.userChoice;
-        if (result.outcome === "accepted") installBtn.style.display = "none";
-      }
-    });
-
-    // 🔹 Internal Navigation (iframe)
-    function abrirTela(src, tela) {
-      const menu = document.getElementById("menuContainer");
-      const iframe = document.getElementById("conteudo");
-      menu.style.display = "none";
-      iframe.style.display = "block";
-      iframe.src = src;
-      history.pushState({ tela }, "", "#" + tela);
-    }
-    window.abrirTela = abrirTela;
-
-    window.onpopstate = function() {
-      const iframe = document.getElementById("conteudo");
-      const menu = document.getElementById("menuContainer");
-      iframe.style.display = "none";
-      menu.style.display = "block";
-      history.replaceState({}, "", location.pathname);
-    };
-  </script>
-
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
+      navigator.serviceWorker.register('/service-worker.js')
         .then(r => console.log('✅ SW registered:', r.scope))
         .catch(e => console.error('❌ SW error:', e));
     }
