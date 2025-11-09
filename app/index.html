@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css" />
 
   <style>
-    /* 🌤️ Fundo: branco até o topo da arte, azul sólido do canvas pra baixo */
+    /* 🌤️ Fundo geral — branco até o topo da arte, azul sólido do canvas pra baixo */
     body {
       background: linear-gradient(180deg, #ffffff 0%, #ffffff 10%, #4a7cff 10%, #4a7cff 100%);
       background-attachment: fixed;
@@ -29,14 +29,10 @@
       z-index: 9999;
       transition: opacity .5s ease, visibility .5s ease;
     }
-    #loadingOverlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
+    #loadingOverlay.hidden { opacity: 0; visibility: hidden; }
 
     .spinner {
-      width: 60px;
-      height: 60px;
+      width: 60px; height: 60px;
       border: 6px solid rgba(255,255,255,0.7);
       border-top: 6px solid transparent;
       border-radius: 50%;
@@ -70,11 +66,7 @@
       transition: opacity .2s ease, transform .2s ease;
       z-index: 1000;
     }
-    .palette-popup.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0) scale(1);
-    }
+    .palette-popup.active { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
 
     .extra-color {
       width: 28px; height: 28px;
@@ -85,10 +77,7 @@
       transition: transform .12s, box-shadow .2s;
     }
     .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }
-    .extra-color:active {
-      transform: scale(.9);
-      box-shadow: 0 0 0 3px #ffd54f;
-    }
+    .extra-color:active { transform: scale(.9); box-shadow: 0 0 0 3px #ffd54f; }
 
     /* 🎨 Novo botão de cor personalizada */
     .sw.custom-picker {
@@ -106,14 +95,8 @@
       cursor: pointer;
       transition: transform .15s, box-shadow .25s;
     }
-    .sw.custom-picker:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(255,213,79,0.6);
-    }
-    .sw.custom-picker:active {
-      transform: scale(.9);
-      box-shadow: 0 0 0 3px #ffd54f;
-    }
+    .sw.custom-picker:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,213,79,0.6); }
+    .sw.custom-picker:active { transform: scale(.9); box-shadow: 0 0 0 3px #ffd54f; }
 
     /* Paleta de cores */
     .sw.custom {
@@ -129,56 +112,92 @@
       transition: box-shadow .3s ease;
     }
     .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }
-    @keyframes hueShift {
-      0%,100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }
-      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }
-    }
+    @keyframes hueShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes glowPulse { 0%,100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); } 50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); } }
 
-    /* 🩶 Base inferior off-white */
+    /* 🩵 Rodapé moderno e contínuo */
     .controls {
       background: #fefefe;
       border-top: 1px solid rgba(255,255,255,0.4);
-      padding-top: 6px;
-      position: sticky;
+      position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      z-index: 10;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 6px;
     }
 
+    /* Paleta centralizada */
     .palette {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      width: 100%;
     }
 
+    /* Círculos de cor */
     .swatches {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 6px;
+      margin-bottom: 8px;
     }
 
+    /* 🔹 Linha de botões */
+    .tools {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    /* 🔹 Linha de paginação */
+    .pager {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding-bottom: 8px;
+    }
+
+    /* 🔹 Faixa azul abaixo dos menus */
+    .controls::after {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 22px;
+      background: #4a7cff;
+      border-top: 2px solid #3f6ce0;
+    }
+
+    /* 🔹 Botões padrão — todos azuis */
     .btn, .navbtn {
-      background: #ffffff;
-      border: 2px solid #e5e9f2;
-      color: #333;
+      background: #4a7cff;
+      border: 2px solid #4a7cff;
+      color: #fff;
       border-radius: 8px;
       font-weight: 500;
       padding: 8px 16px;
+      min-width: 90px;
+      text-align: center;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .btn.primary {
-      background: #4a7cff;
-      border-color: #4a7cff;
-      color: #fff;
+
+    .btn:hover, .navbtn:hover {
+      background: #3e6be0;
+      border-color: #3e6be0;
+      transform: translateY(-1px);
     }
-    .btn:hover, .navbtn:hover { filter: brightness(1.1); }
   </style>
 </head>
 
@@ -210,20 +229,16 @@
     <section class="controls">
       <div class="palette">
         <div class="swatches" id="swatches">
-          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>
-          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>
-
-          <!-- 🎨 Novo botão de cor personalizada -->
+          <button class="sw" data-color="#E53935"></button>
+          <button class="sw" data-color="#FB8C00"></button>
+          <button class="sw" data-color="#FDD835"></button>
+          <button class="sw" data-color="#7CB342"></button>
+          <button class="sw" data-color="#42A5F5"></button>
+          <button class="sw" data-color="#8E24AA"></button>
+          <button class="sw" data-color="#E0C2A2"></button>
+          <button class="sw" data-color="#8D6E63"></button>
           <button class="sw custom-picker" id="pickerBtn">🎨</button>
           <input type="color" id="colorPickerInput" style="display:none;" />
-
-          <!-- ➕ Mantido botão + original -->
           <button class="sw custom" id="customColorBtn">+</button>
         </div>
 
@@ -231,7 +246,7 @@
           <button id="eraserBtn" class="btn">Borracha</button>
           <button id="undoBtn" class="btn">Desfazer</button>
           <button id="redoBtn" class="btn">Refazer</button>
-          <button id="savePng" class="btn primary">Salvar PNG</button>
+          <button id="savePng" class="btn">Salvar PNG</button>
         </div>
 
         <div class="pager">
@@ -365,25 +380,6 @@
       }
     });
     observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });
-  </script>
-
-  <!-- 🟡 Anúncio automático AdMob -->
-  <script>
-    const TESTE = true;
-    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
-    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
-
-    function exibirAnuncio() {
-      if (TESTE) {
-        alert("🎬 Anúncio em exibição (modo de teste)");
-      } else {
-        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-      }
-    }
-
-    window.addEventListener("load", () => {
-      setInterval(exibirAnuncio, 120000);
-    });
   </script>
 </body>
 </html>
