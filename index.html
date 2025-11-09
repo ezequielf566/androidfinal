@@ -1,328 +1,350 @@
-<!doctype html>
-<html lang="pt-BR">  
-<head>  
-  <meta charset="utf-8" />  
-  <meta name="viewport" content="width=device-width, initial-scale=1" />  
-  <title>Pintando a Palavra — Colorir</title>  
-  <link rel="stylesheet" href="css/style.css" />  
-
-  <style>  
-    /* 🌀 Tela de carregamento */  
-    #loadingOverlay {  
-      position: fixed; inset: 0;  
-      background: #fff9e6;  
-      display: flex; flex-direction: column;  
-      align-items: center; justify-content: center;  
-      z-index: 9999;  
-      transition: opacity .5s ease, visibility .5s ease;  
-    }  
-    #loadingOverlay.hidden { opacity: 0; visibility: hidden; }  
-    .spinner {  
-      width: 60px; height: 60px;  
-      border: 6px solid #ffd54f; border-top: 6px solid transparent;  
-      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;  
-    }  
-    @keyframes spin { to { transform: rotate(360deg); } }  
-    .loading-text {  
-      font-family: "Fredoka", sans-serif;  
-      font-size: 1.1rem; color: #444; text-align: center;  
-    }  
-
-    /* 🎨 Popup de tons e extras */  
-    .palette-popup {  
-      position: fixed;  
-      background: #fff;  
-      border: 2px solid #ffd54f;  
-      border-radius: 14px;  
-      padding: 10px;  
-      display: grid;  
-      grid-template-columns: repeat(6, 28px);  
-      gap: 6px;  
-      box-shadow: 0 6px 16px rgba(0,0,0,.18);  
-      opacity: 0;  
-      pointer-events: none;  
-      transform: translateY(8px) scale(.96);  
-      transition: opacity .2s ease, transform .2s ease;  
-      z-index: 1000;  
-    }  
-    .palette-popup.active {  
-      opacity: 1;  
-      pointer-events: auto;  
-      transform: translateY(0) scale(1);  
-    }  
-
-    .extra-color {  
-      width: 28px; height: 28px;  
-      border-radius: 8px;  
-      cursor: pointer;  
-      border: 2px solid rgba(0,0,0,0.1);  
-      box-shadow: 0 2px 4px rgba(0,0,0,.25);  
-      transition: transform .12s, box-shadow .2s;  
-    }  
-    .extra-color:hover { box-shadow: 0 0 6px 2px rgba(255,213,79,0.6); }  
-    .extra-color:active {  
-      transform: scale(.9);  
-      box-shadow: 0 0 0 3px #ffd54f;  
-    }  
-
-    .sw.custom {  
-      width: 36px; height: 36px;  
-      border-radius: 10px !important;  
-      background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb);  
-      background-size: 300% 300%;  
-      animation: hueShift 8s ease infinite;  
-      display: flex; align-items: center; justify-content: center;  
-      font-weight: bold; font-size: 1.4rem;  
-      color: #fff; border: 2px solid #fff;  
-      box-shadow: 0 2px 6px rgba(0,0,0,.2);  
-      transition: box-shadow .3s ease;  
-    }  
-    .sw.custom.active { animation: glowPulse 1.4s ease-in-out infinite; }  
-    @keyframes hueShift {  
-      0%,100% { background-position: 0% 50%; }  
-      50% { background-position: 100% 50%; }  
-    }  
-    @keyframes glowPulse {  
-      0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }  
-      50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }  
-    }  
-
-    /* 🎨 Novo botão de cor personalizada */
-    .sw.custom-picker {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #FFD54F, #FFB300);
+<!-- 🔸 Pintando a Palavra — Menu FINAL (com Atualização e ajustes finais) -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pintando a Palavra — Menu</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#ffffff" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Fredoka", sans-serif;
+      color: #222;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg,#fff7d1 0%,#fff3bf 40%,#fff9e6 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+    header {
+      background: linear-gradient(90deg,#ffd54f,#ffea80);
+      padding: .8rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      color: #fff;
-      border: 2px solid #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,.2);
-      cursor: pointer;
-      transition: transform .15s, box-shadow .25s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: sticky;top: 0;z-index: 20;
+      border-bottom-left-radius: 12px;border-bottom-right-radius: 12px;
     }
-    .sw.custom-picker:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+    .notif-icon, .update-icon {
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .2s ease;
     }
-    .sw.custom-picker:active {
-      transform: scale(.9);
-      box-shadow: 0 0 0 3px #ffd54f;
+    .notif-icon:hover svg, .update-icon:hover svg {
+      transform:scale(1.1);
     }
-  </style>  
-</head>  
-
-<body>  
-  <div id="loadingOverlay">  
-    <div class="spinner"></div>  
-    <div class="loading-text">🎨 Carregando artes...</div>  
-  </div>  
-
-  <header class="topbar">  
-    <div id="progressWidget" class="progress-widget">  
-      <div class="counter">  
-        <span id="starCount" class="star-count">00</span>  
-        <span class="sep">/</span>  
-        <span id="totalPages" class="total-pages">00</span>  
-        <span class="star-icon">★</span>  
-        <span id="progressPercent" class="percent">0%</span>  
-      </div>  
-      <div class="progressbar"><div id="progressFill" class="progress-fill"></div></div>  
-      <audio id="starSound" src="assets/sounds/estrela.mp3" preload="auto"></audio>  
-    </div>  
-  </header>  
-
-  <main class="wrap">  
-    <section class="stage">  
-      <div id="svgMount" class="svgMount"></div>  
-    </section>  
-
-    <section class="controls">  
-      <div class="palette">  
-        <div class="swatches" id="swatches">  
-          <button class="sw" data-color="#E53935" style="--c:#E53935"></button>  
-          <button class="sw" data-color="#FB8C00" style="--c:#FB8C00"></button>  
-          <button class="sw" data-color="#FDD835" style="--c:#FDD835"></button>  
-          <button class="sw" data-color="#7CB342" style="--c:#7CB342"></button>  
-          <button class="sw" data-color="#42A5F5" style="--c:#42A5F5"></button>  
-          <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>  
-          <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>  
-          <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>  
-
-          <!-- 🎨 Novo botão de cor personalizada -->
-          <button class="sw custom-picker" id="pickerBtn">🎨</button>
-          <input type="color" id="colorPickerInput" style="display:none;" />
-
-          <!-- ➕ Mantido botão + original -->
-          <button class="sw custom" id="customColorBtn">+</button>
-        </div>  
-
-        <div class="tools">  
-          <button id="eraserBtn" class="btn">Borracha</button>  
-          <button id="undoBtn" class="btn">Desfazer</button>  
-          <button id="redoBtn" class="btn">Refazer</button>  
-          <button id="savePng" class="btn primary">Salvar PNG</button>  
-        </div>  
-
-        <div class="pager">  
-          <button id="prevBtn" class="navbtn">◀</button>  
-          <span id="pageLabel">1 / ?</span>  
-          <button id="nextBtn" class="navbtn">▶</button>  
-        </div>  
-      </div>  
-    </section>  
-  </main>  
-
-  <script src="js/script.js"></script>  
-  <script src="js/patch-gestures-scroll.js"></script>  
-
-  <script>  
-    document.addEventListener("DOMContentLoaded", () => {  
-      const customBtn = document.getElementById("customColorBtn");  
-      const pickerBtn = document.getElementById("pickerBtn");
-      const colorPickerInput = document.getElementById("colorPickerInput");
-      let popupRef = null;  
-
-      const EXTRA_COLORS = [  
-        "#FF6F61","#F06292","#BA68C8","#9575CD","#4FC3F7","#4DD0E1",  
-        "#81C784","#AED581","#FFD54F","#FFB74D","#A1887F","#BDBDBD",  
-        "#EF5350","#FF8A65","#FFF176","#C0CA33","#26A69A","#29B6F6",  
-        "#7986CB","#AB47BC","#D4E157","#FF7043","#90A4AE","#5D4037"  
-      ];  
-
-      function closePopup() {  
-        if (!popupRef) return;  
-        popupRef.remove();  
-        popupRef = null;  
-        customBtn.classList.remove("active");  
-        document.removeEventListener("click", onOutside);  
-        document.removeEventListener("keydown", onEsc);  
-      }  
-
-      function onOutside(e) {  
-        if (popupRef && !popupRef.contains(e.target) && e.target !== customBtn) closePopup();  
-      }  
-      function onEsc(e) { if (e.key === "Escape") closePopup(); }  
-
-      function applyColorSafely(color) {  
-        const sendColor = () => {  
-          if (typeof window.setColor === "function") {  
-            window.setColor(color);  
-          } else {  
-            window.currentColor = color;  
-          }  
-          window.dispatchEvent(new CustomEvent("colorchange", { detail: { color } }));  
-        };  
-
-        if (typeof window.setColor === "function") {  
-          sendColor();  
-        } else {  
-          let tries = 0;  
-          const interval = setInterval(() => {  
-            if (typeof window.setColor === "function") {  
-              sendColor();  
-              clearInterval(interval);  
-            } else if (tries++ > 20) {  
-              clearInterval(interval);  
-            }  
-          }, 100);  
-        }  
-      }  
-
-      function openPopupAboveButton(btn) {  
-        closePopup();  
-        const pop = document.createElement("div");  
-        pop.className = "palette-popup";  
-        customBtn.classList.add("active");  
-
-        EXTRA_COLORS.forEach(c => {  
-          const el = document.createElement("div");  
-          el.className = "extra-color";  
-          el.style.background = c;  
-          el.addEventListener("click", () => {  
-            btn.style.background = c;  
-            btn.setAttribute("data-color", c);  
-            document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));  
-            btn.classList.add("active");  
-
-            el.style.boxShadow = "0 0 0 3px #ffd54f";  
-            setTimeout(() => el.style.boxShadow = "", 180);  
-
-            applyColorSafely(c);  
-            setTimeout(() => closePopup(), 80);  
-          });  
-          pop.appendChild(el);  
-        });  
-
-        document.body.appendChild(pop);  
-        const br = btn.getBoundingClientRect();  
-        const pw = pop.offsetWidth;  
-        const ph = pop.offsetHeight;  
-        let left = br.left + br.width / 2 - pw / 2;  
-        let top  = br.top - ph - 8;  
-        const margin = 8;  
-        left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));  
-        if (top < margin) top = margin;  
-        pop.style.left = `${left}px`;  
-        pop.style.top  = `${top}px`;  
-
-        requestAnimationFrame(() => pop.classList.add("active"));  
-        document.addEventListener("click", onOutside);  
-        document.addEventListener("keydown", onEsc);  
-        popupRef = pop;  
-      }  
-
-      customBtn.addEventListener("click", (e) => {  
-        e.stopPropagation();  
-        if (popupRef) closePopup();  
-        else openPopupAboveButton(customBtn);  
-      });  
-
-      /* 🎨 Cor personalizada */
-      pickerBtn.addEventListener("click", () => {
-        colorPickerInput.click();
-      });
-      colorPickerInput.addEventListener("input", (e) => {
-        const color = e.target.value;
-        pickerBtn.style.background = color;
-        pickerBtn.setAttribute("data-color", color);
-        document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
-        pickerBtn.classList.add("active");
-        applyColorSafely(color);
-      });
-    });  
-
-    // ⏳ Tela de loading  
-    const overlay = document.getElementById("loadingOverlay");  
-    const observer = new MutationObserver(() => {  
-      const svgLoaded = document.querySelector("#svgMount svg");  
-      if (svgLoaded) {  
-        setTimeout(() => overlay.classList.add("hidden"), 400);  
-        observer.disconnect();  
-      }  
-    });  
-    observer.observe(document.getElementById("svgMount"), { childList: true, subtree: true });  
-  </script>  
-
-  <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
-  <script>
-    const TESTE = true;
-    const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
-    const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
-
-    function exibirAnuncio() {
-      if (TESTE) {
-        alert("🎬 Anúncio em exibição (modo de teste)");
-      } else {
-        console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-      }
+    .notif-icon svg, .update-icon svg {
+      width:28px;
+      height:28px;
+      stroke:#444;
+      filter:drop-shadow(0 0 4px rgba(255,213,79,0.6));
     }
+    .update-icon {
+      margin-left:10px;
+      animation:shake 1.8s infinite linear;
+    }
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(3deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-3deg); }
+    }
+    .diamond {
+      margin-left:10px;
+      font-size:1.5rem;
+      cursor:pointer;
+      animation:spinDiamond 3.5s linear infinite;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform-style:preserve-3d;
+    }
+    @keyframes spinDiamond {
+      0%{transform:rotateY(0deg);}
+      50%{transform:rotateY(180deg);}
+      100%{transform:rotateY(360deg);}
+    }
+    .diamond:hover{transform:scale(1.15);}
+    header .btn {
+      background:#fff;
+      border:none;
+      padding:.6rem 1.1rem;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:600;
+      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      transition:all .25s ease;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    header .btn:hover {
+      transform:scale(1.05);
+      background:#fff7d1;
+    }
+    main {
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:2.5rem 1rem 3rem;
+      text-align:center;
+    }
+    .saudacao {
+      font-size:1.6rem;
+      color:#222;
+      font-weight:600;
+      margin-bottom:2rem;
+      background:rgba(255,255,255,0.6);
+      padding:1rem 1.5rem;
+      border-radius:16px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);
+      backdrop-filter:blur(5px);
+      display:inline-block;
+      opacity:0;
+      transition:opacity .6s ease;
+    }
+    .menu{display:flex;flex-direction:column;gap:1.2rem;width:100%;max-width:340px;}
+    .menu button{
+      background:#ffd54f;
+      border:none;
+      padding:1rem;
+      border-radius:16px;
+      font-size:1.15rem;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.4),0 4px 10px rgba(0,0,0,0.15);
+      transition:all .25s ease;
+    }
+    .menu button:hover{transform:scale(1.03);background:#ffe066;}
+    .socials{display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;}
+    .socials button{
+      background:#fffbe6;
+      border:2px solid #ffe066;
+      border-radius:14px;
+      padding:.7rem 1.3rem;
+      font-size:1rem;
+      font-weight:600;
+      cursor:pointer;
+      transition:all .25s ease;
+      box-shadow:0 3px 6px rgba(0,0,0,0.1);
+    }
+    .socials button:hover{background:#fff2b3;transform:scale(1.05);}
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(255,240,180,0.45);
+      backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;
+      z-index:1200;padding:16px;opacity:0;transition:opacity .3s ease;
+    }
+    .modal-backdrop.open{display:flex;opacity:1;}
+    .modal-box{
+      background:linear-gradient(180deg,#FFF8DC 0%,#FFEBA3 100%);
+      border-radius:20px;
+      padding:24px 22px 30px;
+      width:min(90%,460px);
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);
+      text-align:center;
+    }
+    .modal-box p{line-height:1.45;color:#333;font-size:1rem;margin:0 0 18px 0;text-align:left;}
+    .modal-box button{margin-top:10px;}
+  </style>
+</head>
+<body>
+  <div id="menuContainer">
+    <header>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="notif-icon" title="História do Projeto" onclick="window.openStoryModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M3 8l9 6 9-6"></path>
+            <path d="M21 8v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8"></path>
+          </svg>
+        </div>
+        <div class="diamond" id="diamondBtn" title="Apoiar Projeto">💎</div>
+        <div class="update-icon" id="updateIcon" title="Atualizar App">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10M1 14l5.36 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+        </div>
+      </div>
+      <div style="display:flex; gap:0.5rem; margin-left:auto;">
+        <button id="logoutBtn" class="btn">🚪 Sair</button>
+      </div>
+    </header>
 
-    window.addEventListener("load", () => {
-      setInterval(exibirAnuncio, 120000);
+    <main>
+      <div id="saudacao" class="saudacao">👋 Olá! Seja bem-vindo</div>
+      <div class="menu">
+        <button onclick="abrirTela('app/index.html','app')">📖 Histórias</button>
+        <button onclick="abrirTela('atividades/index.html','atividades')">🎨 Atividades</button>
+        <button onclick="abrirTela('pdfcompleto/index.html','pdfcompleto')">📚 PDF Completo</button>
+      </div>
+      <h2>Siga-nos nas redes sociais</h2>
+      <div class="socials">
+        <button onclick="window.open('https://www.instagram.com/pintandoapalavra_', '_blank')">📸 Instagram</button>
+        <button onclick="window.open('https://www.facebook.com/share/1CYaATKtFQ/', '_blank')">📘 Facebook</button>
+      </div>
+    </main>
+  </div>
+
+  <iframe id="conteudo" style="display:none;width:100%;height:100vh;border:none;"></iframe>
+
+  <!-- 💎 Modal Apoiar Projeto -->
+  <div id="supportModal" class="modal-backdrop">
+    <div class="modal-box">
+      <h2>Seja Premium</h2>
+      <p>Remova os anúncios e faça parte deste propósito, com sua ajuda conseguimos manter tudo gratuito e alcançar mais famílias. 💛</p>
+      <div style="display:flex; justify-content:center; gap:.6rem;">
+        <button class="btn" onclick="window.closeSupportModal()">Agora não</button>
+        <button class="btn" id="btnApoiar">💳 Apoiar agora</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚀 Modal Atualização -->
+  <div id="updateModal" class="modal-backdrop">
+    <div class="modal-box" style="text-align:left;">
+      <h2>🚀 Atualização</h2>
+      <p>
+        Sempre que o <strong>Pintando a Palavra</strong> for atualizado na <strong>Google Play.</strong><br>
+        Use este botão para garantir que o app carregue a nova versão corretamente ou puxe a tela de cima para baixo algumas vezes para recarregar a página.<br><br>
+        Como o app funciona em modo especial (<strong>TWA</strong>).<br>
+        É necessário forçar <strong>“atualização”</strong><br>
+        Repita esses processos de <strong>3-5 vezes</strong> para concluir a atualização por completo.<br><br>
+        💡 Depois de atualizar, volte à tela inicial e verifique se tudo foi renovado direitinho.
+      </p>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn" id="btnReload">🔄 Atualizar agora</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📜 Modal História -->
+  <div id="storyModal" class="modal-backdrop">
+    <div class="modal-box" style="text-align:left;">
+      <h2>🚀 Atualização especial!</h2>
+      <p>
+        • Uso off-line agora disponível<br>
+        • Design reformulado e mais leve<br>
+        • Paleta atualizada<br>
+        • Novos conteúdos e histórias adicionadas!
+      </p>
+      <div style="text-align:center;margin-top:1.5rem;">
+        <button class="btn" onclick="window.closeStoryModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="audio/audioController.js" defer></script>
+  <script type="module" src="/billing.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDN2p43zoaWoFuRcxrBMmNE8_Cm0d0ecw8",
+      authDomain: "pintando-a-palavra-fnl.firebaseapp.com",
+      projectId: "pintando-a-palavra-fnl",
+      storageBucket: "pintando-a-palavra-fnl.firebasestorage.app",
+      messagingSenderId: "394858613454",
+      appId: "1:394858613454:web:68ecc607c0414bd7779e9f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const diamondBtn = document.getElementById("diamondBtn");
+    const updateIcon = document.getElementById("updateIcon");
+    const updateModal = document.getElementById("updateModal");
+    const btnReload = document.getElementById("btnReload");
+    const supportModal = document.getElementById("supportModal");
+    const storyModal = document.getElementById("storyModal");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const saudacao = document.getElementById("saudacao");
+
+    window.openSupportModal = () => supportModal.classList.add("open");
+    window.closeSupportModal = () => supportModal.classList.remove("open");
+    window.openStoryModal = () => storyModal.classList.add("open");
+    window.closeStoryModal = () => storyModal.classList.remove("open");
+    const openUpdateModal = () => updateModal.classList.add("open");
+    const closeUpdateModal = () => updateModal.classList.remove("open");
+
+    diamondBtn.addEventListener("click", window.openSupportModal);
+    updateIcon.addEventListener("click", openUpdateModal);
+
+    btnReload.addEventListener("click", async () => {
+      btnReload.textContent = "🔄 Atualizando, aguarde...";
+      let count = 0;
+      const interval = setInterval(() => {
+        location.reload(true);
+        count++;
+        if (count >= 3) {
+          clearInterval(interval);
+          closeUpdateModal();
+          btnReload.textContent = "🔄 Atualizar agora";
+        }
+      }, 1000);
     });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const firstName = user.displayName?.split(" ")[0] || "Amigo";
+        setTimeout(() => {
+          saudacao.innerHTML = `👋 Olá, <strong>${firstName}</strong>!<br>Que bom ter você aqui 💛`;
+          saudacao.style.opacity = "1";
+        }, 400);
+
+        const ref = doc(db, "usuariosGoogle", user.email.toLowerCase());
+        const snap = await getDoc(ref);
+        if (snap.exists() && snap.data().removeAds) diamondBtn.style.display = "none";
+      } else window.location.replace("seletor.html");
+    });
+
+    logoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      localStorage.clear();
+      window.location.replace("seletor.html");
+    });
+
+    document.getElementById("btnApoiar").addEventListener("click", () => {
+      window.closeSupportModal();
+      window.location.href = "https://pay.kiwify.com.br/kJal7Gv";
+    });
+
+    function abrirTela(src, tela) {
+      const menu = document.getElementById("menuContainer");
+      const iframe = document.getElementById("conteudo");
+      menu.style.display = "none";
+      iframe.style.display = "block";
+      iframe.src = src;
+      history.pushState({ tela }, "", "#" + tela);
+    }
+    window.abrirTela = abrirTela;
+
+    window.onpopstate = function() {
+      const iframe = document.getElementById("conteudo");
+      const menu = document.getElementById("menuContainer");
+      iframe.style.display = "none";
+      menu.style.display = "block";
+      history.replaceState({}, "", location.pathname);
+    };
   </script>
-</body>  
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(r => console.log('✅ SW registrado:', r.scope))
+        .catch(e => console.error('❌ SW erro:', e));
+    }
+  </script>
+</body>
 </html>
