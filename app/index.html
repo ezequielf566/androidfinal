@@ -86,6 +86,31 @@
       0%, 100% { box-shadow: 0 0 8px 4px rgba(255,213,79,0.6); }  
       50% { box-shadow: 0 0 12px 6px rgba(255,213,79,0.9); }  
     }  
+
+    /* 🎨 Novo botão de cor personalizada */
+    .sw.custom-picker {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FFD54F, #FFB300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: #fff;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,.2);
+      cursor: pointer;
+      transition: transform .15s, box-shadow .25s;
+    }
+    .sw.custom-picker:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(255,213,79,0.6);
+    }
+    .sw.custom-picker:active {
+      transform: scale(.9);
+      box-shadow: 0 0 0 3px #ffd54f;
+    }
   </style>  
 </head>  
 
@@ -125,8 +150,13 @@
           <button class="sw" data-color="#8E24AA" style="--c:#8E24AA"></button>  
           <button class="sw" data-color="#E0C2A2" style="--c:#E0C2A2"></button>  
           <button class="sw" data-color="#8D6E63" style="--c:#8D6E63"></button>  
-          <button class="sw" data-color="#263238" style="--c:#263238"></button>  
-          <button class="sw custom" id="customColorBtn">+</button>  
+
+          <!-- 🎨 Novo botão de cor personalizada -->
+          <button class="sw custom-picker" id="pickerBtn">🎨</button>
+          <input type="color" id="colorPickerInput" style="display:none;" />
+
+          <!-- ➕ Mantido botão + original -->
+          <button class="sw custom" id="customColorBtn">+</button>
         </div>  
 
         <div class="tools">  
@@ -151,6 +181,8 @@
   <script>  
     document.addEventListener("DOMContentLoaded", () => {  
       const customBtn = document.getElementById("customColorBtn");  
+      const pickerBtn = document.getElementById("pickerBtn");
+      const colorPickerInput = document.getElementById("colorPickerInput");
       let popupRef = null;  
 
       const EXTRA_COLORS = [  
@@ -247,6 +279,19 @@
         if (popupRef) closePopup();  
         else openPopupAboveButton(customBtn);  
       });  
+
+      /* 🎨 Cor personalizada */
+      pickerBtn.addEventListener("click", () => {
+        colorPickerInput.click();
+      });
+      colorPickerInput.addEventListener("input", (e) => {
+        const color = e.target.value;
+        pickerBtn.style.background = color;
+        pickerBtn.setAttribute("data-color", color);
+        document.querySelectorAll(".sw").forEach(b => b.classList.remove("active"));
+        pickerBtn.classList.add("active");
+        applyColorSafely(color);
+      });
     });  
 
     // ⏳ Tela de loading  
@@ -263,7 +308,7 @@
 
   <!-- 🟡 Anúncio automático AdMob (a cada 2 minutos) -->
   <script>
-    const TESTE = true; // mudar pra false após aprovação
+    const TESTE = true;
     const ADMOB_APP_ID = "ca-app-pub-1648224245207447~6318142740";
     const ADMOB_INTERSTITIAL_ID = "ca-app-pub-1648224245207447/7457439377";
 
@@ -272,13 +317,11 @@
         alert("🎬 Anúncio em exibição (modo de teste)");
       } else {
         console.log("🎬 Exibindo anúncio real:", ADMOB_INTERSTITIAL_ID);
-        // Aqui entra o SDK real do AdMob após publicação
       }
     }
 
     window.addEventListener("load", () => {
-      console.log("⏱️ Contador de 2 minutos iniciado");
-      setInterval(exibirAnuncio, 120000); // 2 minutos
+      setInterval(exibirAnuncio, 120000);
     });
   </script>
 </body>  
