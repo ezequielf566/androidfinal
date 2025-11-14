@@ -231,6 +231,12 @@ async function loadPage(newIdx){
 
   mount.appendChild(svg);
   svgEl = svg;
+
+  // pintura.js hook
+  document.dispatchEvent(new CustomEvent("svgLoaded", {
+    detail: { svgRoot: svg, pageNumber: idx }
+  }));
+
   resetPageCounters();
   // Atualiza cabeçalho e mantém progresso de clicks
   updateProgressUI();
@@ -252,6 +258,31 @@ function onSvgClick(e){
   el.setAttribute('fill', next);
   // Contabiliza clique válido (branco -> cor) e único por elemento
   try{ incClickIfChanged(prev, next); handleUniquePaint(el, prev, next); }catch(e){}
+
+  // 🔵 Integração com pintura.js — salvar/limpar cor persistente
+  try {
+    if (typeof saveElementColor === 'function' && typeof removeElementColor === 'function') {
+      const pageNumber = idx; // mesmo índice usado no evento svgLoaded
+      const elementId = el.id;
+      if (elementId) {
+        const nextLower = String(next || '').toLowerCase();
+        const isWhiteOrNone =
+          nextLower === '#ffffff' ||
+          nextLower === 'white' ||
+          nextLower === 'none' ||
+          nextLower === '';
+        if (isWhiteOrNone) {
+          // borracha → remove registro e volta pro padrão original ao recarregar
+          removeElementColor(pageNumber, elementId);
+        } else {
+          // cor normal → salva/atualiza registro
+          saveElementColor(pageNumber, elementId, next);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('[PINTURA] Erro ao persistir cor:', e);
+  }
 }
 
 // ---------- Undo/Redo ----------
@@ -304,8 +335,8 @@ async function savePNG(){
   inlineComputedStyles(clone);
   
   
-forceBlackStrokes(clone);
-// Ensure stroked outlines are black on export (avoid white-stroke bug)
+  forceBlackStrokes(clone);
+  // Ensure stroked outlines are black on export (avoid white-stroke bug)
   try{
     clone.querySelectorAll('*').forEach(function(el){
       if(!el.getAttribute) return;
@@ -322,7 +353,7 @@ forceBlackStrokes(clone);
     });
   }catch(_){}
 
-clone.removeAttribute('width');
+  clone.removeAttribute('width');
   clone.removeAttribute('height');
 
   if(!clone.hasAttribute('viewBox')){
@@ -344,7 +375,7 @@ clone.removeAttribute('width');
 
   // 2) Serializar e carregar
   forceBlackStrokes(clone);
-const serializer = new XMLSerializer();
+  const serializer = new XMLSerializer();
   const svgText = serializer.serializeToString(clone);
   const svgBlob = new Blob([svgText], {type:'image/svg+xml;charset=utf-8'});
   const url = URL.createObjectURL(svgBlob);
@@ -457,6 +488,7 @@ function toggleSound(){ /* removed: sounds always on */ }
   setLabel();
   loadPage(0);
 })();
+
 // === Stars & Progress (14-click model) ===
 const STAR_STORAGE_KEY = 'pp_stars_v2';
 const CLICK_STORAGE_KEY = 'pp_clicks_v2';
